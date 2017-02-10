@@ -1,0 +1,235 @@
+﻿
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+   
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.lbl{
+
+}
+.txt_right{
+    float: right;
+    text-align: right;
+}
+.chk_left{
+    float: left;
+    text-align: left;
+
+}
+.txt{
+    
+}
+.txt-admin{
+
+    float: left;
+    border-radius: 5px;
+    border: 2px solid #555;
+    width: 6000px;
+    font-size: 20px;
+   
+}
+.txt-default{
+
+    float: right;
+    text-align: center;
+    vertical-align: middle;
+    width: 30px;
+    border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+    
+      
+}
+.drp-purchase{
+    display: inline-block;
+    width: 2000px;
+    height: 30px;
+    border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+}
+.txt-purchase-mult{
+    display: inline-block;
+    resize: none;
+    width: 173px;
+     border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+      width: 2000px;
+      padding-left: 5px;
+    
+   
+}
+.txt-purchase{
+    display: inline-block;
+    resize: none;
+     border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+     width: 2000px;
+         padding-left: 5px;
+}
+.lbl-purchase{
+   
+     color: #1A5276;
+    font-size: 22px;
+    display: block;
+    text-align: right;
+    width: 500px;
+    padding-right: 20px;
+}
+.form-gr{
+   display: inline-block;
+}
+.bullet-list{
+    color: #1A5276;
+    font-size: 22px;
+    text-align: left;
+}
+.username{
+    color: #1A5276;
+    font-size: 22px;
+    text-align: center;
+}
+
+ .gridview th{
+     font-size: large;
+     font-weight: bold;
+     color: dodgerblue;
+     border: 2px solid black;
+     padding: 8px;
+     text-align: center;
+    
+ }
+ .gridview td{
+     padding: 8px;
+     border: 2px solid black;
+     text-align: center;
+ }
+
+input[type='checkbox'] {
+   
+    margin-right: 5px;
+    width:18px;
+    height:18px;
+    background:white;
+    border-radius:5px;
+    border:2px solid #555;
+}
+.main-title{
+    color: #1A5276;
+    font-size: 46px;
+    text-align: center;
+}
+.time-title{
+    color: #1A5276;
+    font-size: 34px;
+    text-align: center;
+}
+.chk-default {
+   
+     margin-right: 10px;
+    font-size: 20px;
+   
+}
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.login {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.login input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.login button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #4CAF50;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.blt-default{
+    text-align: left;
+}
+.login button:hover,.login button:active,.login button:focus {
+  background: #43A047;
+}
+.login .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.login .message a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.login .register-form {
+  display: none;
+}
+.logCon {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.logCon:before, .logCon:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.logCon .info {
+  margin: 50px auto;
+  text-align: center;
+}
+.logCon .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 300;
+  color: #1a1a1a;
+}
+.logCon .info span {
+  color: #4d4d4d;
+  font-size: 12px;
+}
+.logCon .info span a {
+  color: #000000;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #EF3B3A;
+}
