@@ -59,28 +59,35 @@ namespace CTBTeam
         {
             if (!string.IsNullOrEmpty((string)Session["User"]))
             {
-
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                try
+                {
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                               "Data Source=" + Server.MapPath("~/InternHours.xlsx") + ";" +
                               "Extended Properties=Excel 12.0;";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
-                objConn.Open();
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
 
-                OleDbCommand objCmd = new OleDbCommand("INSERT INTO [Sheet3$] " +
-                                                      "([Name],[Date/Time]) " +
-                                                      "VALUES(@value1, @value2)", objConn);
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO [Sheet3$] " +
+                                                          "([Name],[Date/Time]) " +
+                                                          "VALUES(@value1, @value2)", objConn);
 
-                objCmd.Parameters.AddWithValue("@value1", (string)Session["User"]);
-                objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
-              
-                objCmd.ExecuteNonQuery();
-                objConn.Close();
-                System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                sb.Append("alert('");
-                sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been successfully added");
-                sb.Append("');");
-                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
-                populate();
+                    objCmd.Parameters.AddWithValue("@value1", (string)Session["User"]);
+                    objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
+
+
+                    objCmd.ExecuteNonQuery();
+                    objConn.Close();
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    sb.Append("alert('");
+                    sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been successfully added");
+                    sb.Append("');");
+                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+                    populate();
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
         }
 
@@ -90,33 +97,35 @@ namespace CTBTeam
             {
                 try
                 {
-                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                            "Data Source=" + Server.MapPath("~/InternHours.xlsx") + ";" +
-                            "Extended Properties=Excel 12.0;";
-                    OleDbConnection objConn = new OleDbConnection(connectionString);
-                
-                    DataSet objDataSet = (DataSet)Session["objData"];
+                    if (Session["excelApp"] == null)
+                    {
+                        app = new Excel.Application();
+                        Session["excelApp"] = app;
+                    }
+                    if (Session["excelWB"] == null)
+                    {
+                        wb = app.Workbooks.Open(@"" + Server.MapPath("~/InternHours.xlsx"));
+                        Session["excelWB"] = wb;
+                    }
+                    app = (Excel.Application)Session["excelApp"];
+                    wb = (Excel.Workbook)Session["excelWB"];
 
 
-                    OleDbDataAdapter objCmd = new OleDbDataAdapter();
-                  
 
 
-                    string sql = "DELETE FROM [Sheet3$] WHERE [Date/Time]=@val2 AND [Name]=@val1";
-                    objConn.Open();
-
-                    objCmd.DeleteCommand = objConn.CreateCommand();
-                    objCmd.DeleteCommand.CommandText = sql;
-                    objCmd.DeleteCommand.Parameters.AddWithValue("@val1", (string)Session["User"]);
-                    objCmd.DeleteCommand.Parameters.AddWithValue("@val2", cldTimeOff.SelectedDate.ToShortDateString());                  
 
 
-                    objCmd.DeleteCommand.ExecuteNonQuery();
-                    objConn.Close();
+
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    sb.Append("alert('");
+                    sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been successfully added");
+                    sb.Append("');");
+                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+                    populate();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    
+
                 }
             }
         }
