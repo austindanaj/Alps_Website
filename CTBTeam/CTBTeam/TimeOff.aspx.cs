@@ -8,11 +8,17 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Data;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace CTBTeam
 {
     public partial class TimeOff : Page
     {
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
 
         Excel.Application app;
         Excel.Workbook wb;
@@ -109,26 +115,72 @@ namespace CTBTeam
                     }
                     app = (Excel.Application)Session["excelApp"];
                     wb = (Excel.Workbook)Session["excelWB"];
+                    ws = wb.Sheets[3];
 
-
-
-
+                    for(int i = 2; i <= ws.UsedRange.Rows.Count; i++)
+                    {
+                        if ((ws.Cells[i, 1] as Excel.Range).Value.ToString().Equals((string)Session["Users"]) && (ws.Cells[i,2] as Excel.Range).Value.ToString().Contains(cldTimeOff.SelectedDate.ToShortDateString())){
+                            ws.Rows[i].Delete();
+                        }
+                    }
+                    wb.Save();
+                    cleanUpExcel(app, wb);
+                    Session["excelApp"] = app;
+                    Session["excelWB"] = wb;
 
 
 
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
                     sb.Append("alert('");
-                    sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been successfully added");
+                    sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been removed");
                     sb.Append("');");
                     ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
                     populate();
                 }
                 catch (Exception ex)
                 {
-
+                    cleanUpExcel(app, wb);
                 }
             }
         }
+        private void cleanUpExcel(Excel.Application currentApp, Excel.Workbook currentWB)
+        {
+            uint processID = 0;
+            if (currentApp != null)
+            {
+                if (currentWB != null)
+                {
+                    GetWindowThreadProcessId(new IntPtr(app.Hwnd), out processID);
+                    wb.Close();
+                    app.Quit();
+                    Marshal.FinalReleaseComObject(ws);
+                    Marshal.FinalReleaseComObject(wb);
+                    Marshal.FinalReleaseComObject(app);
+                    ws = null;
+                    wb = null;
+                    app = null;
+
+                }
+            }
+            try
+            {
+                Process excelProc = Process.GetProcessById((int)processID);
+                excelProc.CloseMainWindow();
+                excelProc.Refresh();
+                excelProc.Kill();
+            }
+            catch
+            {
+
+            }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+        }
+
+
         public void populate()
         {
             String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
