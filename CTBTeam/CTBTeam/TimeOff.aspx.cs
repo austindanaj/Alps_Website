@@ -25,40 +25,47 @@ namespace CTBTeam
         Excel.Worksheet ws;
         string[,] data;
         string userName;
-       
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                if (!string.IsNullOrEmpty((string)Session["User"]))
-                {
-                    if (Session["objData"] == null)
-                    {
-                        populate();
-                    }
-                }
-            }                  
-         }
-      
+                
+            }
+        }
+
 
         protected void Calendar_SelectionChanged(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty((string)Session["User"]))
             {
-                bltList.Items.Clear();
-                DataSet objDataSet = (DataSet)Session["objData"];
-                for(int i = 0; i < objDataSet.Tables[0].Rows.Count; i++)
+                try
                 {
-                    if((objDataSet.Tables[0].Rows[i][1].ToString().Contains(cldTimeOff.SelectedDate.ToShortDateString())))
+                    bltList.Items.Clear();
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+
+
+                    OleDbCommand objCmd = new OleDbCommand("SELECT Emp_Name FROM TimeOff WHERE Date_Request=@value1;", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", cldTimeOff.SelectedDate.ToShortDateString());
+                    OleDbDataReader reader = objCmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        bltList.Items.Add((string)objDataSet.Tables[0].Rows[i][0]);
-
-                       
+                        bltList.Items.Add(reader["Emp_Name"].ToString());
                     }
-                }
 
+                    objConn.Close();
+
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
-     
+
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -68,18 +75,18 @@ namespace CTBTeam
                 try
                 {
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                              "Data Source=" + Server.MapPath("~/InternHours.xlsx") + ";" +
-                              "Extended Properties=Excel 12.0;";
+                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
 
-                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO [Sheet3$] " +
-                                                          "([Name],[Date/Time]) " +
-                                                          "VALUES(@value1, @value2)", objConn);
 
-                    objCmd.Parameters.AddWithValue("@value1", (string)Session["User"]);
-                    objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
 
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO TimeOff " +
+                                                            "(Alna_Num, Emp_Name, Date_Request) VALUES (@value1, @value2, @value3);", objConn);
+
+                    objCmd.Parameters.AddWithValue("@value1", (int)Session["alna_num"]);
+                    objCmd.Parameters.AddWithValue("@value2", (string)Session["User"]);
+                    objCmd.Parameters.AddWithValue("@value3", cldTimeOff.SelectedDate.ToShortDateString());
 
                     objCmd.ExecuteNonQuery();
                     objConn.Close();
@@ -88,7 +95,7 @@ namespace CTBTeam
                     sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been successfully added");
                     sb.Append("');");
                     ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
-                    populate();
+
                 }
                 catch (Exception ex)
                 {
@@ -103,100 +110,37 @@ namespace CTBTeam
             {
                 try
                 {
-                    if (Session["excelApp"] == null)
-                    {
-                        app = new Excel.Application();
-                        Session["excelApp"] = app;
-                    }
-                    if (Session["excelWB"] == null)
-                    {
-                        wb = app.Workbooks.Open(@"" + Server.MapPath("~/InternHours.xlsx"));
-                        Session["excelWB"] = wb;
-                    }
-                    app = (Excel.Application)Session["excelApp"];
-                    wb = (Excel.Workbook)Session["excelWB"];
-                    ws = wb.Sheets[3];
-
-                    for(int i = 2; i <= ws.UsedRange.Rows.Count; i++)
-                    {
-                        if ((ws.Cells[i, 1] as Excel.Range).Value.ToString().Equals((string)Session["Users"]) && (ws.Cells[i,2] as Excel.Range).Value.ToString().Contains(cldTimeOff.SelectedDate.ToShortDateString())){
-                            ws.Rows[i].Delete();
-                        }
-                    }
-                    wb.Save();
-                    cleanUpExcel(app, wb);
-                    Session["excelApp"] = app;
-                    Session["excelWB"] = wb;
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
 
 
 
+                    OleDbCommand objCmd = new OleDbCommand("DELTE FROM TimeOff WHERE Emp_Name=@value1 AND Date_Request=@value2", objConn);
+
+                    objCmd.Parameters.AddWithValue("@value1", (string)Session["User"]);
+                    objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
+
+                    objCmd.ExecuteNonQuery();
+                    objConn.Close();
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
                     sb.Append("alert('");
-                    sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been removed");
+                    sb.Append("Your time off for: " + cldTimeOff.SelectedDate.ToShortDateString() + " has been successfully removed");
                     sb.Append("');");
                     ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
-                    populate();
+
                 }
                 catch (Exception ex)
                 {
-                    cleanUpExcel(app, wb);
-                }
-            }
-        }
-        private void cleanUpExcel(Excel.Application currentApp, Excel.Workbook currentWB)
-        {
-            uint processID = 0;
-            if (currentApp != null)
-            {
-                if (currentWB != null)
-                {
-                    GetWindowThreadProcessId(new IntPtr(app.Hwnd), out processID);
-                    wb.Close();
-                    app.Quit();
-                    Marshal.FinalReleaseComObject(ws);
-                    Marshal.FinalReleaseComObject(wb);
-                    Marshal.FinalReleaseComObject(app);
-                    ws = null;
-                    wb = null;
-                    app = null;
 
                 }
             }
-            try
-            {
-                Process excelProc = Process.GetProcessById((int)processID);
-                excelProc.CloseMainWindow();
-                excelProc.Refresh();
-                excelProc.Kill();
-            }
-            catch
-            {
-
-            }
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
         }
 
 
-        public void populate()
-        {
-            String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                            "Data Source=" + Server.MapPath("~/InternHours.xlsx") + ";" +
-                                            "Extended Properties=Excel 12.0;";
-            OleDbConnection objConn = new OleDbConnection(connectionString);
-            objConn.Open();
-            OleDbCommand objCmdSelect = new OleDbCommand("SELECT * FROM [Sheet3$]", objConn);
-            OleDbDataAdapter objAdapter = new OleDbDataAdapter();
-            objAdapter.SelectCommand = objCmdSelect;
-            DataSet objDataSet = new DataSet();
-            objAdapter.Fill(objDataSet, "XLData");
-            Session["objData"] = objDataSet;
-            objConn.Close();
-        }
 
-       
     }
+       
+    
 }
