@@ -23,12 +23,17 @@
     <div class="row">
 
         <div class="col-md-6">
-            <asp:GridView ID="dgvProject" runat="server" HorizontalAlign="Center" CssClass="gridview">
+            <asp:GridView ID="dgvProject" runat="server" CssClass="gridview">
             </asp:GridView>
 
         </div>
-        <div>
-            <asp:GridView ID="dgvCars" runat="server" HorizontalAlign="Center" CssClass="gridview">
+    </div>
+     <br />
+    <br />
+  
+    <div class="row">
+        <div class="col-md-6">
+            <asp:GridView ID="dgvCars" runat="server" CssClass="gridview">
             </asp:GridView>
         </div>
 
@@ -212,7 +217,7 @@
             <div class="form-group">
                 <asp:UpdatePanel ID="UpdatePanel15" runat="server">
                     <ContentTemplate>
-                        <asp:CheckBox ID="chkOther" runat="server" Text="   Other" CssClass="lbl chk-default" OnCheckedChanged="On_Click_PB" Visible="False" AutoPostBack="true" />
+                        <asp:CheckBox ID="chkOther" runat="server" Text="   Other" CssClass="lbl chk-default" OnCheckedChanged="On_Click_Other" Visible="False" AutoPostBack="true" />
                         <asp:TextBox ID="txtOther" runat="server" Text="0" CssClass="txt txt-default" Visible="False" Enabled="False" />
                     </ContentTemplate>
                 </asp:UpdatePanel>
@@ -247,36 +252,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <br />
-
-            <asp:TextBox ID="txtUsers" runat="server" Visible="False" CssClass="txt txt-admin" Rows="2"></asp:TextBox>
-            <br />
-            <br />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <asp:TextBox ID="txtProjects" runat="server" Visible="False" CssClass="txt txt-admin" Rows="2"></asp:TextBox>
-            <br />
-            <br />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <asp:TextBox ID="txtCars" runat="server" Visible="False" CssClass="txt txt-admin" Rows="2"></asp:TextBox>
-            <br />
-            <br />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <asp:Button ID="btnUpdate" runat="server" OnClick="Update" Text="Update" Visible="False" Width="128px" CssClass="btn btn-primary btn-lg" />
-            <br />
-            <br />
-        </div>
-    </div>
+  
                        
     
 </asp:Content>

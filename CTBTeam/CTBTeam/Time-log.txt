@@ -1,0 +1,27 @@
+2/6/2017,Project B,Thermostat,Global A,Radar,IR Sensor,Other,
+Daniel Vega,0,0,0,0,0,0,
+Austin Danaj,0,0,0,0,0,0,
+Damien Galloway,0,0,0,0,0,0,
+Adrian,0,0,0,0,0,0,
+Francesco,0,0,0,0,0,0,
+Frankie,0,0,0,0,0,0,
+Levi,0,0,0,0,0,0,
+Seth,0,0,0,0,0,0,
+
+2/6/2017,Cruze,Trax,Tahoe,EV Spark,Bolt,Spark,
+Daniel Vega,0,0,0,0,0,0,
+Austin Danaj,0,0,0,0,0,0,
+Damien Galloway,0,0,0,0,0,0,
+Adrian,0,0,0,0,0,0,
+Francesco,0,0,0,0,0,0,
+Frankie,0,0,0,0,0,0,
+Levi,0,0,0,0,0,0,
+Seth,0,0,0,0,0,0,
+
+2/13/2017,Emp_Name,Project_B,Thermostat,Global_A,Radar,IR_Sensor,Other,
+Austin Danaj,22,0,22,0,0,0,
+
+2/13/2017,Emp_Name,Cruze,Trax,Tahoe,EV_Spark,Bolt,Volt,Spark,Equinox,
+Austin Danaj,1,2,3,1,0,0,0,0,
+
+2/20/2017
