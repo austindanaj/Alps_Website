@@ -106,6 +106,10 @@ namespace CTBTeam
                             txtPass.Text = "";
                             txtUser.Text = "";
                             Session["User"] = userList[i + 2];
+                            string alnaNum = userList[i];
+                            alnaNum = alnaNum.Replace("alna", "");
+                            int empNum = int.Parse(alnaNum);
+                            Session["alna_num"] = empNum;
                             Session["loginStatus"] = "Sign Out";
                             Response.Redirect("Hours.aspx");
                             return;
