@@ -32,7 +32,7 @@ namespace CTBTeam
                     btnLogin.Text = "Sign Out";
                     lblLogin.Text = "Sign Out";
                     string userName = (string)Session["User"];
-                    if (userName.Equals("admin"))
+                    if ((bool)Session["admin"])
                     {
                         lblRegister.Visible = true;
                         txtName.Visible = true;
@@ -45,90 +45,63 @@ namespace CTBTeam
                 }
             }
         }
-        private void cleanUpExcel(Excel.Application currentApp, Excel.Workbook currentWB)
-        {
-            uint processID = 0;
-            if (currentApp != null)
-            {
-                if (currentWB != null)
-                {
-                    GetWindowThreadProcessId(new IntPtr(currentApp.Hwnd), out processID);
-                    currentWB.Close();
-                    currentApp.Quit();
-               
-                    Marshal.FinalReleaseComObject(currentWB);
-                    Marshal.FinalReleaseComObject(currentApp);
-                    Session["excelWB"] = null;
-                    Session["excelApp"] = null;
-                    
-                   
-
-                }
-            }
-            try
-            {
-                Process excelProc = Process.GetProcessById((int)processID);
-                excelProc.CloseMainWindow();
-                excelProc.Refresh();
-                excelProc.Kill();
-            }
-            catch
-            {
-
-            }
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-        }
+    
         protected void Login_Clicked(Object sender, EventArgs e)
         {
             if (btnLogin.Text.Equals("Sign Out"))
             {
-                Excel.Workbook wb = (Excel.Workbook)Session["excelWB"];
-                Excel.Application app = (Excel.Application)Session["excelApp"];
-                cleanUpExcel(app, wb);
                 Session["loginStatus"] = "Sign In";
                 Session["User"] = null;
                 Response.Redirect("~/");
             }
             else
             {
-                string[] userList = File.ReadAllLines(Server.MapPath("~/Users.txt"));
-                for (int i = 0; i < userList.Length; i += 3)
+                try
                 {
-                    if (txtUser.Text.Equals(userList[i]))
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+
+
+                    OleDbCommand objCmd = new OleDbCommand("SELECT * FROM Users WHERE Alna_Num=@value1 AND Emp_Pass=@value2", objConn);
+
+                    objCmd.Parameters.AddWithValue("@value1", int.Parse(txtUser.Text.Replace("alna", "")));
+                    objCmd.Parameters.AddWithValue("@value2", txtPass.Text);
+
+                    OleDbDataReader reader = objCmd.ExecuteReader();
+                    int count = 0;
+                    while (reader.Read())
                     {
-                        if (txtPass.Text.Equals(userList[i + 1]))
-                        {
-                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('You have been successfully logged in!');", true);
-                            txtPass.Text = "";
-                            txtUser.Text = "";
-                            Session["User"] = userList[i + 2];
-                            string alnaNum = userList[i];
-                            alnaNum = alnaNum.Replace("alna", "");
-                            int empNum = int.Parse(alnaNum);
-                            Session["alna_num"] = empNum;
-                            Session["loginStatus"] = "Sign Out";
-                            Response.Redirect("Hours.aspx");
-                            return;
-                        }
-                        else
-                        {
-                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Incorrect Username or Password');", true);
-                            txtPass.Text = "";
-                            txtUser.Text = "";
-                            return;
-                        }
+                        count++;
+                        Session["User"] = reader.GetString(1);
+                        Session["alna_num"] = reader.GetValue(0);
+                        Session["admin"] = reader.GetBoolean(3);
                     }
+                    if (count > 0)
+                    {
+                        Session["loginStatus"] = "Sign Out";
+                        Response.Redirect("Hours.aspx");
+                        objConn.Close();
+                        return;
+                    }
+                    else
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Incorrect Username or Password');", true);
+                        txtPass.Text = "";
+                        txtUser.Text = "";
+                        objConn.Close();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
 
                 }
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: User has not been registered yet, please contact admin');", true);
-                txtPass.Text = "";
-                txtUser.Text = "";
-                return;
-            }
+
+            }  
+           
         }
         protected void Register_Clicked(object sender, EventArgs e)
         {
@@ -136,6 +109,37 @@ namespace CTBTeam
             {
                 if (txtRPass.Text.Equals(txtRConfirm.Text))
                 {
+
+                    try
+                    {
+                        String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                        OleDbConnection objConn = new OleDbConnection(connectionString);
+                        objConn.Open();
+
+
+
+                        OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Alna_Num, Emp_Name, Emp_Pass, Admin) VALUES (@value1, @value2, @value3, @value4);", objConn);
+
+                        objCmd.Parameters.AddWithValue("@value1", int.Parse(txtRUser.Text.Replace("alna", "")));
+                        objCmd.Parameters.AddWithValue("@value2", txtName.Text);
+                        objCmd.Parameters.AddWithValue("@value3", txtRPass.Text);
+                        objCmd.Parameters.AddWithValue("@value4", 0);
+
+                        objCmd.ExecuteNonQuery();
+                        objConn.Close();
+                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully added');", true);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+
+
+
+
+
                     string[] addUser = { txtRUser.Text.ToLower(), txtRPass.Text, txtName.Text };
                     File.AppendAllLines(Server.MapPath("~/Users.txt"), addUser);
                 }

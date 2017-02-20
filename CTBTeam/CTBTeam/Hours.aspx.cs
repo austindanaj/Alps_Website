@@ -60,7 +60,7 @@ namespace CTBTeam
                 {
                     userName = (string)Session["User"];
                     btnSubmit.Visible = true;
-
+                    fill();
                  
                     int colCount = dgvProject.Rows[0].Cells.Count;
                     for (int i = 1; i < colCount; i++)
@@ -266,7 +266,7 @@ namespace CTBTeam
             else
             {
                 txtPB.Enabled = false;
-                txtPB.Text = "0";
+              
 
             }
         }
@@ -279,7 +279,7 @@ namespace CTBTeam
             else
             {
                 txtTherm.Enabled = false;
-                txtTherm.Text = "0";
+              
 
             }
         }
@@ -292,7 +292,7 @@ namespace CTBTeam
             else
             {
                 txtGA.Enabled = false;
-                txtGA.Text = "0";
+              
             }
         }
         protected void On_Click_Other(object sender, EventArgs e)
@@ -304,7 +304,7 @@ namespace CTBTeam
             else
             {
                 txtOther.Enabled = false;
-                txtOther.Text = "0";
+               
             }
         }
         protected void On_Click_Radar(object sender, EventArgs e)
@@ -316,7 +316,7 @@ namespace CTBTeam
             else
             {
                 txtRadar.Enabled = false;
-                txtRadar.Text = "0";
+              
             }
         }
         protected void On_Click_IR(object sender, EventArgs e)
@@ -328,7 +328,7 @@ namespace CTBTeam
             else
             {
                 txtIR.Enabled = false;
-                txtIR.Text = "0";
+               
             }
         }
         //=======================================================
@@ -341,7 +341,7 @@ namespace CTBTeam
             else
             {
                 txtCar1.Enabled = false;
-                txtCar1.Text = "0";
+               
             }
         }
         protected void On_Click_Car2(object sender, EventArgs e)
@@ -353,7 +353,7 @@ namespace CTBTeam
             else
             {
                 txtCar2.Enabled = false;
-                txtCar2.Text = "0";
+                
             }
         }
         protected void On_Click_Car3(object sender, EventArgs e)
@@ -365,7 +365,7 @@ namespace CTBTeam
             else
             {
                 txtCar3.Enabled = false;
-                txtCar3.Text = "0";
+  
             }
         }
         protected void On_Click_Car4(object sender, EventArgs e)
@@ -377,7 +377,7 @@ namespace CTBTeam
             else
             {
                 txtCar4.Enabled = false;
-                txtCar4.Text = "0";
+              
             }
         }
         protected void On_Click_Car5(object sender, EventArgs e)
@@ -389,7 +389,7 @@ namespace CTBTeam
             else
             {
                 txtCar5.Enabled = false;
-                txtCar5.Text = "0";
+             
             }
         }
         protected void On_Click_Car6(object sender, EventArgs e)
@@ -401,7 +401,7 @@ namespace CTBTeam
             else
             {
                 txtCar6.Enabled = false;
-                txtCar6.Text = "0";
+               
             }
         }
         protected void On_Click_Car7(object sender, EventArgs e)
@@ -413,7 +413,7 @@ namespace CTBTeam
             else
             {
                 txtCar7.Enabled = false;
-                txtCar7.Text = "0";
+              
             }
         }
         protected void On_Click_Car8(object sender, EventArgs e)
@@ -425,7 +425,7 @@ namespace CTBTeam
             else
             {
                 txtCar8.Enabled = false;
-                txtCar8.Text = "0";
+             
             }
         }
         protected void On_Click_Car9(object sender, EventArgs e)
@@ -437,7 +437,7 @@ namespace CTBTeam
             else
             {
                 txtCar9.Enabled = false;
-                txtCar9.Text = "0";
+               
             }
         }
         protected void On_Click_Car10(object sender, EventArgs e)
@@ -449,7 +449,7 @@ namespace CTBTeam
             else
             {
                 txtCar10.Enabled = false;
-                txtCar10.Text = "0";
+             
             }
         }
         //=======================================================
@@ -488,24 +488,26 @@ namespace CTBTeam
 
             objCmdProject.ExecuteNonQuery();
 
-            /*
-            OleDbCommand objCmdCars = new OleDbCommand("UPDATE ProjectHours " +
-                                                   "SET Project_B=@value1, Thermostat=@value2, Global_A=@value3, Radar=@value4, IR_Sensor=@value5, Other=@value6 " +
-                                                   "WHERE Alna_Num=@value7", objConn);
+            
+            OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
+                                                   "SET Cruze=@value1, Trax=@value2, Tahoe=@value3, EV_Spark=@value4, Bolt=@value5, Volt=@value6, Spark=@value7, Equinox=@value8 " +
+                                                   "WHERE Alna_Num=@value9", objConn);
 
-            objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtPB.Text));
-            objCmdCars.Parameters.AddWithValue("@value2", int.Parse(txtTherm.Text));
-            objCmdCars.Parameters.AddWithValue("@value3", int.Parse(txtGA.Text));
-            objCmdCars.Parameters.AddWithValue("@value4", int.Parse(txtRadar.Text));
-            objCmdCars.Parameters.AddWithValue("@value5", int.Parse(txtIR.Text));
-            objCmdCars.Parameters.AddWithValue("@value6", int.Parse(txtOther.Text));
-            objCmdCars.Parameters.AddWithValue("@value7", (int)(Session["alna_num"]));
+            objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtCar1.Text));
+            objCmdCars.Parameters.AddWithValue("@value2", int.Parse(txtCar2.Text));
+            objCmdCars.Parameters.AddWithValue("@value3", int.Parse(txtCar3.Text));
+            objCmdCars.Parameters.AddWithValue("@value4", int.Parse(txtCar4.Text));
+            objCmdCars.Parameters.AddWithValue("@value5", int.Parse(txtCar5.Text));
+            objCmdCars.Parameters.AddWithValue("@value6", int.Parse(txtCar6.Text));
+            objCmdCars.Parameters.AddWithValue("@value7", int.Parse(txtCar7.Text));
+            objCmdCars.Parameters.AddWithValue("@value8", int.Parse(txtCar8.Text));
+            objCmdCars.Parameters.AddWithValue("@value9", (int)(Session["alna_num"]));
            
-            objCmdCars.ExecuteNonQuery();
-             */
+            objCmdCars.ExecuteNonQuery();          
 
             objConn.Close();       
-            reset();      
+            fill();
+            reset();     
 
             populateDataCars();
             populateDataProject();
@@ -514,15 +516,52 @@ namespace CTBTeam
         /**
          * Resets the text boxes and checkboxes
          */
-        public void reset()
+         public void reset()
         {
-
-            for (int i = 0; i < checkBoxes.Length; i++)
+            for(int i = 0; i < textBoxes.Length; i++)
             {
                 checkBoxes[i].Checked = false;
-                textBoxes[i].Text = "0";
                 textBoxes[i].Enabled = false;
             }
+        }
+        public void fill()
+        {
+            TextBox[] temp = { txtPB, txtTherm, txtGA, txtRadar, txtIR, txtOther, txtCar1, txtCar2, txtCar3, txtCar4, txtCar5, txtCar6, txtCar7, txtCar8, txtCar9, txtCar10 };
+            textBoxes = temp;
+
+            String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+            OleDbConnection objConn = new OleDbConnection(connectionString);
+            objConn.Open();
+            OleDbCommand objCmdV = new OleDbCommand("SELECT * FROM VehicleHours WHERE Alna_Num=@value1; ", objConn);
+            objCmdV.Parameters.AddWithValue("@value1", (int)(Session["alna_num"]));
+            OleDbDataReader readerV = objCmdV.ExecuteReader();
+            
+            while (readerV.Read())
+            {
+                for(int i = 0; i < 8; i++)
+                {
+                    textBoxes[6 + i].Text = readerV.GetInt32(i + 2).ToString();
+                }
+            }
+            OleDbCommand objCmdP = new OleDbCommand("SELECT * FROM ProjectHours WHERE Alna_Num=@value1; ", objConn);
+            objCmdP.Parameters.AddWithValue("@value1", (int)(Session["alna_num"]));
+            OleDbDataReader readerP = objCmdP.ExecuteReader();
+
+            while (readerP.Read())
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    textBoxes[0 + i].Text = readerP.GetInt32(i + 2).ToString();
+                   
+                }
+            }
+
+
+
+
+            objConn.Close();
+
 
         }
         //==================
