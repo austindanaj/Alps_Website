@@ -20,11 +20,8 @@ namespace CTBTeam
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
 
-        Excel.Application app;
-        Excel.Workbook wb;
-        Excel.Worksheet ws;
-        string[,] data;
-        string userName;
+      
+   
 
         protected void Page_Load(object sender, EventArgs e)
         {

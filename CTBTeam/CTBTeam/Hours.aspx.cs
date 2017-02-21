@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Excel = Microsoft.Office.Interop.Excel;
+
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Text.RegularExpressions;
@@ -16,9 +16,7 @@ namespace CTBTeam
 {
     public partial class Hours : Page
     {
-        Excel.Application app;
-        Excel.Workbook wb;
-        Excel.Worksheet ws;
+      
         int rowCount = 0;
         //int dateIncrease = 0;
         TextBox[] textBoxes;
@@ -182,8 +180,40 @@ namespace CTBTeam
 
 
                         }
-                      
-                       
+
+                        OleDbCommand objResetPH = new OleDbCommand("UPDATE ProjectHours " +
+                                          "SET Project_B=@value1, Thermostat=@value2, Global_A=@value3, Radar=@value4, IR_Sensor=@value5, Other=@value6 ", objConn);
+
+                        objResetPH.Parameters.AddWithValue("@value1", 0);
+                        objResetPH.Parameters.AddWithValue("@value2", 0);
+                        objResetPH.Parameters.AddWithValue("@value3", 0);
+                        objResetPH.Parameters.AddWithValue("@value4", 0);
+                        objResetPH.Parameters.AddWithValue("@value5", 0);
+                        objResetPH.Parameters.AddWithValue("@value6", 0);
+
+
+                        objResetPH.ExecuteNonQuery();
+
+
+                        OleDbCommand objResetVH = new OleDbCommand("UPDATE VehicleHours " +
+                                                               "SET Cruze=@value1, Trax=@value2, Tahoe=@value3, EV_Spark=@value4, Bolt=@value5, Volt=@value6, Spark=@value7, Equinox=@value8 ", objConn);
+
+                        objResetVH.Parameters.AddWithValue("@value1", 0);
+                        objResetVH.Parameters.AddWithValue("@value2", 0);
+                        objResetVH.Parameters.AddWithValue("@value3", 0);
+                        objResetVH.Parameters.AddWithValue("@value4", 0);
+                        objResetVH.Parameters.AddWithValue("@value5", 0);
+                        objResetVH.Parameters.AddWithValue("@value6", 0);
+                        objResetVH.Parameters.AddWithValue("@value7", 0);
+                        objResetVH.Parameters.AddWithValue("@value8", 0);
+
+
+                        objResetVH.ExecuteNonQuery();
+
+                        objConn.Close();
+
+
+
                         return true;
 
                     }
@@ -197,65 +227,8 @@ namespace CTBTeam
                 return false;
             }         
             
-        }
-       
-
-        private void cleanUpExcel(Excel.Application currentApp, Excel.Workbook currentWB)
-        {
-            uint processID = 0;
-            if(currentApp != null)
-            {
-                if(currentWB != null)
-                {
-                    GetWindowThreadProcessId(new IntPtr(app.Hwnd), out processID);
-                    wb.Close();
-                    app.Quit();
-                    Marshal.FinalReleaseComObject(ws);
-                    Marshal.FinalReleaseComObject(wb);
-                    Marshal.FinalReleaseComObject(app);
-                    ws = null;
-                    wb = null;
-                    app = null;
-
-                }
-            }
-            try
-            {
-                Process excelProc = Process.GetProcessById((int)processID);
-                excelProc.CloseMainWindow();
-                excelProc.Refresh();
-                excelProc.Kill();
-            }
-            catch
-            {
-
-            }
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            
-        }
-        static string ColumnIndexToColumnLetter(int colIndex)
-        {
-            int div = colIndex;
-            string colLetter = String.Empty;
-            int mod = 0;
-
-            while (div > 0)
-            {
-                mod = (div - 1) % 26;
-                colLetter = (char)(65 + mod) + colLetter;
-                div = (int)((div - mod) / 26);
-            }
-            return colLetter;
-        }
-
-
-
-
-
-
+        }   
+        
         //=======================================================
         protected void On_Click_PB(object sender, EventArgs e)
         {
@@ -572,13 +545,11 @@ namespace CTBTeam
                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
             OleDbConnection objConn = new OleDbConnection(connectionString);
             objConn.Open();
-            OleDbCommand objCmdSelect = new OleDbCommand("SELECT * FROM VehicleHours ", objConn);
+            OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ", objConn);                
             OleDbDataAdapter objAdapter = new OleDbDataAdapter();
             objAdapter.SelectCommand = objCmdSelect;
             DataSet objDataSet = new DataSet();
-
-            objAdapter.Fill(objDataSet);
-            objDataSet.Tables[0].Columns.RemoveAt(0);
+            objAdapter.Fill(objDataSet);           
             dgvCars.DataSource = objDataSet.Tables[0].DefaultView;            
             dgvCars.DataBind();           
             objConn.Close();
