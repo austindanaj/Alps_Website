@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Hours" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Hours.aspx.cs" Inherits="CTBTeam.Hours" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-   
+
     <div>
         <asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
     </div>
@@ -9,10 +9,10 @@
         <asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 1/16/2017" CssClass="lbl time-title"></asp:Label>
         <asp:Panel ID="Panel1" runat="server" Height="48px" Width="1536px">
             <br />
-          
+
         </asp:Panel>
     </div>
-    
+
 
     <br />
     <br />
@@ -28,9 +28,9 @@
 
         </div>
     </div>
-     <br />
     <br />
-  
+    <br />
+
     <div class="row">
         <div class="col-md-6">
             <asp:GridView ID="dgvCars" runat="server" CssClass="gridview">
@@ -45,9 +45,9 @@
         <div class="col-md-4">
             <div class="form-group">
                 <asp:UpdatePanel ID="UpdatePanel2" runat="server">
-                    <ContentTemplate>                       
-                            <asp:CheckBox ID="chkPB" runat="server" Text="Project B" CssClass="lbl chk-default" OnCheckedChanged="On_Click_PB" Visible="False" AutoPostBack="true" />                     
-                            <asp:TextBox ID="txtPB" runat="server" Text="0" CssClass="txt txt-default" Visible="False" Enabled="False" />               
+                    <ContentTemplate>
+                        <asp:CheckBox ID="chkPB" runat="server" Text="Project B" CssClass="lbl chk-default" OnCheckedChanged="On_Click_PB" Visible="False" AutoPostBack="true" />
+                        <asp:TextBox ID="txtPB" runat="server" Text="0" CssClass="txt txt-default" Visible="False" Enabled="False" />
                     </ContentTemplate>
                 </asp:UpdatePanel>
             </div>
@@ -252,7 +252,7 @@
             </div>
         </div>
     </div>
-  
-                       
-    
+
+
+
 </asp:Content>

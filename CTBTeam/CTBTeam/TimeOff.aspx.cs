@@ -20,11 +20,8 @@ namespace CTBTeam
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
 
-        Excel.Application app;
-        Excel.Workbook wb;
-        Excel.Worksheet ws;
-        string[,] data;
-        string userName;
+      
+   
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -117,7 +114,7 @@ namespace CTBTeam
 
 
 
-                    OleDbCommand objCmd = new OleDbCommand("DELTE FROM TimeOff WHERE Emp_Name=@value1 AND Date_Request=@value2", objConn);
+                    OleDbCommand objCmd = new OleDbCommand("DELETE FROM TimeOff WHERE Emp_Name=@value1 AND Date_Request=@value2", objConn);
 
                     objCmd.Parameters.AddWithValue("@value1", (string)Session["User"]);
                     objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
