@@ -25,10 +25,7 @@ namespace CTBTeam
         string date = "";
         
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-
+       
         protected void Page_Load(object sender, EventArgs e)
         {
            
