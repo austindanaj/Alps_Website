@@ -132,15 +132,7 @@ namespace CTBTeam
                     catch (Exception ex)
                     {
 
-                    }
-
-
-
-
-
-
-                    string[] addUser = { txtRUser.Text.ToLower(), txtRPass.Text, txtName.Text };
-                    File.AppendAllLines(Server.MapPath("~/Users.txt"), addUser);
+                    }                  
                 }
                 else
                 {

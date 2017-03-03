@@ -3,23 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using Excel = Microsoft.Office.Interop.Excel;
-using Date = System.DateTime;
+
 using System.Data.OleDb;
-using System.Data;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace CTBTeam
 {
     public partial class TimeOff : Page
     {
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-
+     
       
    
 

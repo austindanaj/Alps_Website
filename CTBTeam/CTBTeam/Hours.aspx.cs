@@ -16,20 +16,15 @@ namespace CTBTeam
 {
     public partial class Hours : Page
     {
-      
-        int rowCount = 0;
-        //int dateIncrease = 0;
+
+
         TextBox[] textBoxes;
         string userName;
         CheckBox[] checkBoxes;
-        string date = "";
-        
-
-       
+        string date = "";     
+               
         protected void Page_Load(object sender, EventArgs e)
         {
-           
-
             if (!IsPostBack)
             {
 
@@ -130,7 +125,7 @@ namespace CTBTeam
                         OleDbDataReader readerProject = objProject.ExecuteReader();
                         while (readerProject.Read())
                         {
-
+                            text = "";
                             text += readerProject.GetString(1) + "," + readerProject.GetValue(2).ToString() + "," + readerProject.GetValue(3).ToString() + "," + readerProject.GetValue(4).ToString() + ","
                                   + readerProject.GetValue(5).ToString() + "," + readerProject.GetValue(6).ToString() + "," + readerProject.GetValue(7).ToString() + ",";
                             file.WriteLine(text);
@@ -159,7 +154,7 @@ namespace CTBTeam
                         OleDbDataReader readerCar = objCar.ExecuteReader();
                         while (readerCar.Read())
                         {
-
+                            text = "";
                             text += readerCar.GetString(1) + "," + readerCar.GetValue(2).ToString() + "," + readerCar.GetValue(3).ToString() + "," + readerCar.GetValue(4).ToString() + ","
                                   + readerCar.GetValue(5).ToString() + "," + readerCar.GetValue(6).ToString() + "," + readerCar.GetValue(7).ToString() + "," + readerCar.GetValue(8).ToString() + ","
                                   + readerCar.GetValue(9).ToString() + ",";
@@ -431,53 +426,60 @@ namespace CTBTeam
                 ClientScript.RegisterClientScriptBlock(this.GetType(), "myalert", "alert('Error: Please Log in first before submitting!');", true);
                 return;
             }
-            String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-        
-            OleDbConnection objConn = new OleDbConnection(connectionString);
-            objConn.Open();          
-                   
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
-            TextBox[] temp = { txtPB, txtTherm, txtGA, txtRadar, txtIR, txtOther, txtCar1, txtCar2, txtCar3, txtCar4, txtCar5, txtCar6, txtCar7, txtCar8, txtCar9, txtCar10 };
-            textBoxes = temp;
-            CheckBox[] temp2 = { chkPB, chkTherm, chkGA, chkRadar, chkIR, chkOther, chkCar1, chkCar2, chkCar3, chkCar4, chkCar5, chkCar6, chkCar7, chkCar8, chkCar9, chkCar10 };
-            checkBoxes = temp2;
-        
-                    
-            OleDbCommand objCmdProject = new OleDbCommand("UPDATE ProjectHours " +
-                                                    "SET Project_B=@value1, Thermostat=@value2, Global_A=@value3, Radar=@value4, IR_Sensor=@value5, Other=@value6 "+
-                                                    "WHERE Alna_Num=@value7", objConn);
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
 
-            objCmdProject.Parameters.AddWithValue("@value1", int.Parse(txtPB.Text));
-            objCmdProject.Parameters.AddWithValue("@value2", int.Parse(txtTherm.Text));
-            objCmdProject.Parameters.AddWithValue("@value3", int.Parse(txtGA.Text));
-            objCmdProject.Parameters.AddWithValue("@value4", int.Parse(txtRadar.Text));
-            objCmdProject.Parameters.AddWithValue("@value5", int.Parse(txtIR.Text));
-            objCmdProject.Parameters.AddWithValue("@value6", int.Parse(txtOther.Text));
-            objCmdProject.Parameters.AddWithValue("@value7", (int)(Session["alna_num"]));
 
-            objCmdProject.ExecuteNonQuery();
+                TextBox[] temp = { txtPB, txtTherm, txtGA, txtRadar, txtIR, txtOther, txtCar1, txtCar2, txtCar3, txtCar4, txtCar5, txtCar6, txtCar7, txtCar8, txtCar9, txtCar10 };
+                textBoxes = temp;
+                CheckBox[] temp2 = { chkPB, chkTherm, chkGA, chkRadar, chkIR, chkOther, chkCar1, chkCar2, chkCar3, chkCar4, chkCar5, chkCar6, chkCar7, chkCar8, chkCar9, chkCar10 };
+                checkBoxes = temp2;
 
-            
-            OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
-                                                   "SET Cruze=@value1, Trax=@value2, Tahoe=@value3, EV_Spark=@value4, Bolt=@value5, Volt=@value6, Spark=@value7, Equinox=@value8 " +
-                                                   "WHERE Alna_Num=@value9", objConn);
 
-            objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtCar1.Text));
-            objCmdCars.Parameters.AddWithValue("@value2", int.Parse(txtCar2.Text));
-            objCmdCars.Parameters.AddWithValue("@value3", int.Parse(txtCar3.Text));
-            objCmdCars.Parameters.AddWithValue("@value4", int.Parse(txtCar4.Text));
-            objCmdCars.Parameters.AddWithValue("@value5", int.Parse(txtCar5.Text));
-            objCmdCars.Parameters.AddWithValue("@value6", int.Parse(txtCar6.Text));
-            objCmdCars.Parameters.AddWithValue("@value7", int.Parse(txtCar7.Text));
-            objCmdCars.Parameters.AddWithValue("@value8", int.Parse(txtCar8.Text));
-            objCmdCars.Parameters.AddWithValue("@value9", (int)(Session["alna_num"]));
-           
-            objCmdCars.ExecuteNonQuery();          
+                OleDbCommand objCmdProject = new OleDbCommand("UPDATE ProjectHours " +
+                                                        "SET Project_B=@value1, Thermostat=@value2, Global_A=@value3, Radar=@value4, IR_Sensor=@value5, Other=@value6 " +
+                                                        "WHERE Alna_Num=@value7", objConn);
 
-            objConn.Close();       
-            fill();
-            reset();     
+                objCmdProject.Parameters.AddWithValue("@value1", int.Parse(txtPB.Text));
+                objCmdProject.Parameters.AddWithValue("@value2", int.Parse(txtTherm.Text));
+                objCmdProject.Parameters.AddWithValue("@value3", int.Parse(txtGA.Text));
+                objCmdProject.Parameters.AddWithValue("@value4", int.Parse(txtRadar.Text));
+                objCmdProject.Parameters.AddWithValue("@value5", int.Parse(txtIR.Text));
+                objCmdProject.Parameters.AddWithValue("@value6", int.Parse(txtOther.Text));
+                objCmdProject.Parameters.AddWithValue("@value7", (int)(Session["alna_num"]));
+
+                objCmdProject.ExecuteNonQuery();
+
+
+                OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
+                                                       "SET Cruze=@value1, Trax=@value2, Tahoe=@value3, EV_Spark=@value4, Bolt=@value5, Volt=@value6, Spark=@value7, Equinox=@value8 " +
+                                                       "WHERE Alna_Num=@value9", objConn);
+
+                objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtCar1.Text));
+                objCmdCars.Parameters.AddWithValue("@value2", int.Parse(txtCar2.Text));
+                objCmdCars.Parameters.AddWithValue("@value3", int.Parse(txtCar3.Text));
+                objCmdCars.Parameters.AddWithValue("@value4", int.Parse(txtCar4.Text));
+                objCmdCars.Parameters.AddWithValue("@value5", int.Parse(txtCar5.Text));
+                objCmdCars.Parameters.AddWithValue("@value6", int.Parse(txtCar6.Text));
+                objCmdCars.Parameters.AddWithValue("@value7", int.Parse(txtCar7.Text));
+                objCmdCars.Parameters.AddWithValue("@value8", int.Parse(txtCar8.Text));
+                objCmdCars.Parameters.AddWithValue("@value9", (int)(Session["alna_num"]));
+
+                objCmdCars.ExecuteNonQuery();
+
+                objConn.Close();
+                fill();
+                reset();
+            }
+            catch (Exception ex)
+            {
+
+            }    
 
             populateDataCars();
             populateDataProject();
@@ -496,76 +498,96 @@ namespace CTBTeam
         }
         public void fill()
         {
-            TextBox[] temp = { txtPB, txtTherm, txtGA, txtRadar, txtIR, txtOther, txtCar1, txtCar2, txtCar3, txtCar4, txtCar5, txtCar6, txtCar7, txtCar8, txtCar9, txtCar10 };
-            textBoxes = temp;
-
-            String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-            OleDbConnection objConn = new OleDbConnection(connectionString);
-            objConn.Open();
-            OleDbCommand objCmdV = new OleDbCommand("SELECT * FROM VehicleHours WHERE Alna_Num=@value1; ", objConn);
-            objCmdV.Parameters.AddWithValue("@value1", (int)(Session["alna_num"]));
-            OleDbDataReader readerV = objCmdV.ExecuteReader();
-            
-            while (readerV.Read())
+            try
             {
-                for(int i = 0; i < 8; i++)
-                {
-                    textBoxes[6 + i].Text = readerV.GetInt32(i + 2).ToString();
-                }
-            }
-            OleDbCommand objCmdP = new OleDbCommand("SELECT * FROM ProjectHours WHERE Alna_Num=@value1; ", objConn);
-            objCmdP.Parameters.AddWithValue("@value1", (int)(Session["alna_num"]));
-            OleDbDataReader readerP = objCmdP.ExecuteReader();
+                TextBox[] temp = { txtPB, txtTherm, txtGA, txtRadar, txtIR, txtOther, txtCar1, txtCar2, txtCar3, txtCar4, txtCar5, txtCar6, txtCar7, txtCar8, txtCar9, txtCar10 };
+                textBoxes = temp;
 
-            while (readerP.Read())
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdV = new OleDbCommand("SELECT * FROM VehicleHours WHERE Alna_Num=@value1; ", objConn);
+                objCmdV.Parameters.AddWithValue("@value1", (int)(Session["alna_num"]));
+                OleDbDataReader readerV = objCmdV.ExecuteReader();
+
+                while (readerV.Read())
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        textBoxes[6 + i].Text = readerV.GetInt32(i + 2).ToString();
+                    }
+                }
+                OleDbCommand objCmdP = new OleDbCommand("SELECT * FROM ProjectHours WHERE Alna_Num=@value1; ", objConn);
+                objCmdP.Parameters.AddWithValue("@value1", (int)(Session["alna_num"]));
+                OleDbDataReader readerP = objCmdP.ExecuteReader();
+
+                while (readerP.Read())
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        textBoxes[0 + i].Text = readerP.GetInt32(i + 2).ToString();
+
+                    }
+                }
+
+
+
+
+                objConn.Close();
+            }
+            catch(Exception ex)
             {
-                for (int i = 0; i < 6; i++)
-                {
-                    textBoxes[0 + i].Text = readerP.GetInt32(i + 2).ToString();
-                   
-                }
+
             }
-
-
-
-
-            objConn.Close();
-
 
         }
         //==================
 
         public void populateDataCars()
         {
-            String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                 "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-            OleDbConnection objConn = new OleDbConnection(connectionString);
-            objConn.Open();
-            OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ", objConn);                
-            OleDbDataAdapter objAdapter = new OleDbDataAdapter();
-            objAdapter.SelectCommand = objCmdSelect;
-            DataSet objDataSet = new DataSet();
-            objAdapter.Fill(objDataSet);           
-            dgvCars.DataSource = objDataSet.Tables[0].DefaultView;            
-            dgvCars.DataBind();           
-            objConn.Close();
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ", objConn);
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                dgvCars.DataSource = objDataSet.Tables[0].DefaultView;
+                dgvCars.DataBind();
+                objConn.Close();
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     
         public void populateDataProject()
         {
-            String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                               "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-            OleDbConnection objConn = new OleDbConnection(connectionString);
-            objConn.Open();
-            OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours", objConn);
-            OleDbDataAdapter objAdapter = new OleDbDataAdapter();
-            objAdapter.SelectCommand = objCmdSelect;
-            DataSet objDataSet = new DataSet();
-            objAdapter.Fill(objDataSet);
-            dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
-            dgvProject.DataBind();       
-            objConn.Close();
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours", objConn);
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
+                dgvProject.DataBind();
+                objConn.Close();
+            }
+            catch(Exception ex)
+            {
+                
+            }
           
         }
 
