@@ -78,7 +78,7 @@ namespace CTBTeam
         }
         public void getDate()
         {
-            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Time-log.txt"));
+            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
             date = arrLine[arrLine.Length - 1];
             lblWeekOf.Text = "Week Of: " + date;
         }
@@ -109,15 +109,15 @@ namespace CTBTeam
                         }
                         
                     }
-                    string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Time-log.txt"));
+                    string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
 
                     arrLine[arrLine.Length - 1] = Date.Parse(date).ToShortDateString() + "," + headerRow;
-                    System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Time-log.txt"), arrLine);
+                    System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), arrLine);
 
 
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Time-log.txt"), true))
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true))
                     {
-
+                       
                         string text = "";
 
                         OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours;", objConn);
@@ -203,6 +203,7 @@ namespace CTBTeam
                         objResetVH.ExecuteNonQuery();
 
                         objConn.Close();
+                        file.Close();
 
 
 
@@ -216,6 +217,15 @@ namespace CTBTeam
             }
             catch (Exception ex)
             {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Date Change--" + ex.ToString());
+                    file.Close();
+                }
                 return false;
             }         
             
@@ -478,7 +488,15 @@ namespace CTBTeam
             }
             catch (Exception ex)
             {
-
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Hours Submit--" + ex.ToString());
+                    file.Close();
+                }
             }    
 
             populateDataCars();
@@ -538,7 +556,15 @@ namespace CTBTeam
             }
             catch(Exception ex)
             {
-
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Projects--" + ex.ToString());
+                    file.Close();
+                }
             }
 
         }
@@ -563,7 +589,16 @@ namespace CTBTeam
             }
             catch(Exception ex)
             {
-
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Vehicles--" + ex.ToString());
+                    file.Close();
+                }
+                
             }
         }
     
@@ -586,7 +621,15 @@ namespace CTBTeam
             }
             catch(Exception ex)
             {
-                
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Projects--" + ex.ToString());
+                    file.Close();
+                }
             }
           
         }

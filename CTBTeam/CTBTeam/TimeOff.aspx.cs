@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-
+using Date = System.DateTime;
 using System.Data.OleDb;
 
 namespace CTBTeam
@@ -51,7 +51,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Calendar Date Picked--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
 
@@ -88,7 +96,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Add Time Off--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
         }
@@ -122,7 +138,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Remove Time Off--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
         }

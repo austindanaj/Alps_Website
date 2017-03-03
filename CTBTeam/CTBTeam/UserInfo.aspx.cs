@@ -99,7 +99,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Change Password--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
 

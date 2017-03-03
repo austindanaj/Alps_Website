@@ -134,6 +134,8 @@
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Debug\" />
+    <Folder Include="Logs\CurrentHours\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="2017Schedule.PNG" />
@@ -142,7 +144,7 @@
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="HexGenerator.exe" />
     <Content Include="List.aspx" />
-    <Content Include="Time-log.txt" />
+    <Content Include="Logs\TimeLog\Time-log.txt" />
     <Content Include="UserInfo.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Hours.aspx" />
