@@ -162,14 +162,14 @@ namespace CTBTeam
                         }
                         file.WriteLine();
                         readerCar.Close();
-                        objConn.Close();       
+                          
                         
                         if (Date.Today.AddDays(-6) > Date.Parse(date))
                         {
                             DateTime dt = DateTime.Now;
                             while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
                             file.Write(dt.ToShortDateString());
-
+                         
 
                         }
 
@@ -562,7 +562,7 @@ namespace CTBTeam
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Populate Projects--" + ex.ToString());
+                    file.WriteLine(Date.Today.ToString() + "--Populate Text Inputs--" + ex.ToString());
                     file.Close();
                 }
             }
