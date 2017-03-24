@@ -120,7 +120,7 @@ namespace CTBTeam
                        
                         string text = "";
 
-                        OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours;", objConn);
+                        OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours ORDER BY Alna_Num ;", objConn);
 
                         OleDbDataReader readerProject = objProject.ExecuteReader();
                         while (readerProject.Read())
@@ -133,7 +133,7 @@ namespace CTBTeam
                         file.WriteLine();
                         readerProject.Close();
 
-                        OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours", objConn);
+                        OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Alna_Num", objConn);
                         OleDbDataReader readerCNames = fieldCarNames.ExecuteReader();
                         table = readerCNames.GetSchemaTable();
                         nameCol = table.Columns["ColumnName"];
@@ -149,7 +149,7 @@ namespace CTBTeam
                         file.WriteLine(headerRow);
                         readerCNames.Close();
 
-                        OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours;", objConn);
+                        OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Alna_Num;", objConn);
                         text = "";
                         OleDbDataReader readerCar = objCar.ExecuteReader();
                         while (readerCar.Read())
@@ -578,7 +578,7 @@ namespace CTBTeam
                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ORDER BY Alna_Num", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -610,7 +610,7 @@ namespace CTBTeam
                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours ORDER BY Alna_Num", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
