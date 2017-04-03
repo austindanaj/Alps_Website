@@ -3,23 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using Excel = Microsoft.Office.Interop.Excel;
 using Date = System.DateTime;
 using System.Data.OleDb;
-using System.Data;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace CTBTeam
 {
     public partial class TimeOff : Page
     {
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-
+     
       
    
 
@@ -59,7 +51,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Calendar Date Picked--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
 
@@ -96,7 +96,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Add Time Off--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
         }
@@ -130,7 +138,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Remove Time Off--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
         }

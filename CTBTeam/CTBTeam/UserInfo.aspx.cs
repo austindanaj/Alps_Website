@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Excel = Microsoft.Office.Interop.Excel;
+
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Text.RegularExpressions;
@@ -99,7 +99,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Change Password--" + ex.ToString());
+                        file.Close();
+                    }
                 }
             }
 
