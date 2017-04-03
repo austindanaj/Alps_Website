@@ -141,6 +141,7 @@
     <Content Include="CRC.exe" />
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="HexGenerator.exe" />
+    <Content Include="PhoneCheckOut.aspx" />
     <Content Include="List.aspx" />
     <Content Include="Time-log.txt" />
     <Content Include="UserInfo.aspx" />
@@ -210,6 +211,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="PhoneCheckOut.aspx.cs">
+      <DependentUpon>PhoneCheckOut.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PhoneCheckOut.aspx.designer.cs">
+      <DependentUpon>PhoneCheckOut.aspx</DependentUpon>
+    </Compile>
     <Compile Include="List.aspx.cs">
       <DependentUpon>List.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
