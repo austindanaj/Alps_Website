@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Excel = Microsoft.Office.Interop.Excel;
+
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Data;
@@ -18,8 +18,7 @@ namespace CTBTeam
     public partial class Login : Page
     {
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+       
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -97,7 +96,15 @@ namespace CTBTeam
                 }
                 catch (Exception ex)
                 {
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Login--" + ex.ToString());
+                        file.Close();
+                    }
                 }
 
             }  
@@ -132,16 +139,16 @@ namespace CTBTeam
                     }
                     catch (Exception ex)
                     {
-
-                    }
-
-
-
-
-
-
-                    string[] addUser = { txtRUser.Text.ToLower(), txtRPass.Text, txtName.Text };
-                    File.AppendAllLines(Server.MapPath("~/Users.txt"), addUser);
+                        if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                        {
+                            System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                        }
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                        {
+                            file.WriteLine(Date.Today.ToString() + "--Register--" + ex.ToString());
+                            file.Close();
+                        }
+                    }                  
                 }
                 else
                 {
