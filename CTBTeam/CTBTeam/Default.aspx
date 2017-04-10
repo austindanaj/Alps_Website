@@ -12,22 +12,22 @@
 
     <div class="row">
         <div class="col-md-4">
-            <h2>CRC Application</h2>
+            <h2>Current Hours</h2>
             <p>
                 
             </p>
             <p>
-                <asp:Button runat="server" OnClick="download_file_crc"
+                <asp:Button runat="server" OnClick="download_database"
                     Text="Download" CssClass="btn btn-default" />   
             </p>
         </div>
         <div class="col-md-4">
-            <h2>Reset Application</h2>
+            <h2>Time Log</h2>
             <p>
                 
             </p>
             <p>
-                 <asp:Button runat="server" OnClick="download_file_reset"
+                 <asp:Button runat="server" OnClick="download_timelog"
                     Text="Download" CssClass="btn btn-default" />  
             </p>
         </div>

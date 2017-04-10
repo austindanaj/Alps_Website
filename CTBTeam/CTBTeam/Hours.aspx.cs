@@ -78,7 +78,7 @@ namespace CTBTeam
         }
         public void getDate()
         {
-            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Time-log.txt"));
+            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
             date = arrLine[arrLine.Length - 1];
             lblWeekOf.Text = "Week Of: " + date;
         }
@@ -109,18 +109,18 @@ namespace CTBTeam
                         }
                         
                     }
-                    string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Time-log.txt"));
+                    string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
 
                     arrLine[arrLine.Length - 1] = Date.Parse(date).ToShortDateString() + "," + headerRow;
-                    System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Time-log.txt"), arrLine);
+                    System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), arrLine);
 
 
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Time-log.txt"), true))
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true))
                     {
-
+                       
                         string text = "";
 
-                        OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours;", objConn);
+                        OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours ORDER BY Alna_Num ;", objConn);
 
                         OleDbDataReader readerProject = objProject.ExecuteReader();
                         while (readerProject.Read())
@@ -133,7 +133,7 @@ namespace CTBTeam
                         file.WriteLine();
                         readerProject.Close();
 
-                        OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours", objConn);
+                        OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Alna_Num", objConn);
                         OleDbDataReader readerCNames = fieldCarNames.ExecuteReader();
                         table = readerCNames.GetSchemaTable();
                         nameCol = table.Columns["ColumnName"];
@@ -149,7 +149,7 @@ namespace CTBTeam
                         file.WriteLine(headerRow);
                         readerCNames.Close();
 
-                        OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours;", objConn);
+                        OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Alna_Num;", objConn);
                         text = "";
                         OleDbDataReader readerCar = objCar.ExecuteReader();
                         while (readerCar.Read())
@@ -162,14 +162,14 @@ namespace CTBTeam
                         }
                         file.WriteLine();
                         readerCar.Close();
-                        objConn.Close();       
+                          
                         
                         if (Date.Today.AddDays(-6) > Date.Parse(date))
                         {
                             DateTime dt = DateTime.Now;
                             while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
                             file.Write(dt.ToShortDateString());
-
+                         
 
                         }
 
@@ -203,6 +203,7 @@ namespace CTBTeam
                         objResetVH.ExecuteNonQuery();
 
                         objConn.Close();
+                        file.Close();
 
 
 
@@ -216,6 +217,15 @@ namespace CTBTeam
             }
             catch (Exception ex)
             {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Date Change--" + ex.ToString());
+                    file.Close();
+                }
                 return false;
             }         
             
@@ -478,7 +488,15 @@ namespace CTBTeam
             }
             catch (Exception ex)
             {
-
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Hours Submit--" + ex.ToString());
+                    file.Close();
+                }
             }    
 
             populateDataCars();
@@ -538,7 +556,15 @@ namespace CTBTeam
             }
             catch(Exception ex)
             {
-
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Text Inputs--" + ex.ToString());
+                    file.Close();
+                }
             }
 
         }
@@ -552,7 +578,7 @@ namespace CTBTeam
                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ORDER BY Alna_Num", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -563,7 +589,16 @@ namespace CTBTeam
             }
             catch(Exception ex)
             {
-
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Vehicles--" + ex.ToString());
+                    file.Close();
+                }
+                
             }
         }
     
@@ -575,7 +610,7 @@ namespace CTBTeam
                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours ORDER BY Alna_Num", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -586,7 +621,15 @@ namespace CTBTeam
             }
             catch(Exception ex)
             {
-                
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Projects--" + ex.ToString());
+                    file.Close();
+                }
             }
           
         }
