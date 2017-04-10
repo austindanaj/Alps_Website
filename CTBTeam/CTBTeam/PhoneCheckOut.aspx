@@ -8,11 +8,12 @@
     <div>
       
         <asp:Label ID="OS" runat="server" Text="Phone Type:" CssClass="lbl-os"></asp:Label>
-        <asp:DropDownList ID="drpOs" runat="server" CssClass="drp-Model "></asp:DropDownList>
+
+        <asp:DropDownList ID="drpOs" runat="server" CssClass="drp-Model " AutoPostBack="true" OnSelectedIndexChanged="onSelec"></asp:DropDownList>
        <br /> 
         <br />
         <asp:Label ID="Model" runat="server" Text="Phone:" CssClass="lbl-phones"></asp:Label>
-        <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones " ></asp:DropDownList>
+        <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
     </div>
 
 

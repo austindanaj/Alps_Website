@@ -19,7 +19,7 @@ namespace CTBTeam
         TextBox[] textBoxes;
         DropDownList dlist = new DropDownList();
         String[] list = new String[3];
-        DropDownList drpPhone = new DropDownList();
+       // DropDownList drpPhone = new DropDownList();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,7 +28,7 @@ namespace CTBTeam
             if (!IsPostBack)
             {
 
-
+                populateDataPhones();
 
             }
 
@@ -47,7 +47,7 @@ namespace CTBTeam
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
-                    dlist.Items.Add(new ListItem(reader.GetString(1))); ;
+                    drpOs.Items.Add(new ListItem(reader.GetString(0))); ;
                 }
 
                 objConn.Close();
@@ -78,13 +78,13 @@ namespace CTBTeam
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
 
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str;", objConn);
-                objCmdSelect.Parameters.AddWithValue("@str", dlist.SelectedItem.Text);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str ORDER BY Model;", objConn);
+                objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
                 
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
-                    dlist.Items.Add(new ListItem(reader.GetString(1))); ;
+                    drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
                 }
 
                 objConn.Close();
@@ -102,6 +102,13 @@ namespace CTBTeam
                 }
             }
 
+        }
+
+        protected void onSelec(object sender, EventArgs e)
+        {
+          
+                pop2();
+            
         }
     }
 }
