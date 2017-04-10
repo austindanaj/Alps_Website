@@ -3,15 +3,19 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <div>
-        <asp:Label ID="lblTitle" runat="server" Text="Phone Checkout" CssClass=".lbl-MainPhone" ></asp:Label>
+        <asp:Label ID="lblTitle" runat="server" Text="Phone Checkout" CssClass="lbl-main" ></asp:Label>
     </div>
     <div>
       
-        <asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 1/16/2017" CssClass="lbl time-title"></asp:Label>
-        <asp:Panel ID="Panel1" runat="server" Height="48px" Width="1536px">
-            <br />
-
-        </asp:Panel>
+        <asp:Label ID="OS" runat="server" Text="Phone Type:" CssClass="lbl-MainPhone"></asp:Label>
+        <asp:DropDownList ID="drpOs" runat="server" CssClass="drp-Model " >
+         <asp:ListItem Text="Android"></asp:ListItem>
+                    <asp:ListItem Text="IOS"></asp:ListItem>
+                    <asp:ListItem Text="Windows"></asp:ListItem>
+      </asp:DropDownList>
+       <br /> 
+        <asp:Label ID="Model" runat="server" Text="Phone:" CssClass="drp-model"></asp:Label>
+        <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones " ></asp:DropDownList>
     </div>
 
 
