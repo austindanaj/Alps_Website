@@ -19,7 +19,7 @@ namespace CTBTeam
         TextBox[] textBoxes;
         DropDownList dlist = new DropDownList();
         String[] list = new String[3];
-
+        DropDownList drpPhone = new DropDownList();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,28 +28,26 @@ namespace CTBTeam
             if (!IsPostBack)
             {
 
-                populateDataPhones();
+
 
             }
 
         }
 
-        public void populateDataPhones()
+        protected void populateDataPhones()
         {
-
             try
             {
-                drpOs.Items.Clear();
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT OS FROM PhoneCheckout", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
-                    drpOs.Items.Add(new ListItem(reader.GetString(0)));
+                    dlist.Items.Add(new ListItem(reader.GetString(1))); ;
                 }
 
                 objConn.Close();
@@ -65,11 +63,55 @@ namespace CTBTeam
                     file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + e.ToString());
                     file.Close();
                 }
-
             }
-
         }
 
 
+        public void pop2()
+        {
+            //String str = dlist.SelectedItem.Text;
+            try
+            {
+                drpPhone.Items.Clear();
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str;", objConn);
+                objCmdSelect.Parameters.AddWithValue("@str", dlist.SelectedItem.Text);
+                
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    dlist.Items.Add(new ListItem(reader.GetString(1))); ;
+                }
+
+                objConn.Close();
+            }
+            catch (Exception e)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + e.ToString());
+                    file.Close();
+                }
+            }
+
+        }
     }
 }
+
+       
+        
+
+      
+
+
+
+
+
