@@ -23,36 +23,38 @@ namespace CTBTeam
 
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+
 
             if (!IsPostBack)
             {
 
-           
-                                                     
+                populateDataPhones();
+
             }
 
         }
-        
-        protected void populateDataPhones()
+
+        public void populateDataPhones()
         {
+
             try
             {
+                drpOs.Items.Clear();
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT OS FROM PhoneCheckout", objConn);
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
-                    dlist.Items.Add(new ListItem(reader.GetString(1)));;
+                    drpOs.Items.Add(new ListItem(reader.GetString(0)));
                 }
 
                 objConn.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -63,16 +65,10 @@ namespace CTBTeam
                     file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + e.ToString());
                     file.Close();
                 }
-            
+
+            }
+
         }
-       
-        
-
-      
-
-
-
-
 
 
     }

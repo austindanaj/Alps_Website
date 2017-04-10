@@ -7,14 +7,11 @@
     </div>
     <div>
       
-        <asp:Label ID="OS" runat="server" Text="Phone Type:" CssClass="lbl-MainPhone"></asp:Label>
-        <asp:DropDownList ID="drpOs" runat="server" CssClass="drp-Model " >
-         <asp:ListItem Text="Android"></asp:ListItem>
-                    <asp:ListItem Text="IOS"></asp:ListItem>
-                    <asp:ListItem Text="Windows"></asp:ListItem>
-      </asp:DropDownList>
+        <asp:Label ID="OS" runat="server" Text="Phone Type:" CssClass="lbl-os"></asp:Label>
+        <asp:DropDownList ID="drpOs" runat="server" CssClass="drp-Model "></asp:DropDownList>
        <br /> 
-        <asp:Label ID="Model" runat="server" Text="Phone:" CssClass="drp-model"></asp:Label>
+        <br />
+        <asp:Label ID="Model" runat="server" Text="Phone:" CssClass="lbl-phones"></asp:Label>
         <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones " ></asp:DropDownList>
     </div>
 
