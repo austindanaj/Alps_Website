@@ -233,3 +233,11 @@ input[type='checkbox'] {
 .container .info span .fa {
   color: #EF3B3A;
 }
+.lbl-MainPhone {
+    color: #1A5276;
+    font-size: 22px;
+    display: block;
+    text-align: right;
+    width: 500px;
+    padding-right: 20px;
+}

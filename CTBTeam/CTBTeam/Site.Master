@@ -58,7 +58,7 @@
                         <li><a runat="server" href="~/TimeOff">Time Off</a></li>
                          <li><a runat="server" href="~/Schedule">Schedule</a></li>
                         <li><a runat="server" href="~/List">Purchase List</a></li>
-                     <li><a runat="server" href="~/PhoneCheckOut">Phones</a></li>
+                     <li><a runat="server" href="~/PhoneCheckOut">Phone Checkout</a></li>
                     </ul>
 
                     <ul class="nav navbar-nav  navbar-right">
