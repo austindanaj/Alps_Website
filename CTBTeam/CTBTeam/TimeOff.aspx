@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Time Off" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TimeOff.aspx.cs" Inherits="CTBTeam.TimeOff" %>
+﻿<%@ Page Title="Schedule" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TimeOff.aspx.cs" Inherits="CTBTeam.TimeOff" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -48,5 +48,9 @@
         </div>
      
     </div>
+    <div>
+               <asp:Image ID="Image1" runat="server" ImageUrl="~/2017Schedule.PNG" ImageAlign="Middle" />
+    </div>
+ 
 
 </asp:Content>
