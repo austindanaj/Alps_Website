@@ -23,6 +23,10 @@
         <asp:TextBox ID ="getPerson" runat="server"  ></asp:TextBox>
         <br />
         <br />
+        <asp:Label ID="Cars" runat="server" CssClass="lbl-os" Text="Vehicle:"></asp:Label>
+        <asp:DropDownList ID="Vehicle" runat="server" CssClass="drp-phones"></asp:DropDownList>
+        <br />
+        <br />
         <asp:Label ID="Test" runat="server" Text="Purpose:" CssClass="lbl-os"></asp:Label>
         <br />
         <asp:CheckBoxList ID="cbl" 
@@ -44,12 +48,14 @@
 
       </asp:CheckBoxList>
         <br />
-        <asp:Button ID="CheckOut" runat ="server" Text="Check Out" OnClick="clickCheckout" ></asp:Button>
+        <asp:Button ID="CheckOut" runat ="server" Text="Check Out" CssClass="btn btn-primary btn-lg" OnClick="clickCheckout" ></asp:Button>
         <br />
-        <asp:Label ID="CheckIn" runat="server" Text="Check In" CssClass="lbl-os"></asp:Label>
+        <br />
+        <asp:Label ID="CheckIn" runat="server" Text="Check In:" CssClass="lbl-os"></asp:Label>
+ 
+        <asp:DropDownList ID="DropDownList2" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
             <br />
         <br />
-
            <asp:Button ID="Button1" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
 
     </div>
