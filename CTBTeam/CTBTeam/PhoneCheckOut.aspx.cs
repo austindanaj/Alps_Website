@@ -36,6 +36,8 @@ namespace CTBTeam
 
         protected void populateDataPhones()
         {
+            drpOs.Items.Clear();
+            drpOs.Items.Add(new ListItem("--Choose An Option--"));
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -73,6 +75,7 @@ namespace CTBTeam
             try
             {
                 drpPhone.Items.Clear();
+             
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
@@ -110,6 +113,15 @@ namespace CTBTeam
                 pop2();
             
         }
+
+        public void popList()
+        {
+
+           
+
+        }
+
+
     }
 }
 
