@@ -95,8 +95,8 @@ namespace CTBTeam
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
                 objAdapter.Fill(objDataSet);
-                grdList.DataSource = objDataSet.Tables[0].DefaultView;
-                grdList.DataBind();
+                gvTable.DataSource = objDataSet.Tables[0].DefaultView;
+                gvTable.DataBind();
                 objConn.Close();
             }
             catch(Exception ex)
