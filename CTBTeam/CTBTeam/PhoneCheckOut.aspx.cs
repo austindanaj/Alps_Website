@@ -29,6 +29,7 @@ namespace CTBTeam
 
                 populateDataPhones();
                 populateTable();
+                popV();
             }
 
         }
@@ -70,7 +71,7 @@ namespace CTBTeam
 
         public void pop2()
         {
-            //String str = dlist.SelectedItem.Text;
+            
             try
             {
                 drpPhone.Items.Clear();
@@ -106,7 +107,44 @@ namespace CTBTeam
             }
 
         }
+        
+        public void popV()
+        {
 
+            try
+            {
+                drpPhone.Items.Clear();
+
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
+                
+
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    Vehicle.Items.Add(new ListItem(reader.GetString(0))); ;
+                }
+
+                objConn.Close();
+            }
+            catch (Exception e)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + e.ToString());
+                    file.Close();
+                }
+            }
+
+        }
         protected void onSelec(object sender, EventArgs e)
         {
 
@@ -146,6 +184,7 @@ namespace CTBTeam
                     file.Close();
                 }
             }
+
         }
         public void clickCheckout(object sender, EventArgs e)
         {
