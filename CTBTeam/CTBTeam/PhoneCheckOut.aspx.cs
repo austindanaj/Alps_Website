@@ -125,7 +125,7 @@ namespace CTBTeam
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Status, Car, Person FROM PhoneCheckout ORDER BY Model", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Status, Car, Person, Purpose FROM PhoneCheckout ORDER BY Model", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -147,9 +147,41 @@ namespace CTBTeam
                 }
             }
         }
+    public void clickCheckout(object sender, EventArgs e)
+    {
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Status, Car, Person, Purpose FROM PhoneCheckout ORDER BY Model", objConn);
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                gvTable.DataSource = objDataSet.Tables[0].DefaultView;
+                gvTable.DataBind();
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate List--" + ex.ToString());
+                    file.Close();
+                }
+            }
+        }
 
     }
+
+
 }
 
        
