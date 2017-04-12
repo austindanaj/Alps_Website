@@ -43,8 +43,11 @@
          <asp:ListItem>Calibration</asp:ListItem>
 
       </asp:CheckBoxList>
-                 <br />
-                    <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout"></asp:Button>
+                   <br />
+             <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout"></asp:Button>
+
+         <asp:Label ID="Label1" runat="server" Text="Check In:" CssClass="lbl-os" ></asp:Label>
+        <asp:Button ID="Button3" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg"></asp:Button>
 
     </div>
 
@@ -58,7 +61,7 @@
                     <div style="text-align: center;
                     <br />
                     <br />
-                          <asp:Button ID="Button3" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
+                           
                     </div>
                  
                 </div>
