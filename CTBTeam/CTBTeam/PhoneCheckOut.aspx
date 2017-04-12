@@ -44,7 +44,7 @@
 
       </asp:CheckBoxList>
         <br />
-        <asp:Button ID="CheckIn" runat ="server" Text="Check Out" ></asp:Button>
+        <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout"></asp:Button>
 
 
 
