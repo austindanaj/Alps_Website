@@ -55,14 +55,14 @@
                     <ul class="nav navbar-nav">
                         <li><a runat="server" href="~/">Home</a></li>
                         <li><a runat="server" href="~/Hours">Hours</a></li>
-                        <li><a runat="server" href="~/TimeOff">Time Off</a></li>
-                         <li><a runat="server" href="~/Schedule">Schedule</a></li>
+                        <li><a runat="server" href="~/TimeOff">Schedule</a></li>                        
                         <li><a runat="server" href="~/List">Purchase List</a></li>
                      <li><a runat="server" href="~/PhoneCheckOut">Phone Checkout</a></li>
                     </ul>
 
                     <ul class="nav navbar-nav  navbar-right">
-                             <li><a runat="server" href="~/UserInfo"><%:(string)Session["User"] %></a></li>
+                 
+                             <li id="admin" runat="server"><a runat="server" href="~/Admin">Admin</a></li>
                              <li><a runat="server" href="~/Login"><%:(string)Session["loginStatus"] %></a></li>
                             </ul>
                 </div>

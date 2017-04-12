@@ -12,8 +12,17 @@ namespace CTBTeam
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty((string)Session["loginStatus"])){
+            if (string.IsNullOrEmpty((string)Session["loginStatus"]))
+            {
                 Session["loginStatus"] = "Sign In";
+               
+            }
+            if (string.IsNullOrEmpty((string)Session["User"]))
+            {
+                Session["admin"] = false;
+            }
+            if (!(bool)Session["admin"]) { 
+                admin.Visible = false;
             }
         }
     }
