@@ -153,25 +153,25 @@ namespace CTBTeam
 
                 if (cbl.Items[0].Selected)
                 {
-                    temp += "Leakage\n";
+                    temp += "Leakage,\n";
                    
                 }
                 if (cbl.Items[1].Selected)
                 {
-                    temp += "Range\n";
+                    temp += "Range,\n";
                 }
                 if (cbl.Items[2].Selected)
                 {
-                    temp += "Passive\n";
+                    temp += "Passive,\n";
 
                 }
                 if (cbl.Items[3].Selected)
                 {
-                    temp += "Coverage\n";
+                    temp += "Coverage,\n";
                 }
                 if (cbl.Items[4].Selected)
                 {
-                    temp += "8-Blocks\n";
+                    temp += "8-Blocks,\n";
                 }
                 if (cbl.Items[5].Selected)
                 {
