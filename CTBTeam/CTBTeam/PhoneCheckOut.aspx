@@ -20,7 +20,7 @@
         <br />
         <br />
         <asp:Label ID="Person" runat="server" CssClass="lbl-os" Text="Person:" ></asp:Label>
-        <asp:TextBox ID ="user" runat="server"  ></asp:TextBox>
+        <asp:TextBox ID ="getPerson" runat="server"  ></asp:TextBox>
         <br />
         <br />
         <asp:Label ID="Test" runat="server" Text="Purpose:" CssClass="lbl-os"></asp:Label>
@@ -44,7 +44,7 @@
 
       </asp:CheckBoxList>
         <br />
-        <asp:Button ID="CheckIn" runat ="server" Text="Check Out" ></asp:Button>
+        <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout" ></asp:Button>
 
 
 
