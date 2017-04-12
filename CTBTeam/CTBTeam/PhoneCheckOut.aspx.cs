@@ -71,7 +71,7 @@ namespace CTBTeam
 
         public void pop2()
         {
-            //String str = dlist.SelectedItem.Text;
+          
             try
             {
                 drpPhone.Items.Clear();
