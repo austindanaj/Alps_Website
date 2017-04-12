@@ -44,9 +44,13 @@
 
       </asp:CheckBoxList>
         <br />
-        <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout" ></asp:Button>
+        <asp:Button ID="CheckOut" runat ="server" Text="Check Out" OnClick="clickCheckout" ></asp:Button>
+        <br />
+        <asp:Label ID="CheckIn" runat="server" Text="Check In" CssClass="lbl-os"></asp:Label>
+            <br />
+        <br />
 
-
+           <asp:Button ID="Button1" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
 
     </div>
 
@@ -58,10 +62,9 @@
                         <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"></asp:GridView>
 
                     <div style="text-align: center;">
-                           <asp:Button ID="Button1" runat="server" Text="Add Time Off" CssClass="btn btn-primary btn-lg" />
+                    
                     <br />
                     <br />
-                          <asp:Button ID="Button3" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
                     </div>
                  
                 </div>
