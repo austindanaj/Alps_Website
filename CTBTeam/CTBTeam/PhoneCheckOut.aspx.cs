@@ -29,6 +29,7 @@ namespace CTBTeam
             {
 
                 populateDataPhones();
+                populateTable();
 
             }
 
@@ -81,8 +82,9 @@ namespace CTBTeam
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
 
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str ORDER BY Model;", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@value ORDER BY Model;", objConn);
                 objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
+                objCmdSelect.Parameters.AddWithValue("@value", true);
                 
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
@@ -130,7 +132,7 @@ namespace CTBTeam
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Status, Car, Person FROM PhoneCheckout ORDER BY Model", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT  OS, Model, Available, Car, Person FROM PhoneCheckout ORDER BY os, Model", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
