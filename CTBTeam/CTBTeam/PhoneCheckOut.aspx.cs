@@ -149,16 +149,46 @@ namespace CTBTeam
         }
         public void clickCheckout(object sender, EventArgs e)
         {
-            try
-            {
+            String temp = "";
+
+                if (cbl.Items[0].Selected)
+                {
+                    temp += "Leakage\n";
+                   
+                }
+                if (cbl.Items[1].Selected)
+                {
+                    temp += "Range\n";
+                }
+                if (cbl.Items[2].Selected)
+                {
+                    temp += "Passive\n";
+
+                }
+                if (cbl.Items[3].Selected)
+                {
+                    temp += "Coverage\n";
+                }
+                if (cbl.Items[4].Selected)
+                {
+                    temp += "8-Blocks\n";
+                }
+                if (cbl.Items[5].Selected)
+                {
+                    temp += "Calibration\n";
+                }
+    
+    
+            try{
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Available=@bool WHERE Model=@model", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
                 objCmdSelect.Parameters.AddWithValue("@name", getPerson.Text);
                  objCmdSelect.Parameters.AddWithValue("@bool", false);
+                objCmdSelect.Parameters.AddWithValue("@temp", temp);
                 objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
                 objCmdSelect.ExecuteNonQuery();
                 objConn.Close();
