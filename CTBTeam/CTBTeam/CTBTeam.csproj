@@ -141,7 +141,6 @@
     <Content Include="2017Schedule.PNG" />
     <Content Include="Content\AddedCSS.css" />
     <Content Include="CRC.exe" />
-    <Content Include="CTBWebsiteData.accdb" />
     <Content Include="HexGenerator.exe" />
     <Content Include="PhoneCheckOut.aspx" />
     <Content Include="List.aspx" />
