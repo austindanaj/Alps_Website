@@ -18,13 +18,13 @@
         <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
 
         <br />
-         <br />
-            <asp:Label ID="Person" runat="server" CssClass="lbl-os" Text="Person:" ></asp:Label>
-            <asp:TextBox ID ="user" runat="server"  ></asp:TextBox>
-                <br />
-                    <br />
-                <asp:Label ID="Test" runat="server" Text="Purpose:" CssClass="lbl-os"></asp:Label>
-            <br />
+        <br />
+        <asp:Label ID="Person" runat="server" CssClass="lbl-os" Text="Person:" ></asp:Label>
+        <asp:TextBox ID ="getPerson" runat="server"  ></asp:TextBox>
+        <br />
+        <br />
+        <asp:Label ID="Test" runat="server" Text="Purpose:" CssClass="lbl-os"></asp:Label>
+        <br />
         <asp:CheckBoxList ID="cbl" 
            AutoPostBack="True"
            CellPadding="5"
@@ -43,11 +43,10 @@
          <asp:ListItem>Calibration</asp:ListItem>
 
       </asp:CheckBoxList>
-                   <br />
-             <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout"></asp:Button>
+        <br />
+        <asp:Button ID="CheckIn" runat ="server" Text="Check Out" OnClick="clickCheckout" ></asp:Button>
 
-         <asp:Label ID="Label1" runat="server" Text="Check In:" CssClass="lbl-os" ></asp:Label>
-        <asp:Button ID="Button3" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg"></asp:Button>
+
 
     </div>
 
@@ -58,10 +57,11 @@
                         <br />
                         <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"></asp:GridView>
 
-                    <div style="text-align: center;
+                    <div style="text-align: center;">
+                           <asp:Button ID="Button1" runat="server" Text="Add Time Off" CssClass="btn btn-primary btn-lg" />
                     <br />
                     <br />
-                           
+                          <asp:Button ID="Button3" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
                     </div>
                  
                 </div>

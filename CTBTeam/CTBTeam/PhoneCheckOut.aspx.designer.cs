@@ -67,13 +67,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label Person;
         
         /// <summary>
-        /// user control.
+        /// getPerson control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox user;
+        protected global::System.Web.UI.WebControls.TextBox getPerson;
         
         /// <summary>
         /// Test control.
