@@ -29,7 +29,7 @@ namespace CTBTeam
             {
 
                 populateDataPhones();
-
+                populateTable();
             }
 
         }
@@ -114,12 +114,7 @@ namespace CTBTeam
             
         }
 
-        public void popList()
-        {
-
-           
-
-        }
+ 
 
         public void populateTable()
         {

@@ -19,7 +19,31 @@
 
         <br />
         <br />
+        <asp:Label ID="Person" runat="server" CssClass="lbl-os" Text="Person:" ></asp:Label>
+        <asp:TextBox ID ="user" runat="server"  ></asp:TextBox>
+        <br />
+        <br />
+        <asp:Label ID="Test" runat="server" Text="Purpose:" CssClass="lbl-os"></asp:Label>
+        <br />
+        <asp:CheckBoxList ID="cbl" 
+           AutoPostBack="True"
+           CellPadding="5"
+           CellSpacing="5"
+           RepeatColumns="2"
+           RepeatDirection="Vertical"
+           RepeatLayout="Table"
+           TextAlign="Right"
+     
+           runat="server">
+         <asp:ListItem>Leakage</asp:ListItem>
+         <asp:ListItem>Range</asp:ListItem>
+         <asp:ListItem>Passive</asp:ListItem>
+         <asp:ListItem>Coverage</asp:ListItem>
+         <asp:ListItem>8-Blocks</asp:ListItem>
+         <asp:ListItem>Calibration</asp:ListItem>
 
+      </asp:CheckBoxList>
+        <br />
         <asp:Button ID="CheckIn" runat ="server" Text="Check Out" ></asp:Button>
 
 
