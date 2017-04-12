@@ -1,8 +1,8 @@
 ﻿<%@ Page Title="Purchase List" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="List.aspx.cs" Inherits="CTBTeam.List" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-   
-  <br />
+
+    <br />
     <br />
     <div class="row">
         <div class="col-md-6">
@@ -46,6 +46,6 @@
         </div>
     </div>
 
-    
-    
+
+
 </asp:Content>

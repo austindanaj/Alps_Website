@@ -31,16 +31,7 @@ namespace CTBTeam
                     btnLogin.Text = "Sign Out";
                     lblLogin.Text = "Sign Out";
                     string userName = (string)Session["User"];
-                    if ((bool)Session["admin"])
-                    {
-                        lblRegister.Visible = true;
-                        txtName.Visible = true;
-                        txtRUser.Visible = true;
-                        txtRPass.Visible = true;
-                        txtRConfirm.Visible = true;
-                        btnRegister.Visible = true;
-
-                    }
+                   
                 }
             }
         }
@@ -64,9 +55,9 @@ namespace CTBTeam
 
 
 
-                    OleDbCommand objCmd = new OleDbCommand("SELECT * FROM Users WHERE Alna_Num=@value1 AND Emp_Pass=@value2", objConn);
+                    OleDbCommand objCmd = new OleDbCommand("SELECT * FROM Account WHERE ACCT_ROLE=@value1 AND ACCT_PASSWORD=@value2", objConn);
 
-                    objCmd.Parameters.AddWithValue("@value1", int.Parse(txtUser.Text.Replace("alna", "")));
+                    objCmd.Parameters.AddWithValue("@value1", txtUser.Text);
                     objCmd.Parameters.AddWithValue("@value2", txtPass.Text);
 
                     OleDbDataReader reader = objCmd.ExecuteReader();
@@ -75,7 +66,7 @@ namespace CTBTeam
                     {
                         count++;
                         Session["User"] = reader.GetString(1);
-                        Session["alna_num"] = reader.GetValue(0);
+                     //   Session["alna_num"] = reader.GetValue(0);
                         Session["admin"] = reader.GetBoolean(3);
                     }
                     if (count > 0)
@@ -110,58 +101,7 @@ namespace CTBTeam
             }  
            
         }
-        protected void Register_Clicked(object sender, EventArgs e)
-        {
-            if (!(txtRPass.Text.Equals("") || txtRConfirm.Text.Equals("") || txtName.Text.Equals("")))
-            {
-                if (txtRPass.Text.Equals(txtRConfirm.Text))
-                {
-
-                    try
-                    {
-                        String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                        OleDbConnection objConn = new OleDbConnection(connectionString);
-                        objConn.Open();
-
-
-
-                        OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Alna_Num, Emp_Name, Emp_Pass, Admin) VALUES (@value1, @value2, @value3, @value4);", objConn);
-
-                        objCmd.Parameters.AddWithValue("@value1", int.Parse(txtRUser.Text.Replace("alna", "")));
-                        objCmd.Parameters.AddWithValue("@value2", txtName.Text);
-                        objCmd.Parameters.AddWithValue("@value3", txtRPass.Text);
-                        objCmd.Parameters.AddWithValue("@value4", 0);
-
-                        objCmd.ExecuteNonQuery();
-                        objConn.Close();
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully added');", true);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                        {
-                            System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                        }
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                        {
-                            file.WriteLine(Date.Today.ToString() + "--Register--" + ex.ToString());
-                            file.Close();
-                        }
-                    }                  
-                }
-                else
-                {
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Passwords don't match!');", true);
-
-                }
-            }
-            else
-            {
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
-            }
-          
-        }
+       
 
 
     }
