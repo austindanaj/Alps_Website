@@ -31,7 +31,7 @@
 
                     <br />
                         <br />
-                          <asp:ListView ID="List" runat="server"  ></asp:ListView>
+                        <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"></asp:GridView>
 
                     <div style="text-align: center;">
                            <asp:Button ID="Button1" runat="server" Text="Add Time Off" CssClass="btn btn-primary btn-lg" />

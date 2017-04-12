@@ -114,13 +114,7 @@ namespace CTBTeam
             
         }
 
-        public void popList()
-        {
-
-           
-
-        }
-
+       
 
     }
 }
