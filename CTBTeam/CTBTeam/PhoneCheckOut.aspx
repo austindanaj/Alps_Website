@@ -56,7 +56,7 @@
         <asp:DropDownList ID="drpCheckIn" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
             <br />
         <br />
-           <asp:Button ID="Button1" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
+           <asp:Button ID="Button1" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" OnClick="clickCheckin" />
 
     </div>
 

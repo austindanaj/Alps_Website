@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace CTBTeam
 {
@@ -37,7 +38,9 @@ namespace CTBTeam
         protected void populateDataPhones()
         {
             drpOs.Items.Clear();
-            drpOs.Items.Add(new ListItem("--Choose An OS--"));
+            drpOs.Items.Add(new ListItem("--Select An OS--"));
+            drpCheckIn.Items.Clear();
+            drpCheckIn.Items.Add(new ListItem("--Select An OS--"));
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -75,7 +78,7 @@ namespace CTBTeam
             try
             {
                 drpPhone.Items.Clear();
-                drpPhone.Items.Add(new ListItem("--Choose A Phone--"));
+                drpPhone.Items.Add(new ListItem("--Select A Phone--"));
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
@@ -110,7 +113,7 @@ namespace CTBTeam
             try
             {
                 drpCheckIn.Items.Clear();
-                drpCheckIn.Items.Add(new ListItem("--Choose A Phone--"));
+                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -143,14 +146,18 @@ namespace CTBTeam
             }
 
         }
-
+        /*
+         * Connection to vehicles in accdb
+         * Populates Vehicle drop down list
+         * 
+         * */
         public void popV()
         {
 
             try
             {
                 Vehicle.Items.Clear();
-                Vehicle.Items.Add(new ListItem("--Choose A Vehicle--"));
+                Vehicle.Items.Add(new ListItem("--Select A Vehicle--"));
 
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -206,6 +213,8 @@ namespace CTBTeam
                 DataSet objDataSet = new DataSet();
                 objAdapter.Fill(objDataSet);
                 gvTable.DataSource = objDataSet.Tables[0].DefaultView;
+
+          
                 gvTable.DataBind();
                 objConn.Close();
             }
@@ -221,8 +230,11 @@ namespace CTBTeam
                     file.Close();
                 }
             }
+            
 
         }
+
+
         public void clickCheckout(object sender, EventArgs e)
         {
             String temp = "";
@@ -254,7 +266,9 @@ namespace CTBTeam
                 temp += "Calibration\n";
             }
 
-
+            /* Commands to update the PhoneCheckout accdb tab
+             * Populates gridview 
+             */
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -262,8 +276,9 @@ namespace CTBTeam
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
                 objCmdSelect.Parameters.AddWithValue("@name", getPerson.Text);
+                objCmdSelect.Parameters.AddWithValue("@car", Vehicle.Text);
                 objCmdSelect.Parameters.AddWithValue("@bool", false);
                 objCmdSelect.Parameters.AddWithValue("@temp", temp);
                 objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
@@ -286,12 +301,15 @@ namespace CTBTeam
                 */
                 Response.Write(ex.ToString());
             }
+
+            //Populates gridview 
             populateTable();
-            getPerson.Text = "";
+            getPerson.Text = ""; //sets txt field to empty
+
             try
             {
                 drpPhone.Items.Clear();
-
+                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
@@ -327,7 +345,7 @@ namespace CTBTeam
             try
             {
                 drpCheckIn.Items.Clear();
-                drpCheckIn.Items.Add(new ListItem("--Choose Phone--"));
+                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -375,11 +393,12 @@ namespace CTBTeam
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
-                objCmdSelect.Parameters.AddWithValue("@name", getPerson.Text);
+                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
+                objCmdSelect.Parameters.AddWithValue("@name", temp);
+                objCmdSelect.Parameters.AddWithValue("@car", temp);
                 objCmdSelect.Parameters.AddWithValue("@bool", true);
                 objCmdSelect.Parameters.AddWithValue("@temp", temp);
-                objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
+                objCmdSelect.Parameters.AddWithValue("@model", drpCheckIn.SelectedItem.Text);
                 objCmdSelect.ExecuteNonQuery();
                 objConn.Close();
 
@@ -399,11 +418,14 @@ namespace CTBTeam
                 */
                 Response.Write(ex.ToString());
             }
+
+   
             populateTable();
-            getPerson.Text = "";
+            
             try
             {
                 drpPhone.Items.Clear();
+                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -440,7 +462,7 @@ namespace CTBTeam
             try
             {
                 drpCheckIn.Items.Clear();
-                drpCheckIn.Items.Add(new ListItem("--Choose Phone--"));
+                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
