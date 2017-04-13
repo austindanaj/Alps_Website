@@ -37,7 +37,7 @@ namespace CTBTeam
         protected void populateDataPhones()
         {
             drpOs.Items.Clear();
-            drpOs.Items.Add(new ListItem("--Choose An Option--"));
+            drpOs.Items.Add(new ListItem("--Choose An OS--"));
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -71,11 +71,11 @@ namespace CTBTeam
 
         public void pop2()
         {
-            
+
             try
             {
                 drpPhone.Items.Clear();
-
+                drpPhone.Items.Add(new ListItem("--Choose A Phone--"));
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
@@ -106,14 +106,51 @@ namespace CTBTeam
                 }
             }
 
+
+            try
+            {
+                drpCheckIn.Items.Clear();
+                drpCheckIn.Items.Add(new ListItem("--Choose A Phone--"));
+
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+                objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
+                objCmdSelect.Parameters.AddWithValue("@bool", false);
+
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
+                }
+
+                objConn.Close();
+            }
+            catch (Exception ef)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
+                    file.Close();
+                }
+            }
+
         }
-        
+
         public void popV()
         {
 
             try
             {
-                drpPhone.Items.Clear();
+                Vehicle.Items.Clear();
+                Vehicle.Items.Add(new ListItem("--Choose A Vehicle--"));
 
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                          "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -121,7 +158,7 @@ namespace CTBTeam
                 objConn.Open();
 
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
-                
+
 
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
@@ -190,35 +227,36 @@ namespace CTBTeam
         {
             String temp = "";
 
-                if (cbl.Items[0].Selected)
-                {
-                    temp += "Leakage,\n";
-                   
-                }
-                if (cbl.Items[1].Selected)
-                {
-                    temp += "Range,\n";
-                }
-                if (cbl.Items[2].Selected)
-                {
-                    temp += "Passive,\n";
+            if (cbl.Items[0].Selected)
+            {
+                temp += "Leakage,\n";
 
-                }
-                if (cbl.Items[3].Selected)
-                {
-                    temp += "Coverage,\n";
-                }
-                if (cbl.Items[4].Selected)
-                {
-                    temp += "8-Blocks,\n";
-                }
-                if (cbl.Items[5].Selected)
-                {
-                    temp += "Calibration\n";
-                }
-    
-    
-            try{
+            }
+            if (cbl.Items[1].Selected)
+            {
+                temp += "Range,\n";
+            }
+            if (cbl.Items[2].Selected)
+            {
+                temp += "Passive,\n";
+
+            }
+            if (cbl.Items[3].Selected)
+            {
+                temp += "Coverage,\n";
+            }
+            if (cbl.Items[4].Selected)
+            {
+                temp += "8-Blocks,\n";
+            }
+            if (cbl.Items[5].Selected)
+            {
+                temp += "Calibration\n";
+            }
+
+
+            try
+            {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
@@ -226,12 +264,12 @@ namespace CTBTeam
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
                 objCmdSelect.Parameters.AddWithValue("@name", getPerson.Text);
-                 objCmdSelect.Parameters.AddWithValue("@bool", false);
+                objCmdSelect.Parameters.AddWithValue("@bool", false);
                 objCmdSelect.Parameters.AddWithValue("@temp", temp);
                 objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
                 objCmdSelect.ExecuteNonQuery();
                 objConn.Close();
-               
+
             }
             catch (Exception ex)
             {
@@ -250,7 +288,6 @@ namespace CTBTeam
             }
             populateTable();
             getPerson.Text = "";
-
             try
             {
                 drpPhone.Items.Clear();
@@ -285,9 +322,47 @@ namespace CTBTeam
                 }
             }
 
+
+
+            try
+            {
+                drpCheckIn.Items.Clear();
+                drpCheckIn.Items.Add(new ListItem("--Choose Phone--"));
+
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+                objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
+                objCmdSelect.Parameters.AddWithValue("@bool", false);
+
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
+                }
+
+                objConn.Close();
+            }
+            catch (Exception ef)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
+                    file.Close();
+                }
+            }
+
         }
+
         /*TODO:
-        * */
+         * */
         public void clickCheckin(object sender, EventArgs e)
         {
             String temp = "";
@@ -399,15 +474,13 @@ namespace CTBTeam
 
         }
 
-
-
     }
 }
 
-       
-        
 
-      
+
+
+
 
 
 
