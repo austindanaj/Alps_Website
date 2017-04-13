@@ -22,7 +22,7 @@ namespace CTBTeam
         string userName;
         CheckBox[] checkBoxes;
         string date = "";     
-               
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -290,7 +290,7 @@ namespace CTBTeam
                 {
                     ddlNames.Items.Add(new ListItem(reader.GetString(0)));
                 }
-                objCmdSelect = new OleDbCommand("SELECT Project_name FROM Projects ORDER BY ID", objConn);
+                objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY ID", objConn);
                 reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
