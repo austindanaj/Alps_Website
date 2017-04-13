@@ -250,6 +250,7 @@ namespace CTBTeam
             }
             populateTable();
             getPerson.Text = "";
+
             try
             {
                 drpPhone.Items.Clear();
