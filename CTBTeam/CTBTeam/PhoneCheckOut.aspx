@@ -53,7 +53,7 @@
         <br />
         <asp:Label ID="CheckIn" runat="server" Text="Check In:" CssClass="lbl-os"></asp:Label>
  
-        <asp:DropDownList ID="DropDownList2" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
+        <asp:DropDownList ID="drpCheckIn" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
             <br />
         <br />
            <asp:Button ID="Button1" runat="server" Text="Check In" CssClass="btn btn-primary btn-lg" />
