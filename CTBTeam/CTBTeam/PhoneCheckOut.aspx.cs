@@ -314,7 +314,7 @@ namespace CTBTeam
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
-                objCmdSelect.Parameters.AddWithValue("@name", getPerson.Text);
+                objCmdSelect.Parameters.AddWithValue("@name", drpPerson.Text);
                 objCmdSelect.Parameters.AddWithValue("@car", Vehicle.Text);
                 objCmdSelect.Parameters.AddWithValue("@bool", false);
                 objCmdSelect.Parameters.AddWithValue("@temp", temp);
@@ -341,7 +341,7 @@ namespace CTBTeam
 
             //Populates gridview 
             populateTable();
-            getPerson.Text = ""; //sets txt field to empty
+           // drpPerson.Text = ""; //sets txt field to empty
 
             try
             {
