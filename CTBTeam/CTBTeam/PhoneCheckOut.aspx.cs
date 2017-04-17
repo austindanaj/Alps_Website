@@ -34,7 +34,40 @@ namespace CTBTeam
             }
 
         }
+        protected void populateDataPerson()
+        {
+            drpPerson.Items.Clear();
+            drpPerson.Items.Add(new ListItem("--Select A Person--"));
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT Emp_Name FROM Users", objConn);
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    drpPerson.Items.Add(new ListItem(reader.GetString(0))); ;
+                }
+
+                objConn.Close();
+            }
+            catch (Exception e)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + e.ToString());
+                    file.Close();
+                }
+            }
+
+        }
         protected void populateDataPhones()
         {
             drpOs.Items.Clear();
@@ -194,6 +227,10 @@ namespace CTBTeam
 
             pop2();
 
+        }
+        protected void onSelectPhone(object sender, EventArgs e)
+        {
+            populateDataPerson();
         }
 
 
