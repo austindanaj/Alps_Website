@@ -298,7 +298,7 @@ namespace CTBTeam
             {
                 ddlNames.Items.Clear();
                 ddlProjects.Items.Clear();
-                ddlNames.Items.Add("--Select A Name");
+                ddlNames.Items.Add("--Select A Name--");
                 ddlProjects.Items.Add("--Select A Project--");
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
