@@ -341,7 +341,7 @@ namespace CTBTeam
 
             //Populates gridview 
             populateTable();
-           // drpPerson.Text = ""; //sets txt field to empty
+           
 
             try
             {
@@ -416,8 +416,7 @@ namespace CTBTeam
 
         }
 
-        /*TODO:
-         * */
+      
         public void clickCheckin(object sender, EventArgs e)
         {
             String temp = "";
