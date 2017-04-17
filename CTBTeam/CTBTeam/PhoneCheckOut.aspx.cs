@@ -183,6 +183,8 @@ namespace CTBTeam
          * Populates Vehicle drop down list
          * 
          * */
+
+          
         public void popV()
         {
 
@@ -230,6 +232,10 @@ namespace CTBTeam
         protected void onSelectPhone(object sender, EventArgs e)
         {
             populateDataPerson();
+        }
+        protected void onSelectPerson(object sender, EventArgs e)
+        {
+            popV();
         }
 
 
