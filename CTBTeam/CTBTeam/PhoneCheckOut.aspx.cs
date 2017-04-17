@@ -312,114 +312,135 @@ namespace CTBTeam
                 temp += "Other";
             }
 
+            if (drpPerson.Text == "--Select A Person--")
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("alert('");
+                sb.Append("Please Select A Name");
+                sb.Append("');");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+            }
+            else if (Vehicle.Text == "--Select A Vehicle--")
+
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("alert('");
+                sb.Append("Please Select A Vehicle");
+                sb.Append("');");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+
+            }
             /* Commands to update the PhoneCheckout accdb tab
              * Populates gridview 
              */
-            try
+            else
             {
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-
-                OleDbConnection objConn = new OleDbConnection(connectionString);
-                objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
-                objCmdSelect.Parameters.AddWithValue("@name", drpPerson.Text);
-                objCmdSelect.Parameters.AddWithValue("@car", Vehicle.Text);
-                objCmdSelect.Parameters.AddWithValue("@bool", false);
-                objCmdSelect.Parameters.AddWithValue("@temp", temp);
-                objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
-                objCmdSelect.ExecuteNonQuery();
-                objConn.Close();
-
-            }
-            catch (Exception ex)
-            {
-                /*
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                try
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+                    OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
+                    objCmdSelect.Parameters.AddWithValue("@name", drpPerson.Text);
+                    objCmdSelect.Parameters.AddWithValue("@car", Vehicle.Text);
+                    objCmdSelect.Parameters.AddWithValue("@bool", false);
+                    objCmdSelect.Parameters.AddWithValue("@temp", temp);
+                    objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
+                    objCmdSelect.ExecuteNonQuery();
+                    objConn.Close();
+
                 }
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                catch (Exception ex)
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Populate List--" + ex.ToString());
-                    file.Close();
-                }
-                */
-                Response.Write(ex.ToString());
-            }
-
-            //Populates gridview 
-            populateTable();
-           
-
-            try
-            {
-                drpPhone.Items.Clear();
-                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
-                objConn.Open();
-
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-                objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-                objCmdSelect.Parameters.AddWithValue("@bool", true);
-
-                OleDbDataReader reader = objCmdSelect.ExecuteReader();
-                while (reader.Read())
-                {
-                    drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
+                    /*
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Populate List--" + ex.ToString());
+                        file.Close();
+                    }
+                    */
+                    Response.Write(ex.ToString());
                 }
 
-                objConn.Close();
-            }
-            catch (Exception eg)
-            {
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                //Populates gridview 
+                populateTable();
+
+
+                try
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    drpPhone.Items.Clear();
+                    drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                             "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+                    objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
+                    objCmdSelect.Parameters.AddWithValue("@bool", true);
+
+                    OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
+                    }
+
+                    objConn.Close();
                 }
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                catch (Exception eg)
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + eg.ToString());
-                    file.Close();
-                }
-            }
-
-
-
-            try
-            {
-                drpCheckIn.Items.Clear();
-                drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
-                objConn.Open();
-
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-                objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-                objCmdSelect.Parameters.AddWithValue("@bool", false);
-
-                OleDbDataReader reader = objCmdSelect.ExecuteReader();
-                while (reader.Read())
-                {
-                    drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + eg.ToString());
+                        file.Close();
+                    }
                 }
 
-                objConn.Close();
-            }
-            catch (Exception ef)
-            {
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+
+
+                try
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    drpCheckIn.Items.Clear();
+                    drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
+
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                             "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+                    objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
+                    objCmdSelect.Parameters.AddWithValue("@bool", false);
+
+                    OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
+                    }
+
+                    objConn.Close();
                 }
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                catch (Exception ef)
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
-                    file.Close();
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
+                        file.Close();
+                    }
                 }
             }
 
