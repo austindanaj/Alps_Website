@@ -27,7 +27,7 @@
                 <asp:DropDownList ID="ddlProjects" CssClass="drp-purchase" runat="server"></asp:DropDownList>
             </asp:Label>
             <br />
-            <asp:Label ID="lblHour" runat="server" Text="Number of Hours:  " CssClass="lbl-purchase">
+            <asp:Label ID="lblHour" runat="server" Text="Hours:  " CssClass="lbl-purchase">
                 <asp:TextBox ID="txtHours" runat="server" CssClass="txt-purchase" Rows="1" BorderStyle="Solid" placeholder="0"></asp:TextBox>
             </asp:Label>
 
@@ -42,12 +42,12 @@
         <div class="col-md-4">
             <div style="text-align: center">
                
-                <asp:Button ID="btnSubmit" runat="server" OnClick="On_Click_Submit" Text="Submit" CssClass="btn btn-primary btn-lg" Visible="false" Text-Align="Center" />
+                <asp:Button ID="btnSubmit" runat="server" OnClick="On_Click_Submit" Text="Submit" CssClass="btn btn-primary btn-lg" Text-Align="Center" />
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                   <asp:TextBox ID="txtName" runat="server" CssClass="txt-purchase" placeholder="Batteries"></asp:TextBox>
+        
             </div>
         </div>
     </div>
