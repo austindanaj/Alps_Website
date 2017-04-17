@@ -307,23 +307,6 @@ namespace CTBTeam
              */
             try
             {
-                if (drpPerson.Text == "--Select A Person--")
-                {
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    sb.Append("alert('");
-                    sb.Append("Please Select A Person");
-                    sb.Append("');");
-                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
-                }
-                else if (Vehicle.Text == "--Select A Vehicle--")
-                {
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    sb.Append("alert('");
-                    sb.Append("Please Select A Vehicle");
-                    sb.Append("');");
-                    ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
-                }
-                else { }
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 
@@ -357,7 +340,7 @@ namespace CTBTeam
 
             //Populates gridview 
             populateTable();
-            // drpPerson.Text = ""; //sets txt field to empty
+           
 
             try
             {
@@ -429,16 +412,10 @@ namespace CTBTeam
                     file.Close();
                 }
             }
-        
 
         }
 
-        /*TODO:
-         * */
-         public void onSelectPerson(object sender, EventArgs e)
-        {
-            popV();
-        }
+      
         public void clickCheckin(object sender, EventArgs e)
         {
             String temp = "";
