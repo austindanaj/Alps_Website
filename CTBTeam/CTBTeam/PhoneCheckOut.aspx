@@ -15,7 +15,7 @@
        <br /> 
         <br />
         <asp:Label ID="Model" runat="server" Text="Phone:" CssClass="lbl-phones"></asp:Label>
-        <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones "  ></asp:DropDownList>
+        <asp:DropDownList ID="drpPhone" runat="server" CssClass="drp-phones " AutoPostBack="true" OnSelectedIndexChanged="onSelectPhone"  ></asp:DropDownList>
 
         <br />
         <br />
