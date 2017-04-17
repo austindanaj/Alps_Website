@@ -45,6 +45,7 @@
          <asp:ListItem>Coverage</asp:ListItem>
          <asp:ListItem>8-Blocks</asp:ListItem>
          <asp:ListItem>Calibration</asp:ListItem>
+         <asp:ListItem>Other</asp:ListItem>
 
       </asp:CheckBoxList>
         <br />

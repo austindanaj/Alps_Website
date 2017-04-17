@@ -305,7 +305,11 @@ namespace CTBTeam
             }
             if (cbl.Items[5].Selected)
             {
-                temp += "Calibration\n";
+                temp += "Calibration,\n";
+            }
+            if (cbl.Items[6].Selected)
+            {
+                temp += "Other";
             }
 
             /* Commands to update the PhoneCheckout accdb tab
