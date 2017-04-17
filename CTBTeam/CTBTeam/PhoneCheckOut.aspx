@@ -20,7 +20,7 @@
         <br />
         <br />
         <asp:Label ID="Person" runat="server" CssClass="lbl-os" Text="Person:" ></asp:Label>
-        <asp:DropDownList ID="drpPerson" runat="server" CssClass="drp-phones" ></asp:DropDownList>
+        <asp:DropDownList ID="drpPerson" runat="server" CssClass="drp-phones" OnSelectedIndexChanged="onSelectPerson" ></asp:DropDownList>
         <br />
         <br />
         <asp:Label ID="Cars" runat="server" CssClass="lbl-os" Text="Vehicle:"></asp:Label>
