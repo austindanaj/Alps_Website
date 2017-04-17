@@ -30,7 +30,6 @@ namespace CTBTeam
 
                 populateDataPhones();
                 populateTable();
-                popV();
             }
 
         }
