@@ -18,9 +18,9 @@ namespace CTBTeam
     {
 
 
-        TextBox[] textBoxes;
+     
         string userName;
-        CheckBox[] checkBoxes;
+      
         string date = "";     
         
         protected void Page_Load(object sender, EventArgs e)
@@ -30,7 +30,7 @@ namespace CTBTeam
 
                 getDate();
 
-                populateDropDown();
+                populateNames();
                 populateDataCars();
                 populateDataProject();
                
@@ -46,10 +46,11 @@ namespace CTBTeam
                 if (!string.IsNullOrEmpty((string)Session["User"]))
                 {
                     userName = (string)Session["User"];
-                    btnSubmit.Visible = true;
-                   
-                 
-                   
+                    btnSubmitCar.Visible = true;
+                    btnSubmitProject.Visible = true;
+
+
+
 
                 }                                   
                                                      
@@ -214,9 +215,9 @@ namespace CTBTeam
         //=======================================================
      
         //=======================================================
-        protected void On_Click_Submit(object sender, EventArgs e)
+        protected void On_Click_Submit_Projects(object sender, EventArgs e)
         {
-            if (ddlNames.Text == "--Select A Name--")
+            if (ddlNamesProject.Text == "--Select A Name--")
             {
                 System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 sb.Append("alert('");
@@ -252,25 +253,84 @@ namespace CTBTeam
 
 
                     OleDbCommand objCmdProject = new OleDbCommand("UPDATE ProjectHours " +
-                                                            "SET Project_B=@value1, Thermostat=@value2, Global_A=@value3, Radar=@value4, IR_Sensor=@value5, Other=@value6 " +
-                                                            "WHERE Alna_Num=@value7", objConn);
-
+                                                            "SET " + ddlProjects.Text + "=@value1 " +
+                                                            "WHERE Emp_Name=@value2", objConn);
+                    objCmdProject.Parameters.AddWithValue("@value1", int.Parse(txtHoursProjects.Text));
+                    objCmdProject.Parameters.AddWithValue("@value2", ddlNamesProject.Text);
 
 
                     objCmdProject.ExecuteNonQuery();
 
-
-                    OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
-                                                           "SET Cruze=@value1, Trax=@value2, Tahoe=@value3, EV_Spark=@value4, Bolt=@value5, Volt=@value6, Spark=@value7, Equinox=@value8 " +
-                                                           "WHERE Alna_Num=@value9", objConn);
-
-
-
-                    objCmdCars.ExecuteNonQuery();
-
+                   
                     objConn.Close();
 
-                    reset();
+                   // reset();
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Hours Submit--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+
+               // populateDataCars();
+                populateDataProject();
+            }
+        }
+        protected void On_Click_Submit_Cars(object sender, EventArgs e)
+        {
+            if (ddlNamesCar.Text == "--Select A Name--")
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("alert('");
+                sb.Append("Please Select A Name");
+                sb.Append("');");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+            }
+            else if (ddlCars.Text == "--Select A Car--")
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("alert('");
+                sb.Append("Please Select A car");
+                sb.Append("');");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+            }
+            else
+            {
+                userName = (string)Session["User"];
+                if (userName == null)
+                {
+                    ClientScript.RegisterClientScriptBlock(this.GetType(), "myalert", "alert('Error: Please Log in first before submitting!');", true);
+                    return;
+                }
+                try
+                {
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                        "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+
+
+                    
+                    OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
+                                                           "SET " + ddlCars.Text + "=@value1 " +
+                                                           "WHERE Emp_Name=@value2", objConn);
+                    objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtHoursCars.Text));
+                    objCmdCars.Parameters.AddWithValue("@value2", ddlNamesCar.Text);
+                          
+                    objCmdCars.ExecuteNonQuery();
+                    
+                    objConn.Close();
+
+                    // reset();
                 }
                 catch (Exception ex)
                 {
@@ -286,35 +346,36 @@ namespace CTBTeam
                 }
 
                 populateDataCars();
-                populateDataProject();
+               // populateDataProject();
             }
         }
-        /**
-         * Resets the text boxes and checkboxes
-         */
-         public void populateDropDown()
+
+        protected void didSelectNameProject(object sender, EventArgs e)
+        {
+            populateListProjects();
+        }
+        protected void didSelectNameCar(object sender, EventArgs e)
+        {
+            populateListCars();
+        }
+        public void populateNames()
         {
             try
             {
-                ddlNames.Items.Clear();
-                ddlProjects.Items.Clear();
-                ddlNames.Items.Add("--Select A Name--");
-                ddlProjects.Items.Add("--Select A Project--");
+                ddlNamesProject.Items.Clear();
+                ddlNamesCar.Items.Clear();
+                ddlNamesProject.Items.Add("--Select A Name--");
+                ddlNamesCar.Items.Add("--Select A Name--");
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                                       "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
-                    ddlNames.Items.Add(new ListItem(reader.GetString(0)));
-                }
-                objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY PROJ_NAME", objConn);
-                reader = objCmdSelect.ExecuteReader();
-                while (reader.Read())
-                {
-                    ddlProjects.Items.Add(new ListItem(reader.GetString(0)));
+                    ddlNamesProject.Items.Add(new ListItem(reader.GetString(0)));
+                    ddlNamesCar.Items.Add(new ListItem(reader.GetString(0)));
                 }
                 objConn.Close();
             }
@@ -332,14 +393,77 @@ namespace CTBTeam
 
             }
         }
-         public void reset()
+        public void populateListProjects()
         {
-            for(int i = 0; i < textBoxes.Length; i++)
+            try
             {
-                checkBoxes[i].Checked = false;
-                textBoxes[i].Enabled = false;
+                ddlProjects.Items.Clear();
+                ddlProjects.Items.Add("--Select A Project--");
+               
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                       "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY PROJ_NAME", objConn);
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    ddlProjects.Items.Add(new ListItem(reader.GetString(0)));
+              
+                }
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Vehicles--" + ex.ToString());
+                    file.Close();
+                }
+
             }
         }
+        public void populateListCars()
+        {
+            try
+            {
+                ddlCars.Items.Clear();
+                ddlCars.Items.Add("--Select A Car--");
+
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                       "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    ddlCars.Items.Add(new ListItem(reader.GetString(0)));
+
+                }
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Vehicles--" + ex.ToString());
+                    file.Close();
+                }
+
+            }
+        }
+
+       
+        
                //==================
 
         public void populateDataCars()
@@ -350,7 +474,7 @@ namespace CTBTeam
                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Cruze, Trax, Tahoe, EV_Spark, Bolt, Volt, Spark, Equinox FROM VehicleHours ORDER BY Alna_Num", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -382,7 +506,7 @@ namespace CTBTeam
                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Project_B, Thermostat, Global_A, Radar, IR_Sensor, Other FROM ProjectHours ORDER BY Alna_Num", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT * FROM ProjectHours ORDER BY Emp_Name", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
