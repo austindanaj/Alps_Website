@@ -20,56 +20,168 @@ namespace CTBTeam
 
         protected void Page_Load(object sender, EventArgs e)
         {
-         
+            if (!IsPostBack)
+            {
+                populateUsers();
+                populateProjects();
+                populateVehicles();
+            }
 
 
 
         }
-        protected void Register_Clicked(object sender, EventArgs e)
+        protected void User_Clicked(object sender, EventArgs e)
         {
-            if (!(txtRPass.Text.Equals("") || txtRConfirm.Text.Equals("") || txtName.Text.Equals("")))
+            if (!(txtName.Text.Equals("")))
             {
-                if (txtRPass.Text.Equals(txtRConfirm.Text))
+                
+
+                try
                 {
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+                    
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Emp_Name) VALUES (@value1);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtName.Text);                  
+                    objCmd.ExecuteNonQuery();
 
-                    try
+                    objCmd = new OleDbCommand("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    if(chkAddToVehcileHours.Checked == true)
                     {
-                        String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                      "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                        OleDbConnection objConn = new OleDbConnection(connectionString);
-                        objConn.Open();
-
-
-
-                        OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Alna_Num, Emp_Name, Emp_Pass, Admin) VALUES (@value1, @value2, @value3, @value4);", objConn);
-
-                        objCmd.Parameters.AddWithValue("@value1", int.Parse(txtRUser.Text.Replace("alna", "")));
-                        objCmd.Parameters.AddWithValue("@value2", txtName.Text);
-                        objCmd.Parameters.AddWithValue("@value3", txtRPass.Text);
-                        objCmd.Parameters.AddWithValue("@value4", 0);
-
+                        objCmd = new OleDbCommand("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", objConn);
+                        objCmd.Parameters.AddWithValue("@value1", txtName.Text);
                         objCmd.ExecuteNonQuery();
-                        objConn.Close();
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully added');", true);
                     }
-                    catch (Exception ex)
-                    {
-                        if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                        {
-                            System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                        }
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                        {
-                            file.WriteLine(Date.Today.ToString() + "--Register--" + ex.ToString());
-                            file.Close();
-                        }
-                    }
+                   
+                    objConn.Close();
+                    populateUsers();
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully added');", true);
                 }
-                else
+                catch (Exception ex)
                 {
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Passwords don't match!');", true);
-
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Add User--" + ex.ToString());
+                        file.Close();
+                    }
                 }
+
+             
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+            }
+        }
+
+        
+        protected void Project_Clicked(object sender, EventArgs e)
+        {
+            if(!(txtProject.Text.Equals("")))
+            {
+
+
+                try
+                {
+                    if (txtProject.Text.Contains(" "))
+                    {
+                        txtProject.Text = txtProject.Text.Replace(" ", "_");
+                    }
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (PROJ_NAME) VALUES (@value1);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtProject.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("ALTER TABLE ProjectHours ADD " + txtProject.Text + " number;", objConn);
+                  //  objCmd = new OleDbCommand("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", objConn);
+                    //  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("UPDATE ProjectHours SET " + txtProject.Text + " =0;", objConn);
+                    objCmd.ExecuteNonQuery();
+
+                    objConn.Close();
+                    populateProjects();
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Project successfully added');", true);
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Add Project--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+
+             
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+            }
+        }
+        protected void Car_Clicked(object sender, EventArgs e)
+        {
+            if (!(txtCar.Text.Equals("")))
+            {
+
+
+                try
+                {
+                    if(txtCar.Text.Contains(" "))
+                    {
+                        txtCar.Text = txtCar.Text.Replace(" ", "_");
+                    }
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Cars (Vehicle) VALUES (@value1);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtCar.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", objConn);
+                  //  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("UPDATE VehicleHours SET " + txtCar.Text + " =0;", objConn);
+                    objCmd.ExecuteNonQuery();
+                    objConn.Close();
+                    populateVehicles();
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Vehicle successfully added');", true);
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Add Vehicle--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+
+               
             }
             else
             {
@@ -77,15 +189,252 @@ namespace CTBTeam
             }
 
         }
-        protected void Project_Clicked(object sender, EventArgs e)
-        {
 
+        protected void Remove_Project_Clicked(object sender, EventArgs e)
+        {
+            if (!(txtPR.Text.Equals("")))
+            {
+
+
+                try
+                {
+                    if (txtPR.Text.Contains(" "))
+                    {
+                        txtPR.Text = txtCar.Text.Replace(" ", "_");
+                    }
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmd = new OleDbCommand("DELETE FROM Projects WHERE PROJ_NAME=@value1;", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtPR.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("ALTER TABLE ProjectHours DROP COLUMN " + txtPR.Text + ";", objConn);
+                    //  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objConn.Close();
+                    populateProjects();
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Project successfully removed');", true);
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Remove Project--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+               
+
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+            }
+        }
+        protected void Remove_Car_Clicked(object sender, EventArgs e)
+        {
+            if (!(txtCR.Text.Equals("")))
+            {
+
+
+                try
+                {
+                    if (txtCR.Text.Contains(" "))
+                    {
+                        txtCR.Text = txtCar.Text.Replace(" ", "_");
+                    }
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmd = new OleDbCommand("DELETE FROM Cars WHERE Vehicle=@value1;", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtCR.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("ALTER TABLE VehicleHours DROP COLUMN " + txtCR.Text + ";", objConn);
+                    //  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objConn.Close();
+                    populateVehicles();
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Vehicle successfully removed');", true);
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Remove Vehicle--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+           
+
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+            }
+        }
+        protected void Remove_User_Clicked(object sender, EventArgs e)
+        {
+            if (!(txtNR.Text.Equals("")))
+            {
+
+
+                try
+                {
+                   
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+                    OleDbCommand objCmd = new OleDbCommand("DELETE FROM Users WHERE Emp_Name=@value1;", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtNR.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtNR.Text);
+                    objCmd.ExecuteNonQuery();
+
+                    objCmd = new OleDbCommand("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtNR.Text);
+                    objCmd.ExecuteNonQuery();
+
+              
+                    objConn.Close();
+                    populateUsers();
+
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully removed');", true);
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Remove User--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+               
+
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+            }
         }
 
 
+        public void populateUsers()
+        {
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                dgvUsers.DataSource = objDataSet.Tables[0].DefaultView;
+                dgvUsers.DataBind();
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Users--" + ex.ToString());
+                    file.Close();
+                }
+            }
 
+        }
+        public void populateProjects()
+        {
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                dgvCars.DataSource = objDataSet.Tables[0].DefaultView;
+                dgvCars.DataBind();
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Vehicles--" + ex.ToString());
+                    file.Close();
+                }
+            }
 
+        }
+        public void populateVehicles()
+        {
+            try
+            {
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY PROJ_NAME", objConn);
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                dgvProjects.DataSource = objDataSet.Tables[0].DefaultView;
+                dgvProjects.DataBind();
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Projects--" + ex.ToString());
+                    file.Close();
+                }
+            }
 
+        }
 
 
 

@@ -19,8 +19,10 @@
     <br />    
     <div class="row">
         <div class="col-md-6">
-            <asp:Label ID="lblName" runat="server" Text="Name:  " CssClass="lbl-purchase">
-               <asp:DropDownList ID="ddlNames" CssClass="drp-purchase" runat="server"></asp:DropDownList>
+             <asp:Label ID="Label1" Text-Align="Center" runat="server" Text="Project Hours"/>
+                 <br />
+            <asp:Label ID="lblName1" runat="server" Text="Name:  " CssClass="lbl-purchase">
+               <asp:DropDownList ID="ddlNamesProject" CssClass="drp-purchase" runat="server" OnSelectedIndexChanged="didSelectNameProject" AutoPostBack="true"></asp:DropDownList>
             </asp:Label>
             <br />
             <asp:Label ID="lblProject" runat="server" Text="Project:  " CssClass="lbl-purchase">
@@ -28,30 +30,29 @@
             </asp:Label>
             <br />
             <asp:Label ID="lblHour" runat="server" Text="Hours:  " CssClass="lbl-purchase">
-                <asp:TextBox ID="txtHours" runat="server" CssClass="txt-purchase" Rows="1" BorderStyle="Solid" placeholder="0"></asp:TextBox>
+                <asp:TextBox ID="txtHoursProjects" runat="server" CssClass="txt-purchase" Rows="1" BorderStyle="Solid" placeholder="0"></asp:TextBox>
             </asp:Label>
+            <br />
+             <asp:Button ID="btnSubmitProject" runat="server" OnClick="On_Click_Submit_Projects" Text="Submit" CssClass="btn btn-primary btn-lg" Text-Align="Center" />
 
             </div>
+        <div class="col-md-6">
+             <asp:Label ID="lblName2" runat="server" Text="Name:  " CssClass="lbl-purchase">
+               <asp:DropDownList ID="ddlNamesCar" CssClass="drp-purchase" runat="server" OnSelectedIndexChanged="didSelectNameCar" AutoPostBack="true"></asp:DropDownList>
+            </asp:Label>
+            <br />
+            <asp:Label ID="Label2" runat="server" Text="Vehicle:  " CssClass="lbl-purchase">
+                <asp:DropDownList ID="ddlCars" CssClass="drp-purchase" runat="server" ></asp:DropDownList>
+            </asp:Label>
+            <br />
+            <asp:Label ID="Label3" runat="server" Text="Hours:  " CssClass="lbl-purchase">
+                <asp:TextBox ID="txtHoursCars" runat="server" CssClass="txt-purchase" Rows="1" BorderStyle="Solid" placeholder="0"></asp:TextBox>
+            </asp:Label>
+            <br />
+             <asp:Button ID="btnSubmitCar" runat="server" OnClick="On_Click_Submit_Cars" Text="Submit" CssClass="btn btn-primary btn-lg" Text-Align="Center" />
         </div>
-     <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-            </div>
-          
         </div>
-        <div class="col-md-4">
-            <div style="text-align: center">
-               
-                <asp:Button ID="btnSubmit" runat="server" OnClick="On_Click_Submit" Text="Submit" CssClass="btn btn-primary btn-lg" Text-Align="Center" />
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-        
-            </div>
-        </div>
-    </div>
-
+  
      <br />
     <br />
       <br />
