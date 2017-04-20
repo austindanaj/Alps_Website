@@ -12,6 +12,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using Microsoft.Office.Interop.Excel;
 
 namespace CTBTeam
 {
@@ -560,6 +561,86 @@ namespace CTBTeam
                 }
             }
 
+        }
+
+
+        public void ExcelExport()
+        {
+            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel._Workbook workbook = excel.Workbooks.Add(Type.Missing);
+            Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
+
+            //Sets column width to 20 units
+            excel.Columns.ColumnWidth = 20;
+
+            // Tries this method
+            try
+            {
+
+                worksheet = workbook.ActiveSheet;
+
+                string d = DateTime.Today.ToString("M-d-y");
+
+
+
+                worksheet.Name = ("Report On " + d);
+
+                int cellRowIndex = 2;
+                int cellColumnIndex = 1;
+
+                //gets the header first 
+                for (int i = 1; i < gvTable.Columns.Count + 1; i++)
+                {
+                    worksheet.Cells[1, i] = gvTable.Columns[i - 1].HeaderText;
+                }
+
+                //Loops through each row and read value from each column. 
+                for (int i = 0; i < gvTable.Rows.Count - 1; i++)
+                {
+                    for (int j = 0; j < gvTable.Columns.Count; j++)
+                    {
+
+                        worksheet.Cells[cellRowIndex, cellColumnIndex] = gvTable.Rows[i].Cells[j].ToString();
+
+
+                        cellColumnIndex++;
+                    }
+                    cellColumnIndex = 1;
+                    cellRowIndex++;
+                }
+                /*
+                //Getting the location and file name of the excel to save from user. 
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+                saveDialog.FilterIndex = 2;
+
+                if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    workbook.SaveAs(saveDialog.FileName);
+                    MessageBox.Show("Export Successful");
+                }
+                */
+            }
+
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate List--" + ex.ToString());
+                    file.Close();
+                }
+            }
+            finally
+            {
+                excel.Quit();
+                workbook = null;
+                excel = null;
+            }
+            
         }
 
     }

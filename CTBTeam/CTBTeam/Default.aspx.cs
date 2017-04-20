@@ -169,5 +169,17 @@ namespace CTBTeam
             Response.TransmitFile(Server.MapPath("~/HexGenerator.exe"));
             Response.End();
         }
+
+        protected void download_Phones_file(object sender, EventArgs e)
+        {
+            PhoneCheckOut ph = new PhoneCheckOut();
+
+            ph.ExcelExport();
+
+            Response.ContentType = "Application/xlsx";
+            Response.AppendHeader("Content-Disposition", "attachment; Phone-log.xlsx");
+            Response.TransmitFile(Server.MapPath("~/Logs/TimeLog/Phone-log.xlsx"));
+            Response.End();
+        }
     }
 }
