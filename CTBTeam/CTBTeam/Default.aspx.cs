@@ -175,10 +175,13 @@ namespace CTBTeam
             PhoneCheckOut ph = new PhoneCheckOut();
 
             ph.ExcelExport();
+            string d = DateTime.Today.ToString("M-d-y");
 
-            Response.ContentType = "Application/xlsx";
-            Response.AppendHeader("Content-Disposition", "attachment; Phone-log.xlsx");
-            Response.TransmitFile(Server.MapPath("~/Logs/TimeLog/Phone-log.xlsx"));
+           
+
+            Response.ContentType = "Application/txt";
+            Response.AppendHeader("Content-Disposition", "attachment; Report.txt");
+            Response.TransmitFile(Server.MapPath("~/Report.txt"));
             Response.End();
         }
     }
