@@ -12,7 +12,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Drawing;
-using Microsoft.Office.Interop.Excel;
 
 namespace CTBTeam
 {

@@ -57,19 +57,34 @@ namespace CTBTeam
             }
 
         }
+        /**
+         * Get the Monday of the current week 
+         **/
         public void getDate()
         {
-            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
+            /** Read contents of file into array **/
+            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt")); 
+            /** Get the last line in file, (thats where the current monday of the week is saved) **/
             date = arrLine[arrLine.Length - 1];
+            /** Set label **/
             lblWeekOf.Text = "Week Of: " + date;
         }
+
+        /**
+        * Checks whether the data needs to be changed or not
+        * 
+        * Return: bool
+        **/
         public bool datechange()
         {
             try
             {
+                /** If the date from file, more than a week old **/
                 if (Date.Today.AddDays(-6) > Date.Parse(lblWeekOf.Text.Replace("Week Of: ", "")))
                 {                    
-
+                   /**
+                    * Set SQL connection
+                    **/
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                     OleDbConnection objConn = new OleDbConnection(connectionString);
@@ -77,109 +92,198 @@ namespace CTBTeam
 
 
 
+
+                    string projectList = "";      /** List of projects **/
+                    int projectCount = 0;         /** Count of projects **/
+
+                    /** Command to get list of projects **/                 
+                    OleDbCommand getProjectList = new OleDbCommand("SELECT PROJ_NAME From Projects ORDER BY ID", objConn);
+                    OleDbDataReader readerProjectList = getProjectList.ExecuteReader();
+                    while (readerProjectList.Read())
+                    {
+                        projectCount++;      /** Increment counter by 1 **/
+                        projectList += readerProjectList.GetString(0) + ",";    /** Add project name to list **/
+                    }
+
+
+                    string carList = "";        /** List of projects **/
+                    int carCount = 0;           /** Count of projects **/
+
+                    /** Command to get list of cars **/
+                    OleDbCommand getCarList = new OleDbCommand("SELECT Vehicle From Cars ORDER BY ID", objConn);
+                    OleDbDataReader readerCarList = getCarList.ExecuteReader();
+                    while (readerCarList.Read())
+                    {
+                        carCount++;      /** Increment counter by 1 **/
+                        carList += readerCarList.GetString(0) + ",";    /** Add car name to list **/
+                    }
+
+
+                    /** Command to get project hours ( used to get header ) **/
                     OleDbCommand fieldProjectNames = new OleDbCommand("SELECT * FROM ProjectHours", objConn);
                     OleDbDataReader readerPNames = fieldProjectNames.ExecuteReader();
-                    var table = readerPNames.GetSchemaTable();
-                    var nameCol = table.Columns["ColumnName"];
-                    string headerRow = "";
+
+               
+                    var table = readerPNames.GetSchemaTable();      /** Set the table of project hours to variable **/
+                    var nameCol = table.Columns["ColumnName"];      /** Set the column name **/
+                    string headerRow = "";                          /** Header Row for Project Hours Log file **/
+
+                    /** 
+                     * Loop through each row, if column is ID, dont add
+                     * This loop populates the header row for project hours
+                     **/
                     foreach (DataRow row in table.Rows)
                     {
-                        if (!row[nameCol].Equals("Alna_Num"))
+                        if (!row[nameCol].Equals("ID"))
                         {
                             headerRow += row[nameCol] + ",";
                         }
                         
                     }
+                    /** Get the contents of file **/
                     string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
 
+                    /** Replace the last line (the date of the previous week with the header row ) also appending the previous week**/
                     arrLine[arrLine.Length - 1] = Date.Parse(date).ToShortDateString() + "," + headerRow;
+
+                    /** Write array to file, replacing contents with it (basically appending, but need to replace all to replace the last line **/
                     System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), arrLine);
 
-
+                    /** Now append to file **/
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true))
                     {
-                       
-                        string text = "";
 
-                        OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours ORDER BY Alna_Num ;", objConn);
+                        string text = "";      /** Initialize variable for storing each line **/
 
+                        /** Command to get project hours  **/
+                        OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours ORDER BY Emp_Name ;", objConn);
                         OleDbDataReader readerProject = objProject.ExecuteReader();
+
+                        /** Loop through each row **/
                         while (readerProject.Read())
                         {
-                            text = "";
-                            text += readerProject.GetString(1) + "," + readerProject.GetValue(2).ToString() + "," + readerProject.GetValue(3).ToString() + "," + readerProject.GetValue(4).ToString() + ","
-                                  + readerProject.GetValue(5).ToString() + "," + readerProject.GetValue(6).ToString() + "," + readerProject.GetValue(7).ToString() + ",";
-                            file.WriteLine(text);
+                            text = "";     /** Reset the line to empty **/
+
+                            /** Loop through each row, starting at emp_name to end **/
+                            for (int i = 1; i <= projectCount; i++)
+                            {
+                                text += readerProject.GetValue(i).ToString() + ",";      /** Get value from database and append to line **/
+                            }
+                            file.WriteLine(text);     /** write line to file **/
                         }
-                        file.WriteLine();
+                        file.WriteLine();      /** write blank line to file **/
                         readerProject.Close();
 
-                        OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Alna_Num", objConn);
+                        /** Command to get car hours ( used to get header ) **/
+                        OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
                         OleDbDataReader readerCNames = fieldCarNames.ExecuteReader();
-                        table = readerCNames.GetSchemaTable();
-                        nameCol = table.Columns["ColumnName"];
-                        headerRow = "";
+
+                        table = readerPNames.GetSchemaTable();      /** Set the table of vehicle hours to variable **/
+                        nameCol = table.Columns["ColumnName"];      /** Set the column name **/
+                        headerRow = "";                             /** Header Row for Vehicle Hours Log file **/
+
+                        /** 
+                         * Loop through each row, if column is ID, dont add
+                         * This loop populates the header row for vehicle hours
+                         **/
                         foreach (DataRow row in table.Rows)
                         {
-                            if (!row[nameCol].Equals("Alna_Num"))
+                            if (!row[nameCol].Equals("ID"))
                             {
                                 headerRow += row[nameCol] + ",";
                             }
                         }
+
+                        /** Set header row to previous week + created header row **/
                         headerRow = Date.Parse(date).ToShortDateString() + "," + headerRow;
+
+                        /** Write header row to file **/
                         file.WriteLine(headerRow);
                         readerCNames.Close();
 
-                        OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Alna_Num;", objConn);
-                        text = "";
+                        /** Command to get vehicle hours **/
+                        OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name;", objConn);                         
                         OleDbDataReader readerCar = objCar.ExecuteReader();
+
+                        text = "";      /** Reset the line to empty **/
+
+                        /** Loop through each row **/
                         while (readerCar.Read())
                         {
-                            text = "";
-                            text += readerCar.GetString(1) + "," + readerCar.GetValue(2).ToString() + "," + readerCar.GetValue(3).ToString() + "," + readerCar.GetValue(4).ToString() + ","
-                                  + readerCar.GetValue(5).ToString() + "," + readerCar.GetValue(6).ToString() + "," + readerCar.GetValue(7).ToString() + "," + readerCar.GetValue(8).ToString() + ","
-                                  + readerCar.GetValue(9).ToString() + ",";
-                            file.WriteLine(text);
+                            text = "";      /** Reset the line to empty **/
+
+                            /** Loop through each row, starting at emp_name to end **/
+                            for (int i = 1; i <= carCount; i++)
+                            {
+                                text += readerCar.GetValue(i).ToString() + ",";         /** Get value from database and append to line **/
+                            }
+                            file.WriteLine(text);       /** write line to file **/
                         }
-                        file.WriteLine();
+                        file.WriteLine();       /** write blank line to file **/
                         readerCar.Close();
-                          
-                        
+
+                        /** Second check if date needs to be changed, if yes, find the monday of the week, then set date to monday, write to line **/
                         if (Date.Today.AddDays(-6) > Date.Parse(date))
                         {
                             DateTime dt = DateTime.Now;
                             while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
                             file.Write(dt.ToShortDateString());
-                         
+
 
                         }
 
-                        OleDbCommand objResetPH = new OleDbCommand("UPDATE ProjectHours " +
-                                          "SET Project_B=@value1, Thermostat=@value2, Global_A=@value3, Radar=@value4, IR_Sensor=@value5, Other=@value6 ", objConn);
+                        /** split list of projects into an array **/
+                        string[] arrayProjectList = projectList.Split(',');
+                        /** Start the query string **/
+                        string queryProject = "UPDATE ProjectHours SET ";
 
-                        objResetPH.Parameters.AddWithValue("@value1", 0);
-                        objResetPH.Parameters.AddWithValue("@value2", 0);
-                        objResetPH.Parameters.AddWithValue("@value3", 0);
-                        objResetPH.Parameters.AddWithValue("@value4", 0);
-                        objResetPH.Parameters.AddWithValue("@value5", 0);
-                        objResetPH.Parameters.AddWithValue("@value6", 0);
-
+                        /** Loop through the list of projects, and build the rest of the query, do use last array index, it is empty **/
+                        for (int i = 0; i < arrayProjectList.Length - 1; i++)
+                        {
+                            queryProject += arrayProjectList[i] + "=@value" + (i + 1);
+                            if (i != arrayProjectList.Length - 2)
+                            {
+                                /** If not last, then comma **/
+                                queryProject += ", ";
+                            } else
+                            {
+                                /** If last then semicolon to end query **/
+                                queryProject += ";";
+                            }
+                        }
+                        /** Command for query **/
+                        OleDbCommand objResetPH = new OleDbCommand(queryProject, objConn);
+                        for (int i = 0; i < arrayProjectList.Length - 1; i++)
+                        {
+                            objResetPH.Parameters.AddWithValue("@value" + (i + 1), 0);
+                        }                   
 
                         objResetPH.ExecuteNonQuery();
 
 
-                        OleDbCommand objResetVH = new OleDbCommand("UPDATE VehicleHours " +
-                                                               "SET Cruze=@value1, Trax=@value2, Tahoe=@value3, EV_Spark=@value4, Bolt=@value5, Volt=@value6, Spark=@value7, Equinox=@value8 ", objConn);
 
-                        objResetVH.Parameters.AddWithValue("@value1", 0);
-                        objResetVH.Parameters.AddWithValue("@value2", 0);
-                        objResetVH.Parameters.AddWithValue("@value3", 0);
-                        objResetVH.Parameters.AddWithValue("@value4", 0);
-                        objResetVH.Parameters.AddWithValue("@value5", 0);
-                        objResetVH.Parameters.AddWithValue("@value6", 0);
-                        objResetVH.Parameters.AddWithValue("@value7", 0);
-                        objResetVH.Parameters.AddWithValue("@value8", 0);
 
+                     
+                        string[] arrayCarList = carList.Split(',');
+                        string queryCar = "UPDATE VehicleHours SET ";
+                        for (int i = 0; i < arrayCarList.Length - 1; i++)
+                        {
+                            queryCar += arrayCarList[i] + "=@value" + (i + 1);
+                            if (i != arrayCarList.Length - 2)
+                            {
+                                queryCar += ", ";
+                            }
+                            else
+                            {
+                                queryCar += ";";
+                            }
+                        }
+
+                        OleDbCommand objResetVH = new OleDbCommand(queryCar, objConn);
+                        for (int i = 0; i < arrayCarList.Length - 1; i++)
+                        {
+                            objResetVH.Parameters.AddWithValue("@value" + (i + 1), 0);
+                        }
 
                         objResetVH.ExecuteNonQuery();
 
