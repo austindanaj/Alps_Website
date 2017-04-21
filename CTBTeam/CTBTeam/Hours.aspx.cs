@@ -20,7 +20,7 @@ namespace CTBTeam
 
      
         string userName;
-      
+      //  int[][] fileLineNumber;
         string date = "";     
         
         protected void Page_Load(object sender, EventArgs e)
@@ -45,6 +45,7 @@ namespace CTBTeam
 
                 if (!string.IsNullOrEmpty((string)Session["User"]))
                 {
+                    loggingInfo.Visible = true;
                     userName = (string)Session["User"];
                     btnSubmitCar.Visible = true;
                     btnSubmitProject.Visible = true;
@@ -61,11 +62,40 @@ namespace CTBTeam
          * Get the Monday of the current week 
          **/
         public void getDate()
-        {
+        {/*
+            ddlChangeDate.Items.Clear();
+            ddlChangeDate.Items.Add(new ListItem("--Select A Date--"));
+            */
+
             /** Read contents of file into array **/
-            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt")); 
-            /** Get the last line in file, (thats where the current monday of the week is saved) **/
+            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
             date = arrLine[arrLine.Length - 1];
+            /** Get the last line in file, (thats where the current monday of the week is saved) **/
+            /*
+          
+            DateTime previous = DateTime.Now;
+            ddlChangeDate.Items.Add(new ListItem(DateTime.Parse(arrLine[arrLine.Length - 1]).ToShortDateString()));
+            DateTime time = DateTime.Now;
+            int count = 0;
+            for (int i = arrLine.Length - 2; i >= 0; i--)
+            {
+                if (!arrLine[i].Equals("")) { 
+                    if (DateTime.TryParse(arrLine[i].Substring(0, arrLine[i].IndexOf(',')), out time))
+                    {
+                        if (!time.Equals(previous))
+                        {
+                            previous = time;
+                            count++;
+                            ddlChangeDate.Items.Add(new ListItem(time.ToShortDateString()));
+                            if (count == 4)
+                            {
+                                break;
+                            }
+                        }
+                        }
+                    }
+                }
+            */
             /** Set label **/
             lblWeekOf.Text = "Week Of: " + date;
         }
@@ -583,9 +613,12 @@ namespace CTBTeam
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
                 objAdapter.Fill(objDataSet);
+                objDataSet.Tables[0].Columns.RemoveAt(0);
                 dgvCars.DataSource = objDataSet.Tables[0].DefaultView;
                 dgvCars.DataBind();
+               
                 objConn.Close();
+               // dgvCars.HeaderRow.Cells[0].Visible = false;
             }
             catch(Exception ex)
             {
@@ -615,8 +648,10 @@ namespace CTBTeam
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
                 objAdapter.Fill(objDataSet);
+                objDataSet.Tables[0].Columns.RemoveAt(0);
                 dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
                 dgvProject.DataBind();
+               
                 objConn.Close();
             }
             catch(Exception ex)
@@ -635,8 +670,25 @@ namespace CTBTeam
         }
 
 
+        protected void OnPageIndexChanging1(object sender, GridViewPageEventArgs e)
+        {
+            populateDataProject();
+            dgvProject.PageIndex = e.NewPageIndex;
+            dgvProject.DataBind();
 
 
+
+        }
+
+             protected void OnPageIndexChanging2(object sender, GridViewPageEventArgs e)
+        {
+            populateDataCars();
+            dgvCars.PageIndex = e.NewPageIndex;
+            dgvCars.DataBind();
+
+
+
+        }
 
 
     }

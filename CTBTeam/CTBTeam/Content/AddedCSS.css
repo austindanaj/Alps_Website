@@ -63,6 +63,50 @@
     
       
 }
+.txt-home{
+    display: inline-block;
+    resize: none;
+    border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+    width: 2000px;
+    padding-left: 5px;
+}
+.lbl-home-title{
+    color: #1A5276;
+    font-size: 25px;
+    display: inline-block;
+    text-align: center;
+    width: 200px;
+    
+}
+.btn-home{
+    display: inline-block;
+    width: 2000px;
+    height: 30px;
+    border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+    background-color: cornflowerblue;
+    color: white;
+
+}
+.lbl-home{
+    color: #1A5276;
+    font-size: 22px;
+    display: block;
+    text-align: right;
+    width: 2000px;
+    padding-right: 20px;
+}
+.drp-home{
+     display: inline-block;
+    width: 2000px;
+    height: 30px;
+    border-radius: 5px;
+    border: 2px solid #555;
+    font-size: 16px;
+}
 .drp-purchase{
     display: inline-block;
     width: 2000px;
@@ -83,6 +127,44 @@
     
    
 }
+.Grid {background-color: #fff; margin: 5px 0 10px 0; border: solid 1px #525252; border-collapse:collapse; font-family:Calibri; color: #474747;}
+.Grid td {
+      padding: 2px;
+      border: solid 1px #c1c1c1; }
+.Grid th  {
+      padding : 4px 2px;
+      color: #fff;
+      background: #363670 url(Images/grid-header.png) repeat-x top;
+      border-left: solid 1px #525252;
+      font-size: 0.9em; }
+.Grid .alt {
+      background: #fcfcfc url(Images/grid-alt.png) repeat-x top; }
+.Grid .pgr {background: #363670 url(Images/grid-pgr.png) repeat-x top; }
+.Grid .pgr table { margin: 3px 0; }
+.Grid .pgr td { border-width: 0; padding: 0 6px; border-left: solid 1px #666; font-weight: bold; color: #fff; line-height: 12px; }  
+.Grid .pgr a { color: Gray; text-decoration: none; }
+.Grid .pgr a:hover { color: #000; text-decoration: none; }
+
+.rounded_corners
+    {
+        border: 1px solid #A1DCF2;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .rounded_corners td, .rounded_corners th
+    {
+        border: 1px solid #A1DCF2;
+        font-family: Arial;
+        font-size: 10pt;
+        text-align: center;
+    }
+    .rounded_corners table table td
+    {
+        border-style: none;
+    }
+
 .txt-purchase{
     display: inline-block;
     resize: none;
