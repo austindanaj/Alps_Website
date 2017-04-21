@@ -563,7 +563,7 @@ namespace CTBTeam
 
         }
 
-
+        /*
         public void ExcelExport()
         {
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
@@ -577,13 +577,15 @@ namespace CTBTeam
             try
             {
 
-                worksheet = workbook.ActiveSheet;
+               worksheet = workbook.ActiveSheet;
 
                 string d = DateTime.Today.ToString("M-d-y");
 
 
 
                 worksheet.Name = ("Report On " + d);
+                string j;
+                string path = "~/Logs/PhoneLog/Report.txt";
 
                 int cellRowIndex = 2;
                 int cellColumnIndex = 1;
@@ -608,18 +610,17 @@ namespace CTBTeam
                     cellColumnIndex = 1;
                     cellRowIndex++;
                 }
-                /*
+                
                 //Getting the location and file name of the excel to save from user. 
-                SaveFileDialog saveDialog = new SaveFileDialog();
-                saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
-                saveDialog.FilterIndex = 2;
+              //  SaveFileDialog saveDialog = new SaveFileDialog();
+                //saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+                //saveDialog.FilterIndex = 2;
 
-                if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    workbook.SaveAs(saveDialog.FileName);
-                    MessageBox.Show("Export Successful");
-                }
-                */
+              
+                    workbook.SaveAs(Server.MapPath(path));
+                    //MessageBox.Show("Export Successful");
+                
+                
             }
 
             catch (Exception ex)
@@ -641,7 +642,7 @@ namespace CTBTeam
                 excel = null;
             }
             
-        }
+        }*/
 
     }
 }
