@@ -17,9 +17,7 @@ namespace CTBTeam
 {
     public partial class PhoneCheckOut : Page
     {
-        DropDownList dlist = new DropDownList();
-        String[] list = new String[3];
-        // DropDownList drpPhone = new DropDownList();
+    
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,15 +26,22 @@ namespace CTBTeam
             if (!IsPostBack)
             {
 
-                populateDataPhones();
-                populateTable();
+                populateDataPhones(); // Populates table with Phone Data on start up
+                populateTable(); // Populates table with other information 
             }
 
         }
+
+
+       
         protected void populateDataPerson()
         {
-            drpPerson.Items.Clear();
-            drpPerson.Items.Add(new ListItem("--Select A Person--"));
+            //Method for the intial population of person 
+
+            drpPerson.Items.Clear(); // Clears drop down list
+            drpPerson.Items.Add(new ListItem("--Select A Person--")); //Initializes the drpPerson drop down list
+
+            // gets information form database
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -48,7 +53,7 @@ namespace CTBTeam
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
-                    drpPerson.Items.Add(new ListItem(reader.GetString(0))); ;
+                    drpPerson.Items.Add(new ListItem(reader.GetString(0))); ;  //adds items to the drop down list
                 }
 
                 objConn.Close();
@@ -67,12 +72,18 @@ namespace CTBTeam
             }
 
         }
+
+       
         protected void populateDataPhones()
-        {
-            drpOs.Items.Clear();
-            drpOs.Items.Add(new ListItem("--Select An OS--"));
-            drpCheckIn.Items.Clear();
-            drpCheckIn.Items.Add(new ListItem("--Select An OS--"));
+        { 
+            //Method for the Intial population of phones
+
+            drpOs.Items.Clear(); // Clears drop down list 
+            drpOs.Items.Add(new ListItem("--Select An OS--")); // Preset
+            drpCheckIn.Items.Clear();  // Clears drop down list 
+            drpCheckIn.Items.Add(new ListItem("--Select An OS--"));// Preset
+
+            // gets information form database
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -103,9 +114,10 @@ namespace CTBTeam
             }
         }
 
-
+       
         public void pop2()
-        {
+        { 
+            // Populates phones after Updating the database
 
             try
             {
@@ -178,15 +190,16 @@ namespace CTBTeam
             }
 
         }
-        /*
+
+
+       
+        public void popV()
+        { 
+            /*
          * Connection to vehicles in accdb
          * Populates Vehicle drop down list
          * 
          * */
-
-          
-        public void popV()
-        {
 
             try
             {
@@ -223,18 +236,34 @@ namespace CTBTeam
             }
 
         }
+
         protected void onSelec(object sender, EventArgs e)
         {
+        /*
+         * Button Listener to populate phone drop down list
+         * 
+         */
 
             pop2();
 
         }
+
+
         protected void onSelectPhone(object sender, EventArgs e)
         {
+        /*
+        * Button Listener to populate person's drop down list upon selecting a phone
+        * 
+        */
             populateDataPerson();
         }
+
         protected void onSelectPerson(object sender, EventArgs e)
         {
+            /*
+       * Button Listener to populate vehicle's drop down list upon selecting a person
+       * 
+       */
             popV();
         }
 
@@ -242,6 +271,10 @@ namespace CTBTeam
 
         public void populateTable()
         {
+            /*
+             * Initialzes the grid view table(gvTable) with all the current information in the database
+             * 
+             * */
             try
             {
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
@@ -256,7 +289,7 @@ namespace CTBTeam
                 objAdapter.Fill(objDataSet);
                 gvTable.DataSource = objDataSet.Tables[0].DefaultView;
 
-          
+
                 gvTable.DataBind();
                 objConn.Close();
             }
@@ -272,13 +305,19 @@ namespace CTBTeam
                     file.Close();
                 }
             }
-            
+
 
         }
 
 
         public void clickCheckout(object sender, EventArgs e)
         {
+         /*
+          * Button listener for cheking out a phone
+          * temp is used to get the selected value of the check list boxes
+          * 
+          * */
+
             String temp = "";
 
             if (cbl.Items[0].Selected)
@@ -351,6 +390,8 @@ namespace CTBTeam
                     objCmdSelect.ExecuteNonQuery();
                     objConn.Close();
 
+                    saveOut();
+
                 }
                 catch (Exception ex)
                 {
@@ -371,7 +412,7 @@ namespace CTBTeam
                 //Populates gridview 
                 populateTable();
 
-
+                // Updates the drop down phone list 
                 try
                 {
                     drpPhone.Items.Clear();
@@ -407,7 +448,7 @@ namespace CTBTeam
                 }
 
 
-
+                //Updates the drop down list for the phone that can be checkout
                 try
                 {
                     drpCheckIn.Items.Clear();
@@ -446,9 +487,15 @@ namespace CTBTeam
 
         }
 
-      
+
         public void clickCheckin(object sender, EventArgs e)
         {
+
+        /* Button listener for the checked in 
+         * 
+         * 
+         * 
+         * */
             String temp = "";
 
 
@@ -467,6 +514,7 @@ namespace CTBTeam
                 objCmdSelect.Parameters.AddWithValue("@model", drpCheckIn.SelectedItem.Text);
                 objCmdSelect.ExecuteNonQuery();
                 objConn.Close();
+                saveIn();
 
             }
             catch (Exception ex)
@@ -485,9 +533,10 @@ namespace CTBTeam
                 Response.Write(ex.ToString());
             }
 
-   
-            populateTable();
-            
+
+            populateTable(); // Updates table
+
+            // Updates phone and check in phone drop down list's 
             try
             {
                 drpPhone.Items.Clear();
@@ -524,7 +573,7 @@ namespace CTBTeam
             }
 
 
-
+            // Updates phone and check in phone drop down list's 
             try
             {
                 drpCheckIn.Items.Clear();
@@ -561,68 +610,27 @@ namespace CTBTeam
             }
 
         }
-
-        /*
-        public void ExcelExport()
+        
+       public void saveOut()
         {
-            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
-            Microsoft.Office.Interop.Excel._Workbook workbook = excel.Workbooks.Add(Type.Missing);
-            Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
-
-            //Sets column width to 20 units
-            excel.Columns.ColumnWidth = 20;
-
-            // Tries this method
+            /*
+             * Saves information when CheckOut button is clicked
+             * 
+             * */
+          
             try
             {
-
-               worksheet = workbook.ActiveSheet;
-
-                string d = DateTime.Today.ToString("M-d-y");
-
-
-
-                worksheet.Name = ("Report On " + d);
-                string j;
-                string path = "~/Logs/PhoneLog/Report.txt";
-
-                int cellRowIndex = 2;
-                int cellColumnIndex = 1;
-
-                //gets the header first 
-                for (int i = 1; i < gvTable.Columns.Count + 1; i++)
+                /** Now append to file **/
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true))
                 {
-                    worksheet.Cells[1, i] = gvTable.Columns[i - 1].HeaderText;
+
+                    file.WriteLine("Checked Out," + DateTime.Now.ToShortDateString() + " " + ","+"By: "+ drpPerson.Text + "," + "Vehicle: " +Vehicle.Text + "," + drpPhone.Text );
+
+                   file.Close();
                 }
 
-                //Loops through each row and read value from each column. 
-                for (int i = 0; i < gvTable.Rows.Count - 1; i++)
-                {
-                    for (int j = 0; j < gvTable.Columns.Count; j++)
-                    {
-
-                        worksheet.Cells[cellRowIndex, cellColumnIndex] = gvTable.Rows[i].Cells[j].ToString();
-
-
-                        cellColumnIndex++;
-                    }
-                    cellColumnIndex = 1;
-                    cellRowIndex++;
-                }
-                
-                //Getting the location and file name of the excel to save from user. 
-              //  SaveFileDialog saveDialog = new SaveFileDialog();
-                //saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
-                //saveDialog.FilterIndex = 2;
-
-              
-                    workbook.SaveAs(Server.MapPath(path));
-                    //MessageBox.Show("Export Successful");
-                
-                
             }
-
-            catch (Exception ex)
+            catch (Exception ef)
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -630,19 +638,50 @@ namespace CTBTeam
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Populate List--" + ex.ToString());
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
                     file.Close();
                 }
             }
-            finally
-            {
-                excel.Quit();
-                workbook = null;
-                excel = null;
-            }
-            
-        }*/
 
+        }
+
+      public void saveIn()
+        {
+
+            /*
+            * Saves information when Check In button is clicked
+            * 
+            * */
+
+            try
+            {
+                    /** Now append to file **/
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true))
+                    {
+
+                        file.WriteLine("Checked In," + DateTime.Now.ToShortDateString() + " "  + "," + drpCheckIn.Text);
+
+                        file.Close();
+                    }
+
+                    // OS.Text = txt;
+
+                }
+                catch (Exception ef)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
+                        file.Close();
+                    }
+                }
+
+            
+        }
     }
 }
 
