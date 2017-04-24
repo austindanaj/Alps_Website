@@ -59,7 +59,8 @@ namespace CTBTeam
                     }
                    
                     objConn.Close();
-                    populateUsers();
+                    //     populateUsers();
+                    Response.Redirect("~/Admin");
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully added');", true);
                 }
                 catch (Exception ex)
@@ -114,7 +115,8 @@ namespace CTBTeam
                     objCmd.ExecuteNonQuery();
 
                     objConn.Close();
-                    populateProjects();
+                    // populateProjects();
+                    Response.Redirect("~/Admin");
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Project successfully added');", true);
                 }
                 catch (Exception ex)
@@ -165,7 +167,8 @@ namespace CTBTeam
                     objCmd = new OleDbCommand("UPDATE VehicleHours SET " + txtCar.Text + " =0;", objConn);
                     objCmd.ExecuteNonQuery();
                     objConn.Close();
-                    populateVehicles();
+                    // populateVehicles();
+                    Response.Redirect("~/Admin");
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Vehicle successfully added');", true);
                 }
                 catch (Exception ex)
@@ -216,7 +219,8 @@ namespace CTBTeam
                     objCmd.ExecuteNonQuery();
 
                     objConn.Close();
-                    populateProjects();
+                    // populateProjects();
+                    Response.Redirect("~/Admin");
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Project successfully removed');", true);
                 }
                 catch (Exception ex)
@@ -265,7 +269,8 @@ namespace CTBTeam
                     objCmd.ExecuteNonQuery();
 
                     objConn.Close();
-                    populateVehicles();
+                    //populateVehicles();
+                    Response.Redirect("~/Admin");
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Vehicle successfully removed');", true);
                 }
                 catch (Exception ex)
@@ -316,8 +321,8 @@ namespace CTBTeam
 
               
                     objConn.Close();
-                    populateUsers();
-
+                 //   populateUsers();
+                    Response.Redirect("~/Admin");
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully removed');", true);
                 }
                 catch (Exception ex)
