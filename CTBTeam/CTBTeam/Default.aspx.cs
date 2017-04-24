@@ -172,8 +172,11 @@ namespace CTBTeam
 
         protected void download_Phones_file(object sender, EventArgs e)
         {
-          
 
+            Response.ContentType = "Application/txt";
+            Response.AppendHeader("Content-Disposition", "attachment; filename=Phone-report.txt");
+            Response.TransmitFile(Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"));
+            Response.End();
         }
     }
 }
