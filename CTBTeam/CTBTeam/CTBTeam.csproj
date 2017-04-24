@@ -137,7 +137,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="HexGenerator.exe" />
     <Content Include="Logs\CurrentHours\Current-Hours_2-27-2017.txt" />
-    <Content Include="Logs\PhoneLog\Report.txt" />
+    <Content Include="Logs\PhoneLog\Phone-report.txt" />
     <Content Include="PhoneCheckOut.aspx" />
     <Content Include="List.aspx" />
     <Content Include="Logs\TimeLog\Time-log.txt" />

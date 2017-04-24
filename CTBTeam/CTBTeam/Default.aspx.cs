@@ -172,17 +172,8 @@ namespace CTBTeam
 
         protected void download_Phones_file(object sender, EventArgs e)
         {
-            PhoneCheckOut ph = new PhoneCheckOut();
+          
 
-            ph.ExcelExport();
-            string d = DateTime.Today.ToString("M-d-y");
-
-           
-
-            Response.ContentType = "Application/txt";
-            Response.AppendHeader("Content-Disposition", "attachment; Report.txt");
-            Response.TransmitFile(Server.MapPath("~/Report.txt"));
-            Response.End();
         }
     }
 }
