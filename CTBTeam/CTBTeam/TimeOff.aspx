@@ -37,6 +37,9 @@
                     </asp:BulletedList>
                     <br />
                     <div style="text-align: center;">
+                          <asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server"></asp:DropDownList>
+                        <br />
+                        <br />
                            <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Add Time Off" CssClass="btn btn-primary btn-lg" />
                     <br />
                     <br />

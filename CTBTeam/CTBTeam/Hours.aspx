@@ -24,8 +24,8 @@
     <br />
     <br />
         
-    <div class="row" id="loggingInfo" runat="server" visible="false">
-        <div class="col-md-6" style="text-align: center;">
+    <div class="row">
+        <div class="col-md-4" style="text-align: center;">
 
             <asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Project Hours" />
             <br />
@@ -42,7 +42,24 @@
             <asp:Button ID="btnSubmitProject" runat="server" OnClick="On_Click_Submit_Projects" Text="Submit" CssClass="btn-home" Text-Align="Center" />
 
         </div>
-        <div class="col-md-6" style="text-align: center;">
+        <div class="col-md-6">
+          
+            <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
+                CssClass="Grid"
+                AlternatingRowStyle-CssClass="alt"
+                PagerStyle-CssClass="pgr"
+                HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
+                RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
+                OnPageIndexChanging="OnPageIndexChanging1">
+            </asp:GridView>
+             
+    </div>
+        </div>
+    <br />
+    <br />
+    <br />
+    <div class="row">
+          <div class="col-md-4" style="text-align: center;">
 
             <asp:Label ID="Label4" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" />
             <br />
@@ -59,31 +76,8 @@
             <asp:Button ID="btnSubmitCar" runat="server" OnClick="On_Click_Submit_Projects" Text="Submit" CssClass="btn-home" Text-Align="Center" />
 
         </div>
-    </div>
-
-    <br />
-    <br />
-    <br />
-    <div class="row">
-
-        <div class="col-md-6">
-          
-            <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
-                CssClass="Grid"
-                AlternatingRowStyle-CssClass="alt"
-                PagerStyle-CssClass="pgr"
-                HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
-                RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
-                OnPageIndexChanging="OnPageIndexChanging1">
-            </asp:GridView>
-          
-
-        </div>
-    </div>
-    <br />
-    <br />
-
-    <div class="row">
+        
+         
         <div class="col-md-6">
       
             <asp:GridView ID="dgvCars" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
