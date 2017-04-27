@@ -45,7 +45,7 @@ namespace CTBTeam
 
                 if (!string.IsNullOrEmpty((string)Session["User"]))
                 {
-                    loggingInfo.Visible = true;
+                   
                     userName = (string)Session["User"];
                     btnSubmitCar.Visible = true;
                     btnSubmitProject.Visible = true;

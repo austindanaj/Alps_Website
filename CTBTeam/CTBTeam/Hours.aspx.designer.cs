@@ -40,15 +40,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// loggingInfo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl loggingInfo;
-        
-        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>
@@ -94,6 +85,15 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Button btnSubmitProject;
         
         /// <summary>
+        /// dgvProject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView dgvProject;
+        
+        /// <summary>
         /// Label4 control.
         /// </summary>
         /// <remarks>
@@ -137,15 +137,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSubmitCar;
-        
-        /// <summary>
-        /// dgvProject control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvProject;
         
         /// <summary>
         /// dgvCars control.

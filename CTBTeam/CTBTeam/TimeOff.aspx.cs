@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using Date = System.DateTime;
 using System.Data.OleDb;
+using System.Web.UI.WebControls;
 
 namespace CTBTeam
 {
@@ -19,15 +20,51 @@ namespace CTBTeam
         {
             if (!IsPostBack)
             {
-                
+                populateNames();
+                cldTimeOff.SelectedDate = DateTime.Now;
+                getCurrentDate();
+            }
+        }
+        public void getCurrentDate()
+        {
+            try
+            {
+                bltList.Items.Clear();
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                              "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+
+
+
+                OleDbCommand objCmd = new OleDbCommand("SELECT Emp_Name FROM TimeOff WHERE Date_Request=@value1;", objConn);
+                objCmd.Parameters.AddWithValue("@value1", DateTime.Today.ToShortDateString());
+                OleDbDataReader reader = objCmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    bltList.Items.Add(reader["Emp_Name"].ToString());
+                }
+
+                objConn.Close();
+
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Calendar Date Picked--" + ex.ToString());
+                    file.Close();
+                }
             }
         }
 
-
         protected void Calendar_SelectionChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty((string)Session["User"]))
-            {
+            
                 try
                 {
                     bltList.Items.Clear();
@@ -61,8 +98,7 @@ namespace CTBTeam
                         file.Close();
                     }
                 }
-            }
-
+            
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -79,11 +115,11 @@ namespace CTBTeam
 
 
                     OleDbCommand objCmd = new OleDbCommand("INSERT INTO TimeOff " +
-                                                            "(Alna_Num, Emp_Name, Date_Request) VALUES (@value1, @value2, @value3);", objConn);
+                                                            "(Emp_Name, Date_Request) VALUES (@value1, @value2);", objConn);
 
-                    objCmd.Parameters.AddWithValue("@value1", (int)Session["alna_num"]);
-                    objCmd.Parameters.AddWithValue("@value2", (string)Session["User"]);
-                    objCmd.Parameters.AddWithValue("@value3", cldTimeOff.SelectedDate.ToShortDateString());
+                   // objCmd.Parameters.AddWithValue("@value1", (int)Session["alna_num"]);
+                    objCmd.Parameters.AddWithValue("@value1", ddlNames.Text);
+                    objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
 
                     objCmd.ExecuteNonQuery();
                     objConn.Close();
@@ -124,7 +160,7 @@ namespace CTBTeam
 
                     OleDbCommand objCmd = new OleDbCommand("DELETE FROM TimeOff WHERE Emp_Name=@value1 AND Date_Request=@value2", objConn);
 
-                    objCmd.Parameters.AddWithValue("@value1", (string)Session["User"]);
+                    objCmd.Parameters.AddWithValue("@value1", ddlNames.Text);
                     objCmd.Parameters.AddWithValue("@value2", cldTimeOff.SelectedDate.ToShortDateString());
 
                     objCmd.ExecuteNonQuery();
@@ -150,7 +186,41 @@ namespace CTBTeam
                 }
             }
         }
+        public void populateNames()
+        {
+            try
+            {
+                ddlNames.Items.Clear();
+                
+                ddlNames.Items.Add("--Select A Name--");
+              
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                       "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
+                OleDbDataReader reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    ddlNames.Items.Add(new ListItem(reader.GetString(0)));
+                  
+                }
+                objConn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Names--" + ex.ToString());
+                    file.Close();
+                }
 
+            }
+        }
 
 
     }
