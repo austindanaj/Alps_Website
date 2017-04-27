@@ -3,10 +3,13 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <div class="row">
-
-    
+        
     <div class="col-md-6">
         <asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
+        <%-- The css you want still needs to be selected for the next two lines --%>
+        <asp:TextBox ID="searchbox" runat="server" TextMode="SingleLine" maxlength="30" tooltip="Enter what you would like to search" placeholder="Search" />
+        <asp:DropDownList ID="searchDropDown" runat="server" />
+        <asp:Button ID="searchboxbutton" runat="server" Text="Search" OnClick="On_Click_Search_DB" />
     </div>
         <div class="col-md-6" style="text-align: right;">
          
@@ -15,7 +18,7 @@
     <div>
        
         <br />
-        <asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 1/16/2017" CssClass="lbl time-title"></asp:Label>
+        <asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title"></asp:Label>
         <asp:Panel ID="Panel1" runat="server" Height="48px" Width="1536px">
             <br />
         </asp:Panel>
