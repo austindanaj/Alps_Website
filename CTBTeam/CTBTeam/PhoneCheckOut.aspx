@@ -73,7 +73,13 @@
 
                     <br />
                         <br />
-                        <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"></asp:GridView>
+                        <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"  HeaderStyle-BackColor="#000099"
+                AlternatingRowStyle-CssClass="alt"
+                PagerStyle-CssClass="pgr"
+                HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
+                RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="25"
+                OnPageIndexChanging="OnPageIndexChanging2"
+                            ></asp:GridView>
 
                     <div style="text-align: center;">
                     

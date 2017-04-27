@@ -688,6 +688,7 @@ namespace CTBTeam
 
         }
 
+        // adds 30 days in advance to the current day for selecting a check out date
         public void Period(int num)
         {
             drpFrom.Items.Clear();
@@ -702,6 +703,18 @@ namespace CTBTeam
           
            
         }
+
+        //once limit on table is met (30 List Items) it add a new page
+        protected void OnPageIndexChanging2(object sender, GridViewPageEventArgs e)
+        {
+            populateTable();
+            gvTable.PageIndex = e.NewPageIndex;
+            gvTable.DataBind();
+
+
+
+        }
+
 
     }
 }
