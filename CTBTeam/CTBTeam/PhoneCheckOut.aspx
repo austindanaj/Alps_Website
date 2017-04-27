@@ -49,6 +49,13 @@
 
       </asp:CheckBoxList>
         <br />
+        <asp:Label ID="From" runat="server" Text="From:" CssClass="lbl-os" ></asp:Label>
+        <asp:DropDownList ID="drpFrom" runat="server" CssClass="drp-phones" ></asp:DropDownList>
+        <br />
+        <asp:Label ID="To" runat="server" Text="To:" CssClass="lbl-os" ></asp:Label>
+        <asp:DropDownList ID="drpTo" runat="server" CssClass="drp-phones" ></asp:DropDownList>
+        <br />
+        <br />
         <asp:Button ID="CheckOut" runat ="server" Text="Check Out" CssClass="btn btn-primary btn-lg" OnClick="clickCheckout" ></asp:Button>
         <br />
         <br />

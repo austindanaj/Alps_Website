@@ -17,7 +17,7 @@ namespace CTBTeam
 {
     public partial class PhoneCheckOut : Page
     {
-    
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,12 +28,13 @@ namespace CTBTeam
 
                 populateDataPhones(); // Populates table with Phone Data on start up
                 populateTable(); // Populates table with other information 
+                Period(30); // Populates date of which phones will be checked out (30 days from current day)
             }
 
         }
 
 
-       
+
         protected void populateDataPerson()
         {
             //Method for the intial population of person 
@@ -73,9 +74,9 @@ namespace CTBTeam
 
         }
 
-       
+
         protected void populateDataPhones()
-        { 
+        {
             //Method for the Intial population of phones
 
             drpOs.Items.Clear(); // Clears drop down list 
@@ -114,9 +115,11 @@ namespace CTBTeam
             }
         }
 
-       
+
         public void pop2()
-        { 
+        {
+
+            // Gets all phones that are checked in 
             // Populates phones after Updating the database
 
             try
@@ -192,9 +195,9 @@ namespace CTBTeam
         }
 
 
-       
+
         public void popV()
-        { 
+        {
             /*
          * Connection to vehicles in accdb
          * Populates Vehicle drop down list
@@ -239,10 +242,10 @@ namespace CTBTeam
 
         protected void onSelec(object sender, EventArgs e)
         {
-        /*
-         * Button Listener to populate phone drop down list
-         * 
-         */
+            /*
+             * Button Listener to populate phone drop down list
+             * 
+             */
 
             pop2();
 
@@ -251,10 +254,10 @@ namespace CTBTeam
 
         protected void onSelectPhone(object sender, EventArgs e)
         {
-        /*
-        * Button Listener to populate person's drop down list upon selecting a phone
-        * 
-        */
+            /*
+            * Button Listener to populate person's drop down list upon selecting a phone
+            * 
+            */
             populateDataPerson();
         }
 
@@ -282,7 +285,7 @@ namespace CTBTeam
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Available, Car, Person, Purpose FROM PhoneCheckout ORDER BY Model", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Available, Car, Person, Purpose, Period FROM PhoneCheckout ORDER BY Model", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -312,11 +315,11 @@ namespace CTBTeam
 
         public void clickCheckout(object sender, EventArgs e)
         {
-         /*
-          * Button listener for cheking out a phone
-          * temp is used to get the selected value of the check list boxes
-          * 
-          * */
+            /*
+             * Button listener for cheking out a phone
+             * temp is used to get the selected value of the check list boxes
+             * 
+             * */
 
             String temp = "";
 
@@ -381,11 +384,12 @@ namespace CTBTeam
 
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
-                    OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
+                    OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp, Period=@period  WHERE Model=@model", objConn);
                     objCmdSelect.Parameters.AddWithValue("@name", drpPerson.Text);
                     objCmdSelect.Parameters.AddWithValue("@car", Vehicle.Text);
                     objCmdSelect.Parameters.AddWithValue("@bool", false);
                     objCmdSelect.Parameters.AddWithValue("@temp", temp);
+                    objCmdSelect.Parameters.AddWithValue("@period", drpFrom.Text + " - " + drpTo.Text);
                     objCmdSelect.Parameters.AddWithValue("@model", drpPhone.SelectedItem.Text);
                     objCmdSelect.ExecuteNonQuery();
                     objConn.Close();
@@ -448,7 +452,7 @@ namespace CTBTeam
                 }
 
 
-                //Updates the drop down list for the phone that can be checkout
+                //Updates the drop down list for the phone that can be checked out
                 try
                 {
                     drpCheckIn.Items.Clear();
@@ -491,11 +495,11 @@ namespace CTBTeam
         public void clickCheckin(object sender, EventArgs e)
         {
 
-        /* Button listener for the checked in 
-         * 
-         * 
-         * 
-         * */
+            /* Button listener for the checked in 
+             * 
+             * 
+             * 
+             * */
             String temp = "";
 
 
@@ -506,11 +510,12 @@ namespace CTBTeam
 
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp WHERE Model=@model", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp, Period=@period WHERE Model=@model", objConn);
                 objCmdSelect.Parameters.AddWithValue("@name", temp);
                 objCmdSelect.Parameters.AddWithValue("@car", temp);
                 objCmdSelect.Parameters.AddWithValue("@bool", true);
                 objCmdSelect.Parameters.AddWithValue("@temp", temp);
+                objCmdSelect.Parameters.AddWithValue("@period", temp);
                 objCmdSelect.Parameters.AddWithValue("@model", drpCheckIn.SelectedItem.Text);
                 objCmdSelect.ExecuteNonQuery();
                 objConn.Close();
@@ -610,23 +615,23 @@ namespace CTBTeam
             }
 
         }
-        
-       public void saveOut()
+
+        public void saveOut()
         {
             /*
              * Saves information when CheckOut button is clicked
              * 
              * */
-          
+
             try
             {
                 /** Now append to file **/
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true))
                 {
 
-                    file.WriteLine("Checked Out," + DateTime.Now.ToShortDateString() + " " + ","+"By: "+ drpPerson.Text + "," + "Vehicle: " +Vehicle.Text + "," + drpPhone.Text );
+                    file.WriteLine("Checked Out," + DateTime.Now.ToShortDateString() + " " + "," + "By: " + drpPerson.Text + "," + "Vehicle: " + Vehicle.Text + "," + drpPhone.Text);
 
-                   file.Close();
+                    file.Close();
                 }
 
             }
@@ -645,7 +650,7 @@ namespace CTBTeam
 
         }
 
-      public void saveIn()
+        public void saveIn()
         {
 
             /*
@@ -655,33 +660,49 @@ namespace CTBTeam
 
             try
             {
-                    /** Now append to file **/
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true))
-                    {
-
-                        file.WriteLine("Checked In," + DateTime.Now.ToShortDateString() + " "  + "," + drpCheckIn.Text);
-
-                        file.Close();
-                    }
-
-                    // OS.Text = txt;
-
-                }
-                catch (Exception ef)
+                /** Now append to file **/
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true))
                 {
-                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                    {
-                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                    }
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                    {
-                        file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
-                        file.Close();
-                    }
+
+                    file.WriteLine("Checked In," + DateTime.Now.ToShortDateString() + " " + "," + drpCheckIn.Text);
+
+                    file.Close();
                 }
 
-            
+                // OS.Text = txt;
+
+            }
+            catch (Exception ef)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + ef.ToString());
+                    file.Close();
+                }
+            }
+
+
         }
+
+        public void Period(int num)
+        {
+            drpFrom.Items.Clear();
+            drpTo.Items.Clear();
+
+             for(DateTime d = DateTime.Now; d <= DateTime.Now.AddDays(num); d = d.AddDays(1))
+             {
+                 drpFrom.Items.Add(new ListItem(d.ToShortDateString()));
+                 drpTo.Items.Add(new ListItem(d.ToShortDateString()));
+             }
+
+          
+           
+        }
+
     }
 }
 
