@@ -1,1 +1,7 @@
-﻿
+﻿Checked Out,4/27/2017 ,By: Anthony Hewins,Vehicle: D2JCI_VOLT,Big Nexus
+Checked In,4/27/2017 ,Big Nexus
+Checked Out,4/27/2017 ,By: Anthony Hewins,Vehicle: D2LC_CRUZE,Galaxy S5-1
+Checked In,4/27/2017 ,Galaxy S5-1
+Checked Out,4/27/2017 ,By: Adrian Sandoval-Vargas,Vehicle: G2KCA_BOLT_AV,Big Nexus
+Checked In,4/27/2017 ,Big Nexus
+Checked Out,4/27/2017 ,By: Anthony Hewins,Vehicle: D2JCI_VOLT,Galaxy S5-1

@@ -346,6 +346,23 @@ namespace CTBTeam
             
         }   
         
+        //Searches the database to match the pattern given by the
+        //searchbox element in Hours.aspx.
+        protected void On_Click_Search_DB(object sender, EventArgs e) {
+            String s = searchbox.Text;
+            
+            if (s is null || s.Equals("")) {
+                //Some sort of exception or do nothing condition to correct the user
+            } else {
+                /*
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                        "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objconn = new OleDbConnection(connectionString);
+                OleDbCommand searchDbCommand = new OleDbCommand("Select * from ");
+                */
+            }
+        }
+
         //=======================================================
      
         //=======================================================

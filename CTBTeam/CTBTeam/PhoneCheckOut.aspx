@@ -49,6 +49,13 @@
 
       </asp:CheckBoxList>
         <br />
+        <asp:Label ID="From" runat="server" Text="From:" CssClass="lbl-os" ></asp:Label>
+        <asp:DropDownList ID="drpFrom" runat="server" CssClass="drp-phones" ></asp:DropDownList>
+        <br />
+        <asp:Label ID="To" runat="server" Text="To:" CssClass="lbl-os" ></asp:Label>
+        <asp:DropDownList ID="drpTo" runat="server" CssClass="drp-phones" ></asp:DropDownList>
+        <br />
+        <br />
         <asp:Button ID="CheckOut" runat ="server" Text="Check Out" CssClass="btn btn-primary btn-lg" OnClick="clickCheckout" ></asp:Button>
         <br />
         <br />
@@ -66,7 +73,13 @@
 
                     <br />
                         <br />
-                        <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"></asp:GridView>
+                        <asp:GridView ID="gvTable" runat="server"  CssClass="gridview"  HeaderStyle-BackColor="#000099"
+                AlternatingRowStyle-CssClass="alt"
+                PagerStyle-CssClass="pgr"
+                HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
+                RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="25"
+                OnPageIndexChanging="OnPageIndexChanging2"
+                            ></asp:GridView>
 
                     <div style="text-align: center;">
                     
