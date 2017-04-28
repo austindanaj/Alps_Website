@@ -3,14 +3,14 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <div class="form-group">
-       
+
         <br />
-        
+
         <br />
 
         <div class="row">
             <div class="col-md-6">
-               
+
                 <asp:Calendar ID="cldTimeOff" runat="server" BackColor="White" BorderColor="White" BorderWidth="1px" Font-Names="Verdana" Font-Size="9pt" ForeColor="Black" Height="388px" NextPrevFormat="FullMonth" Width="593px" OnSelectionChanged="Calendar_SelectionChanged">
                     <DayHeaderStyle Font-Bold="True" Font-Size="8pt" />
                     <NextPrevStyle Font-Bold="True" Font-Size="8pt" ForeColor="#333333" VerticalAlign="Bottom" />
@@ -21,13 +21,13 @@
                 </asp:Calendar>
                 <br />
                 <br />
-                    <div style="text-align: left;">
+                <div style="text-align: left;">
                     <asp:BulletedList ID="bltList" runat="server" BulletStyle="Square" Font-Size="14pt" ForeColor="#1A5276" CssClass="blt-default"></asp:BulletedList>
-                    </div>
-                    <br />
-                    <br />
-                   
                 </div>
+                <br />
+                <br />
+
+            </div>
             <div class="col-md-6">
                 <div class="form-gr">
                     <asp:BulletedList ID="bulletList" runat="server" CssClass="bullet-list" BulletStyle="Numbered">
@@ -37,23 +37,23 @@
                     </asp:BulletedList>
                     <br />
                     <div style="text-align: center;">
-                          <asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server"></asp:DropDownList>
                         <br />
                         <br />
-                           <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Add Time Off" CssClass="btn btn-primary btn-lg" />
-                    <br />
-                    <br />
-                          <asp:Button ID="Button3" runat="server" OnClick="Button2_Click" Text="Remove Time Off" CssClass="btn btn-primary btn-lg" />
+                        <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Add Time Off" CssClass="btn btn-primary btn-lg" />
+                        <br />
+                        <br />
+                        <asp:Button ID="Button3" runat="server" OnClick="Button2_Click" Text="Remove Time Off" CssClass="btn btn-primary btn-lg" />
                     </div>
-                 
+
                 </div>
             </div>
         </div>
-     
+
     </div>
     <div>
-               <asp:Image ID="Image1" runat="server" ImageUrl="~/2017Schedule.PNG" ImageAlign="Middle" />
+        <asp:Image ID="Image1" runat="server" ImageUrl="~/2017Schedule.PNG" ImageAlign="Middle" />
     </div>
- 
+
 
 </asp:Content>

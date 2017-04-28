@@ -37,8 +37,8 @@ namespace CTBTeam
 
 
 
-                OleDbCommand objCmd = new OleDbCommand("SELECT Emp_Name FROM TimeOff WHERE Date_Request=@value1;", objConn);
-                objCmd.Parameters.AddWithValue("@value1", DateTime.Today.ToShortDateString());
+                OleDbCommand objCmd = new OleDbCommand("SELECT Emp_Name FROM TimeOff WHERE Date_Request=@date;", objConn);
+                objCmd.Parameters.AddWithValue("@date", DateTime.Today.ToShortDateString());
                 OleDbDataReader reader = objCmd.ExecuteReader();
                 while (reader.Read())
                 {
