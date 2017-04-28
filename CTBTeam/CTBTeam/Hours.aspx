@@ -14,7 +14,7 @@
     <div>
 
         <br />
-        <asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 1/16/2017" CssClass="lbl time-title"></asp:Label>
+        <asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title"></asp:Label>
         <asp:Panel ID="Panel1" runat="server" Height="48px" Width="1536px">
             <br />
         </asp:Panel>
