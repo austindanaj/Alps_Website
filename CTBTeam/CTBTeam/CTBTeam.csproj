@@ -86,6 +86,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
@@ -214,7 +215,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccessConnection.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="PhoneCheckOut.aspx.cs">
       <DependentUpon>PhoneCheckOut.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

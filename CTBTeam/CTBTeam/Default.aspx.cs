@@ -36,6 +36,7 @@ namespace CTBTeam
 
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt")))
                 {
+                    
 
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -135,16 +136,7 @@ namespace CTBTeam
 
             catch (Exception ex)
             {
-
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                }
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                {
-                    file.WriteLine(Date.Today.ToString() + "--Create Current Hours--" + ex.ToString());
-                    file.Close();
-                }
+                Log.getInstance.WriteToLog("Create Current Project Hours", ex, Server);
             }
             try
             {
@@ -155,16 +147,8 @@ namespace CTBTeam
             }
                 catch (Exception ex)
             {
-                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                    {
-                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                    }
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                    {
-                        file.WriteLine(Date.Today.ToString() + "--Download Current Hours--" + ex.ToString());
-                        file.Close();
-                    }
-                }
+                Log.getInstance.WriteToLog("Download Database", ex, Server);
+            }
         }
              
 
