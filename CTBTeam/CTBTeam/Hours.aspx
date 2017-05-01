@@ -26,7 +26,50 @@
     <br />
     <br />
     <br />
+    <div class="row">
+        <div class="col-md-4" style="text-align: center;">
 
+            <asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
+            <br />
+            <br />
+            <asp:DropDownList ID="ddlAllNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNamesPercent" AutoPostBack="true"></asp:DropDownList>
+            <br />
+            <br />
+            <asp:DropDownList ID="ddlAllProjects" CssClass="drp-home" runat="server"></asp:DropDownList>
+            <br />
+            <br />
+             <asp:DropDownList ID="ddlPercentage" CssClass="drp-home" runat="server"></asp:DropDownList>
+            <br />
+            <br />
+            <asp:Button ID="Button1" runat="server" OnClick="On_Click_Submit_Percent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+
+        </div>
+        <div class="col-md-6">
+                <asp:Chart ID="chartPercent" runat="server" BackColor="0, 0, 64" BackGradientStyle="LeftRight"
+                BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
+                Width="380px" BorderlineColor="64, 0, 64">
+                <Titles>
+                    <asp:Title ShadowOffset="10" Name="Items" />
+                </Titles>
+                <Legends>
+                    <asp:Legend Alignment="Center" Docking="Bottom" IsTextAutoFit="False" Name="Default"
+                        LegendStyle="Row" />
+                </Legends>
+                <Series>
+                    <asp:Series Name="Default" />
+                </Series>
+                <ChartAreas>
+                    <asp:ChartArea Name="ChartArea1" BorderWidth="0" />
+                </ChartAreas>
+            </asp:Chart>
+
+          
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
     <div class="row">
         <div class="col-md-4" style="text-align: center;">
 
@@ -46,8 +89,7 @@
 
         </div>
         <div class="col-md-6">
-
-            <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
+              <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
                 CssClass="Grid"
                 AlternatingRowStyle-CssClass="alt"
                 PagerStyle-CssClass="pgr"
@@ -55,7 +97,7 @@
                 RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
                 OnPageIndexChanging="OnPageIndexChanging1">
             </asp:GridView>
-
+        
         </div>
     </div>
     <br />

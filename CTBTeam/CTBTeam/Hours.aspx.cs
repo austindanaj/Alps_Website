@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Web.UI.DataVisualization.Charting;
 
 namespace CTBTeam
 {
@@ -33,6 +34,7 @@ namespace CTBTeam
                 populateNames();
                 populateDataCars();
                 populateDataProject();
+                populateDataPercentage();
                
                 if (datechange())
                 {
@@ -256,7 +258,7 @@ namespace CTBTeam
                         if (Date.Today.AddDays(-6) > Date.Parse(date))
                         {
                             DateTime dt = DateTime.Now;
-                            while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
+                          
                             file.Write(dt.ToShortDateString());
 
 
@@ -434,6 +436,72 @@ namespace CTBTeam
                 populateDataProject();
             }
         }
+        protected void On_Click_Submit_Percent(object sender, EventArgs e)
+        {
+            if (ddlNamesCar.Text == "--Select A Name--")
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("alert('");
+                sb.Append("Please Select A Name");
+                sb.Append("');");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+            }
+            else if (ddlCars.Text == "--Select A Project--")
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("alert('");
+                sb.Append("Please Select A Project");
+                sb.Append("');");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString(), true);
+            }
+            else
+            {
+                userName = (string)Session["User"];
+                if (userName == null)
+                {
+                    ClientScript.RegisterClientScriptBlock(this.GetType(), "myalert", "alert('Error: Please Log in first before submitting!');", true);
+                    return;
+                }
+                try
+                {
+                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                        "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+
+                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    objConn.Open();
+
+
+
+
+                    OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
+                                                           "SET " + ddlCars.Text + "=@value1 " +
+                                                           "WHERE Emp_Name=@value2", objConn);
+                    objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtHoursCars.Text));
+                    objCmdCars.Parameters.AddWithValue("@value2", ddlNamesCar.Text);
+
+                    objCmdCars.ExecuteNonQuery();
+
+                    objConn.Close();
+
+                    // reset();
+                }
+                catch (Exception ex)
+                {
+                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    }
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                    {
+                        file.WriteLine(Date.Today.ToString() + "--Hours Submit--" + ex.ToString());
+                        file.Close();
+                    }
+                }
+
+                populateDataCars();
+                // populateDataProject();
+            }
+        }
         protected void On_Click_Submit_Cars(object sender, EventArgs e)
         {
             if (ddlNamesCar.Text == "--Select A Name--")
@@ -500,7 +568,10 @@ namespace CTBTeam
                // populateDataProject();
             }
         }
-
+        protected void didSelectNamesPercent(object sender, EventArgs e)
+        {
+            populateListProjects();
+        }
         protected void didSelectNameProject(object sender, EventArgs e)
         {
             populateListProjects();
@@ -515,19 +586,30 @@ namespace CTBTeam
             {
                 ddlNamesProject.Items.Clear();
                 ddlNamesCar.Items.Clear();
+                ddlAllNames.Items.Clear();
                 ddlNamesProject.Items.Add("--Select A Name--");
                 ddlNamesCar.Items.Add("--Select A Name--");
+                ddlAllNames.Items.Add("--Select A Name--");
                 String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                        "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
+                objCmdSelect.Parameters.AddWithValue("@bool", false);
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
                 while (reader.Read())
                 {
                     ddlNamesProject.Items.Add(new ListItem(reader.GetString(0)));
                     ddlNamesCar.Items.Add(new ListItem(reader.GetString(0)));
                 }
+                objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);        
+                reader = objCmdSelect.ExecuteReader();
+                while (reader.Read())
+                {
+                    ddlAllNames.Items.Add(new ListItem(reader.GetString(0)));
+                }
+
+
                 objConn.Close();
             }
             catch (Exception ex)
@@ -538,7 +620,7 @@ namespace CTBTeam
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Populate Vehicles--" + ex.ToString());
+                    file.WriteLine(Date.Today.ToString() + "--Populate Names--" + ex.ToString());
                     file.Close();
                 }
 
@@ -613,7 +695,124 @@ namespace CTBTeam
             }
         }
 
-       
+       public void populateDataPercentage()
+        {
+            try { 
+            
+                
+                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+                                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+                OleDbConnection objConn = new OleDbConnection(connectionString);
+                objConn.Open();
+                OleDbCommand objCount = new OleDbCommand("SELECT DISTINCT Emp_Name FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
+                objCount.Parameters.AddWithValue("@date", DateTime.Parse(date));
+                OleDbDataReader readerCount = objCount.ExecuteReader();
+                int empCount = 0;
+                while (readerCount.Read())
+                {
+                    empCount++;
+                }
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT * FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
+                objCmdSelect.Parameters.AddWithValue("@date", DateTime.Parse(date));
+                OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+                objAdapter.SelectCommand = objCmdSelect;
+                DataSet objDataSet = new DataSet();
+                objAdapter.Fill(objDataSet);
+                objDataSet.Tables[0].Columns.RemoveAt(0);
+
+                DataTable chartData = objDataSet.Tables[0];
+                string[] XPointMember = { "A", "B", "C", "D" };
+                double[] YPointMember = { 0, 0, 0, 0 };
+                int[] numberPeople = { 0, 0, 0, 0 };
+                double value = 0;
+                double runningSum = 0;
+                for(int i = 0; i < chartData.Rows.Count; i++)
+                {
+                    if (Convert.ToBoolean(chartData.Rows[i]["Full_Time"])) 
+                    {
+                        value = (Convert.ToDouble(chartData.Rows[i]["Percentage"])) / 100;
+                    }
+                    else
+                    {
+                        value = (Convert.ToDouble(chartData.Rows[i]["Percentage"]) / 2) / 100;
+                    }
+                    value *= 40;
+                    runningSum += value;
+                    switch (chartData.Rows[i]["Category"].ToString())
+                    {
+                        
+                        case "A":
+                            YPointMember[0] += value; 
+                            
+                            break;
+                        case "B":
+                            YPointMember[1] += value;
+                           
+                            break;
+                        case "C":
+                            YPointMember[2] += value;
+                          
+                            break;
+                        case "D":
+                            YPointMember[3] += value; 
+                           
+                            break;
+                    }
+                   
+                    
+                }
+                YPointMember[0] = (YPointMember[0] / runningSum);
+                YPointMember[1] = (YPointMember[1] / runningSum);
+                YPointMember[2] = (YPointMember[2] / runningSum);
+                YPointMember[3] = (YPointMember[3] / runningSum);
+
+
+                chartPercent.Series[0].Points.DataBindXY(XPointMember, YPointMember);
+                chartPercent.Series[0].BorderWidth = 10;
+                chartPercent.Series[0].ChartType = SeriesChartType.Pie;
+
+                foreach (Series charts in chartPercent.Series)
+                {
+                    foreach(DataPoint point in charts.Points)
+                    {
+                        switch (point.AxisLabel)
+                        {
+                            case "A":
+                                point.Color = System.Drawing.Color.Aqua;
+                                break;
+                            case "B":
+                                point.Color = System.Drawing.Color.SpringGreen;
+                                break;
+                            case "C":
+                                point.Color = System.Drawing.Color.Salmon;
+                                break;
+                            case "D":
+                                point.Color = System.Drawing.Color.Violet;
+                                break;
+                        }
+                        point.Label = string.Format("{0:P} - {1}", point.YValues[0], point.AxisLabel);
+                   
+                    }
+                }
+
+                objConn.Close();
+                
+                // dgvCars.HeaderRow.Cells[0].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Populate Percent--" + ex.ToString());
+                    file.Close();
+                }
+
+            }
+        }
         
                //==================
 
