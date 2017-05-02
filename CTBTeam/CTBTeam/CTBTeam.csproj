@@ -251,7 +251,7 @@
       <DependentUpon>Hours.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Serialization\Class1.cs" />
+    <Compile Include="Serialization\HoursFile.cs" />
     <Compile Include="TimeOff.aspx.cs">
       <DependentUpon>TimeOff.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
