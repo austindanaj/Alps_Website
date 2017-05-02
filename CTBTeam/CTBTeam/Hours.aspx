@@ -1,7 +1,16 @@
 ﻿<%@ Page Title="Hours" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Hours.aspx.cs" Inherits="CTBTeam.Hours" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
+          <style type="text/css">
+        body {
+            background: url('Gradient.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+           
+        }
+    </style>
     <div class="row">
 
 
@@ -35,7 +44,7 @@
             <asp:DropDownList ID="ddlAllNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNamesPercent" AutoPostBack="true"></asp:DropDownList>
             <br />
             <br />
-            <asp:DropDownList ID="ddlAllProjects" CssClass="drp-home" runat="server"></asp:DropDownList>
+            <asp:DropDownList ID="ddlAllProjects" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectProjectsPercent" AutoPostBack="true"></asp:DropDownList>
             <br />
             <br />
              <asp:DropDownList ID="ddlPercentage" CssClass="drp-home" runat="server"></asp:DropDownList>
@@ -45,21 +54,23 @@
 
         </div>
         <div class="col-md-6">
-                <asp:Chart ID="chartPercent" runat="server" BackColor="0, 0, 64" BackGradientStyle="LeftRight"
+                <asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
                 BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
-                Width="380px" BorderlineColor="64, 0, 64">
+                Width="700px" BorderlineColor="64, 0, 64" >
                 <Titles>
-                    <asp:Title ShadowOffset="10" Name="Items" />
+                    <asp:Title ShadowOffset="10" Name="Project Percent" />
                 </Titles>
                 <Legends>
-                    <asp:Legend Alignment="Center" Docking="Bottom" IsTextAutoFit="False" Name="Default"
-                        LegendStyle="Row" />
+                    <asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
+                         BackColor="Transparent" ForeColor="White" LegendStyle="Column"  />
                 </Legends>
                 <Series>
-                    <asp:Series Name="Default" />
+                    <asp:Series Name="Default" 
+                        />
                 </Series>
                 <ChartAreas>
-                    <asp:ChartArea Name="ChartArea1" BorderWidth="0" />
+                    <asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
+                   
                 </ChartAreas>
             </asp:Chart>
 
