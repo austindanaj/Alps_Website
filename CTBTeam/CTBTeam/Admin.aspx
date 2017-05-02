@@ -22,7 +22,8 @@
             <asp:Button ID="btnName" runat="server" OnClick="User_Clicked" Text="Add User"></asp:Button>
             <br />
             <asp:CheckBox ID="chkAddToVehcileHours" runat="server" Text="Add to Vehicle Hours" />
-            <br />
+               <br />
+             <asp:CheckBox ID="chkPartTime" runat="server" Text="Part Time" />
             <br />
             <asp:Label ID="lblNR" runat="server" Text="Remove User" CssClass="username"></asp:Label>
             <br />
@@ -43,7 +44,7 @@
         <div class="col-md-4">
             <asp:Label ID="lblProject" runat="server" Text="Add Project" CssClass="username"></asp:Label>
             <br />
-            <asp:TextBox ID="txtProject" runat="server" placeholder="Project Name"></asp:TextBox>
+            <asp:TextBox ID="txtProject" runat="server" placeholder="Project Name, Category"></asp:TextBox>
 
             <asp:Button ID="btnProject" runat="server" OnClick="Project_Clicked" Text="Add Project"></asp:Button>
             <br />

@@ -43,8 +43,9 @@ namespace CTBTeam
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
                     
-                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Emp_Name) VALUES (@value1);", objConn);
-                    objCmd.Parameters.AddWithValue("@value1", txtName.Text);                  
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.Parameters.AddWithValue("@value2", !chkPartTime.Checked);
                     objCmd.ExecuteNonQuery();
 
                     objCmd = new OleDbCommand("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", objConn);
@@ -93,17 +94,21 @@ namespace CTBTeam
 
                 try
                 {
+                    string[] array = txtProject.Text.Split(',');
                     if (txtProject.Text.Contains(" "))
                     {
-                        txtProject.Text = txtProject.Text.Replace(" ", "_");
+                        array[0] = array[0].Replace(" ", "_");
                     }
+                    array[1] = array[1].Replace(" ", "");
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
 
-                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (PROJ_NAME) VALUES (@value1);", objConn);
-                    objCmd.Parameters.AddWithValue("@value1", txtProject.Text);
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (PROJ_NAME, PROJ_CATEGORY) VALUES (@value1, @value2);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", array[0]);
+                    objCmd.Parameters.AddWithValue("@value2", array[1]);
+
                     objCmd.ExecuteNonQuery();
 
                     objCmd = new OleDbCommand("ALTER TABLE ProjectHours ADD " + txtProject.Text + " number;", objConn);
