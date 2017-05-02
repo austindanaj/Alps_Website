@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
+using HoursControl;
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Text.RegularExpressions;
@@ -22,8 +22,8 @@ namespace CTBTeam
 
      
         string userName;
-      //  int[][] fileLineNumber;
-        string date = "";     
+        string date = "";
+        HoursManagement h;
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -64,43 +64,20 @@ namespace CTBTeam
         /**
          * Get the Monday of the current week 
          **/
-        public void getDate()
-        {/*
-            ddlChangeDate.Items.Clear();
-            ddlChangeDate.Items.Add(new ListItem("--Select A Date--"));
-            */
+        public void getDate() {
+            //Hoursfile h is opened as a property for the class
+            h = HoursManagement.open();
 
-            /** Read contents of file into array **/
+            //Makes sure the date is a Monday; if it isn't it needs to be updated. (Sunday counts as last week)
+            while (h.date.DayOfWeek != DayOfWeek.Monday)
+                h.date.AddDays(-1);
+            h.save();
+            date = h.date.Month + @"/" + h.date.Day + @"/" + h.date.Year;
+            lblWeekOf.Text = "Week Of: " + date;
+            /* The old way of doing it
             string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
             date = arrLine[arrLine.Length - 1];
-            /** Get the last line in file, (thats where the current monday of the week is saved) **/
-            /*
-          
-            DateTime previous = DateTime.Now;
-            ddlChangeDate.Items.Add(new ListItem(DateTime.Parse(arrLine[arrLine.Length - 1]).ToShortDateString()));
-            DateTime time = DateTime.Now;
-            int count = 0;
-            for (int i = arrLine.Length - 2; i >= 0; i--)
-            {
-                if (!arrLine[i].Equals("")) { 
-                    if (DateTime.TryParse(arrLine[i].Substring(0, arrLine[i].IndexOf(',')), out time))
-                    {
-                        if (!time.Equals(previous))
-                        {
-                            previous = time;
-                            count++;
-                            ddlChangeDate.Items.Add(new ListItem(time.ToShortDateString()));
-                            if (count == 4)
-                            {
-                                break;
-                            }
-                        }
-                        }
-                    }
-                }
-            */
-            /** Set label **/
-            lblWeekOf.Text = "Week Of: " + date;
+            lblWeekOf.Text = "Week Of: " + date;*/
         }
 
         /**
@@ -112,7 +89,7 @@ namespace CTBTeam
         {
             try
             {
-                /** If the date from file, more than a week old **/
+                /** If the date from file is more than a week old **/
                 if (Date.Today.AddDays(-6) > Date.Parse(lblWeekOf.Text.Replace("Week Of: ", "")))
                 {                    
                    /**
@@ -123,8 +100,7 @@ namespace CTBTeam
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
 
-
-
+                    
 
                     string projectList = "";      /** List of projects **/
                     int projectCount = 0;         /** Count of projects **/
@@ -173,14 +149,9 @@ namespace CTBTeam
                         }
                         
                     }
-                    /** Get the contents of file **/
-                    string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
 
-                    /** Replace the last line (the date of the previous week with the header row ) also appending the previous week**/
-                    arrLine[arrLine.Length - 1] = Date.Parse(date).ToShortDateString() + "," + headerRow;
-
-                    /** Write array to file, replacing contents with it (basically appending, but need to replace all to replace the last line **/
-                    System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), arrLine);
+                    //Since it's a new week, we need a new hours file to be created on the stack
+                    this.h = new HoursManagement(this.h);
 
                     /** Now append to file **/
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true))
