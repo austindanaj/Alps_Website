@@ -18,6 +18,20 @@ Frankie,0,0,0,0,0,0,
 Levi,0,0,0,0,0,0,
 Seth,0,0,0,0,0,0,
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 4/10/2017,Emp_Name,Project_B,Thermostat,Global_A,Radar,IR_Sensor,
 Adrian Sandoval-Vargas,0,0,0,0,
 Anthony Hewins,0,0,0,0,
@@ -114,4 +128,95 @@ Levi Hellebuyck,0,0,0,0,0,0,0,0,
 Seth Logan,0,0,0,0,0,0,0,0,
 Zarif Ghazi,0,0,0,0,0,0,0,0,
 
-5/1/2017
+5/1/2017Adrian Sandoval-Vargas,0,0,0,0,
+Anthony Hewins,0,0,0,0,
+Austin Danaj,0,0,0,0,
+Damien Galloway,0,0,0,0,
+Daniel Vega,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,
+Frank Shmaon,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,
+Seth Logan,0,0,0,0,
+Zarif Ghazi,0,0,0,0,
+
+4/17/2017,Emp_Name,Project_B,Thermostat,Radar,IR_Sensor,Global_A,
+Adrian Sandoval-Vargas,0,0,0,0,0,0,0,0,
+Anthony Hewins,0,0,0,0,0,0,0,0,
+Austin Danaj,0,0,0,0,0,0,0,0,
+Damien Galloway,0,0,0,0,0,0,0,0,
+Daniel Vega,0,0,0,0,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,0,0,0,0,
+Frank Shmaon,0,0,0,0,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,0,0,0,0,
+Seth Logan,0,0,0,0,0,0,0,0,
+Zarif Ghazi,0,0,0,0,0,0,0,0,
+
+5/1/2017Adrian Sandoval-Vargas,0,0,0,0,
+Anthony Hewins,0,0,0,0,
+Austin Danaj,0,0,0,0,
+Damien Galloway,0,0,0,0,
+Daniel Vega,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,
+Frank Shmaon,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,
+Seth Logan,0,0,0,0,
+Zarif Ghazi,0,0,0,0,
+
+4/17/2017,Emp_Name,Project_B,Thermostat,Radar,IR_Sensor,Global_A,
+Adrian Sandoval-Vargas,0,0,0,0,0,0,0,0,
+Anthony Hewins,0,0,0,0,0,0,0,0,
+Austin Danaj,0,0,0,0,0,0,0,0,
+Damien Galloway,0,0,0,0,0,0,0,0,
+Daniel Vega,0,0,0,0,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,0,0,0,0,
+Frank Shmaon,0,0,0,0,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,0,0,0,0,
+Seth Logan,0,0,0,0,0,0,0,0,
+Zarif Ghazi,0,0,0,0,0,0,0,0,
+
+5/1/2017Adrian Sandoval-Vargas,0,0,0,0,
+Anthony Hewins,0,0,0,0,
+Austin Danaj,0,0,0,0,
+Damien Galloway,0,0,0,0,
+Daniel Vega,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,
+Frank Shmaon,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,
+Seth Logan,0,0,0,0,
+Zarif Ghazi,0,0,0,0,
+
+4/18/2017,Emp_Name,Project_B,Thermostat,Radar,IR_Sensor,Global_A,
+Adrian Sandoval-Vargas,0,0,0,0,0,0,0,0,
+Anthony Hewins,0,0,0,0,0,0,0,0,
+Austin Danaj,0,0,0,0,0,0,0,0,
+Damien Galloway,0,0,0,0,0,0,0,0,
+Daniel Vega,0,0,0,0,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,0,0,0,0,
+Frank Shmaon,0,0,0,0,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,0,0,0,0,
+Seth Logan,0,0,0,0,0,0,0,0,
+Zarif Ghazi,0,0,0,0,0,0,0,0,
+
+Adrian Sandoval-Vargas,0,0,0,0,
+Anthony Hewins,0,0,0,0,
+Austin Danaj,0,0,0,0,
+Damien Galloway,0,0,0,0,
+Daniel Vega,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,
+Frank Shmaon,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,
+Seth Logan,0,0,0,0,
+Zarif Ghazi,0,0,0,0,
+
+4/18/2017,Emp_Name,Project_B,Thermostat,Radar,IR_Sensor,Global_A,
+Adrian Sandoval-Vargas,0,0,0,0,0,0,0,0,
+Anthony Hewins,0,0,0,0,0,0,0,0,
+Austin Danaj,0,0,0,0,0,0,0,0,
+Damien Galloway,0,0,0,0,0,0,0,0,
+Daniel Vega,0,0,0,0,0,0,0,0,
+Francesco Parrinelio,0,0,0,0,0,0,0,0,
+Frank Shmaon,0,0,0,0,0,0,0,0,
+Levi Hellebuyck,0,0,0,0,0,0,0,0,
+Seth Logan,0,0,0,0,0,0,0,0,
+Zarif Ghazi,0,0,0,0,0,0,0,0,
+

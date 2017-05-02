@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Web.UI.WebControls;
 
 namespace HoursControl {
     [Serializable]
@@ -126,33 +127,39 @@ namespace HoursControl {
         public HoursFile projectHours;
         public HoursFile vehicleHours;
         public DateTime date;
-        public readonly static string PATH = @"C:\Users\alna173017\Desktop\hours.daddy"; //@"~/hours.daddy";
+        public HoursManagement previous;
+        
+        public static string PATH = @"~/Serialization/hours.daddy";
+            //@"C:\Users\alna173017\Desktop\hours.daddy"; 
 
         public HoursManagement() {
             this.projectHours = new HoursFile();
             this.vehicleHours = new HoursFile();
             this.date = DateTime.Today;
+            this.previous = null;
         }
 
         public HoursManagement(HoursManagement h) {
             this.projectHours = h.projectHours;
             this.vehicleHours = h.vehicleHours;
             this.date = DateTime.Today;
+            this.previous = h;
         }
 
-        public void save() {
-            Stream s = File.OpenWrite(PATH);
+        public void save(string newPath) {
+           // bool test = File.Exists(PATH);
+            Stream s = File.OpenWrite(newPath);
             new BinaryFormatter().Serialize(s, this);
             s.Close();
         }
 
-        public static HoursManagement open() {
+        public static HoursManagement open(string newPath) {
             HoursManagement h;
-            if (!File.Exists(PATH)) {
+            if (!File.Exists(newPath)) {
                 h = new HoursManagement();
             }
             else {
-                Stream s = File.OpenRead(PATH);
+                Stream s = File.OpenRead(newPath);
                 h = (HoursManagement)new BinaryFormatter().Deserialize(s);
                 s.Close();
             }

@@ -60,24 +60,28 @@ namespace CTBTeam
                                                      
             }
 
+            
         }
         /**
          * Get the Monday of the current week 
          **/
         public void getDate() {
             //Hoursfile h is opened as a property for the class
-            h = HoursManagement.open();
-
+            h = HoursManagement.open(Server.MapPath(HoursManagement.PATH));
+           
             //Makes sure the date is a Monday; if it isn't it needs to be updated. (Sunday counts as last week)
+            /*
             while (h.date.DayOfWeek != DayOfWeek.Monday)
-                h.date.AddDays(-1);
-            h.save();
-            date = h.date.Month + @"/" + h.date.Day + @"/" + h.date.Year;
-            lblWeekOf.Text = "Week Of: " + date;
-            /* The old way of doing it
+                h.date = h.date.AddDays(-1);
+                */
+           // h.save(Server.MapPath(HoursManagement.PATH));
+
+           // date = h.date.Month + @"/" + h.date.Day + @"/" + h.date.Year;
+           // lblWeekOf.Text = "Week Of: " + date;
+            
             string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
             date = arrLine[arrLine.Length - 1];
-            lblWeekOf.Text = "Week Of: " + date;*/
+            lblWeekOf.Text = "Week Of: " + date;
         }
 
         /**
@@ -91,10 +95,22 @@ namespace CTBTeam
             {
                 /** If the date from file is more than a week old **/
                 if (Date.Today.AddDays(-6) > Date.Parse(lblWeekOf.Text.Replace("Week Of: ", "")))
-                {                    
-                   /**
-                    * Set SQL connection
-                    **/
+                {
+                    /**
+                     * Set SQL connection
+                     **/
+                    //Since it's a new week, we need a new hours file to be created on the stack
+                   // this.h = new HoursManagement(this.h);
+
+                    // Last on stack
+                 
+                    /*
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true))
+                    {
+                        file.Write(last.print());
+                        file.Close();
+                    }
+                    */
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                     OleDbConnection objConn = new OleDbConnection(connectionString);
@@ -149,9 +165,17 @@ namespace CTBTeam
                         }
                         
                     }
+                    headerRow = h.date.ToShortDateString() + "," + headerRow;
 
-                    //Since it's a new week, we need a new hours file to be created on the stack
-                    this.h = new HoursManagement(this.h);
+                    /** Get the contents of file **/
+                    string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
+
+                    /** Replace the last line (the date of the previous week with the header row ) also appending the previous week**/
+                    arrLine[arrLine.Length - 1] = Date.Parse(date).ToShortDateString() + "," + headerRow;
+
+                    /** Write array to file, replacing contents with it (basically appending, but need to replace all to replace the last line **/
+                    System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), arrLine);
+
 
                     /** Now append to file **/
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true))
@@ -199,7 +223,7 @@ namespace CTBTeam
                         }
 
                         /** Set header row to previous week + created header row **/
-                        headerRow = Date.Parse(date).ToShortDateString() + "," + headerRow;
+                        headerRow = h.date.ToShortDateString() + "," + headerRow;
 
                         /** Write header row to file **/
                         file.WriteLine(headerRow);
@@ -229,12 +253,21 @@ namespace CTBTeam
                         /** Second check if date needs to be changed, if yes, find the monday of the week, then set date to monday, write to line **/
                         if (Date.Today.AddDays(-6) > Date.Parse(date))
                         {
+                            /*
                             DateTime dt = DateTime.Now;
                             while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
+                            h.date = dt;
+                            h.save(Server.MapPath(HoursManagement.PATH));
+
+                            */
+                            DateTime dt = DateTime.Now;
+
                             file.Write(dt.ToShortDateString());
 
-
                         }
+                      
+                      
+
 
                         /** split list of projects into an array **/
                         string[] arrayProjectList = projectList.Split(',');
