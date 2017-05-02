@@ -1,7 +1,16 @@
 ﻿<%@ Page Title="Hours" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Hours.aspx.cs" Inherits="CTBTeam.Hours" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
+          <style type="text/css">
+        body {
+            background: url('Gradient.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+           
+        }
+    </style>
     <div class="row">
 
 
@@ -9,6 +18,10 @@
             <asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
         </div>
         <div class="col-md-6" style="text-align: right;">
+                 <%-- The css you want still needs to be selected for the next two lines --%>
+        <asp:TextBox ID="searchbox" runat="server" TextMode="SingleLine" maxlength="30" tooltip="Enter what you would like to search" placeholder="Search" />
+        <asp:DropDownList ID="searchDropDown" runat="server" />
+        <asp:Button ID="searchboxbutton" runat="server" Text="Search" OnClick="On_Click_Search_DB" />
         </div>
     </div>
     <div>
@@ -22,7 +35,52 @@
     <br />
     <br />
     <br />
+    <div class="row">
+        <div class="col-md-4" style="text-align: center;">
 
+            <asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
+            <br />
+            <br />
+            <asp:DropDownList ID="ddlAllNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNamesPercent" AutoPostBack="true"></asp:DropDownList>
+            <br />
+            <br />
+            <asp:DropDownList ID="ddlAllProjects" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectProjectsPercent" AutoPostBack="true"></asp:DropDownList>
+            <br />
+            <br />
+             <asp:DropDownList ID="ddlPercentage" CssClass="drp-home" runat="server"></asp:DropDownList>
+            <br />
+            <br />
+            <asp:Button ID="Button1" runat="server" OnClick="On_Click_Submit_Percent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+
+        </div>
+        <div class="col-md-6">
+                <asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
+                BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
+                Width="700px" BorderlineColor="64, 0, 64" >
+                <Titles>
+                    <asp:Title ShadowOffset="10" Name="Project Percent" />
+                </Titles>
+                <Legends>
+                    <asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
+                         BackColor="Transparent" ForeColor="White" LegendStyle="Column"  />
+                </Legends>
+                <Series>
+                    <asp:Series Name="Default" 
+                        />
+                </Series>
+                <ChartAreas>
+                    <asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
+                   
+                </ChartAreas>
+            </asp:Chart>
+
+          
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
     <div class="row">
         <div class="col-md-4" style="text-align: center;">
 
@@ -42,8 +100,7 @@
 
         </div>
         <div class="col-md-6">
-
-            <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
+              <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
                 CssClass="Grid"
                 AlternatingRowStyle-CssClass="alt"
                 PagerStyle-CssClass="pgr"
@@ -51,7 +108,7 @@
                 RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
                 OnPageIndexChanging="OnPageIndexChanging1">
             </asp:GridView>
-
+        
         </div>
     </div>
     <br />

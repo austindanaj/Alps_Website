@@ -3,13 +3,19 @@
     position: relative;
     display: inline-block;
 }
+
 .modalBackground {
     background-
         : Black;
     filter: alpha(opacity=90);
     opacity: 0.8;
 }
-
+.background-gradient{
+    background-image:url('~/Gradient.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+   
+}
 .modalPopup {
     background-color: #FFFFFF;
     border-width: 3px;
@@ -73,13 +79,12 @@
     width: 2000px;
     padding-left: 5px;
 }
-.lbl-home-title{
-    color: #1A5276;
+.lbl-home-title {
+    color: #FFFFFF;
     font-size: 25px;
     display: inline-block;
     text-align: center;
     width: 200px;
-    
 }
 .btn-home{
     display: inline-block;
@@ -92,8 +97,8 @@
     color: white;
 
 }
-.lbl-home{
-    color: #1A5276;
+.lbl-home {
+    color: #FFFFFF;
     font-size: 22px;
     display: block;
     text-align: right;
@@ -175,9 +180,8 @@
      width: 2000px;
          padding-left: 5px;
 }
-.lbl-purchase{
-   
-     color: #1A5276;
+.lbl-purchase {
+    color: #FFFFFF;
     font-size: 22px;
     display: block;
     text-align: right;
@@ -187,13 +191,13 @@
 .form-gr{
    display: inline-block;
 }
-.bullet-list{
-    color: #1A5276;
+.bullet-list {
+    color: #FFFFFF;
     font-size: 22px;
     text-align: left;
 }
-.username{
-    color: #1A5276;
+.username {
+    color: #FFFFFF;
     font-size: 22px;
     text-align: center;
 }
@@ -222,13 +226,13 @@ input[type='checkbox'] {
     border-radius:5px;
     border:2px solid #555;
 }
-.main-title{
-    color: #1A5276;
+.main-title {
+    color: #FFFFFF;
     font-size: 46px;
     text-align: center;
 }
-.time-title{
-    color: #1A5276;
+.time-title {
+    color: #FFFFFF;
     font-size: 34px;
     text-align: center;
 }
@@ -333,7 +337,7 @@ input[type='checkbox'] {
   color: #EF3B3A;
 }
 .lbl-main {
-    color: #1A5276;
+    color: #FFFFFF;
     font-size: 50px;
     display: block;
     text-align: match-parent;
@@ -341,7 +345,7 @@ input[type='checkbox'] {
     padding-right: 20px;
 }
 .lbl-os {
-    color: #1A5276;
+    color: #FFFFFF;
     font-size: 25px;
     display: block;
     text-align: left;
@@ -349,7 +353,7 @@ input[type='checkbox'] {
     padding-right: 20px;
 }
 .lbl-phones {
-    color: #1A5276;
+    color: #FFFFFF;
     font-size: 25px;
     display: block;
     text-align: left;

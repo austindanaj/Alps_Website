@@ -1,7 +1,16 @@
 ﻿<%@ Page Title="Phone Checkout" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="PhoneCheckOut.aspx.cs" Inherits="CTBTeam.PhoneCheckOut" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
+         <style type="text/css">
+        body {
+            background: url('Gradient.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+           
+        }
+    </style>
         <div class="row">
     <div>
         <asp:Label ID="lblTitle" runat="server" Text="Phone Checkout" CssClass="lbl-main" ></asp:Label>
