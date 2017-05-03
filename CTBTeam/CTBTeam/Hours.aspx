@@ -100,12 +100,11 @@
 
         </div>
         <div class="col-md-6">
-              <asp:GridView ID="dgvProject" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
-                CssClass="Grid"
-                AlternatingRowStyle-CssClass="alt"
-                PagerStyle-CssClass="pgr"
-                HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
-                RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
+              <asp:GridView ID="dgvProject" runat="server" CssClass="Grid" HeaderStyle-BackColor="#000099"
+                    AlternatingRowStyle-CssClass="alt"
+                    PagerStyle-CssClass="pgr"
+                    HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
+                    RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
                 OnPageIndexChanging="OnPageIndexChanging1">
             </asp:GridView>
         
@@ -136,12 +135,11 @@
 
         <div class="col-md-6">
 
-            <asp:GridView ID="dgvCars" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
-                CssClass="Grid"
-                AlternatingRowStyle-CssClass="alt"
-                PagerStyle-CssClass="pgr"
-                HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
-                RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
+            <asp:GridView ID="dgvCars" runat="server" CssClass="Grid" HeaderStyle-BackColor="#000099"
+                    AlternatingRowStyle-CssClass="alt"
+                    PagerStyle-CssClass="pgr"
+                    HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
+                    RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true"  PageSize="10"
                 OnPageIndexChanging="OnPageIndexChanging2">
             </asp:GridView>
 
