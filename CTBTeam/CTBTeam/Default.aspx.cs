@@ -34,16 +34,9 @@ namespace CTBTeam
             try
             {
 
-
-
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt")))
-                {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt"));
-                }
-
-
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt")))
                 {
+                    
 
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
@@ -57,7 +50,7 @@ namespace CTBTeam
                     string headerRow = "";
                     foreach (DataRow row in table.Rows)
                     {
-                        if (!row[nameCol].Equals("Alna_Num"))
+                        if (!row[nameCol].Equals("ID"))
                         {
                             headerRow += row[nameCol] + ",";
                         }
@@ -67,14 +60,28 @@ namespace CTBTeam
                     file.WriteLine(headerRow);
                     string text = "";
 
+                    int projectCount = 0;
+
+                    OleDbCommand getProjectList = new OleDbCommand("SELECT PROJ_NAME From Projects ORDER BY ID", objConn);
+                    OleDbDataReader readerProjectList = getProjectList.ExecuteReader();
+                    while (readerProjectList.Read())
+                    {
+                        projectCount++;      /** Increment counter by 1 **/
+                      
+                    }
+
+
                     OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours;", objConn);
 
                     OleDbDataReader readerProject = objProject.ExecuteReader();
                     while (readerProject.Read())
                     {
                         text = "";
-                        text += readerProject.GetString(1) + "," + readerProject.GetValue(2).ToString() + "," + readerProject.GetValue(3).ToString() + "," + readerProject.GetValue(4).ToString() + ","
-                              + readerProject.GetValue(5).ToString() + "," + readerProject.GetValue(6).ToString() + "," + readerProject.GetValue(7).ToString() + ",";
+                        for(int i = 1; i <= projectCount; i++)
+                        {
+                            text += readerProject.GetValue(i).ToString() + "," ;
+                        }
+                      
                         file.WriteLine(text);
                     }
                     file.WriteLine();
@@ -87,7 +94,7 @@ namespace CTBTeam
                     headerRow = "";
                     foreach (DataRow row in table.Rows)
                     {
-                        if (!row[nameCol].Equals("Alna_Num"))
+                        if (!row[nameCol].Equals("ID"))
                         {
                             headerRow += row[nameCol] + ",";
                         }
@@ -96,15 +103,27 @@ namespace CTBTeam
                     file.WriteLine(headerRow);
                     readerCNames.Close();
 
+                    int carCount = 0;           
+
+                    /** Command to get list of cars **/
+                    OleDbCommand getCarList = new OleDbCommand("SELECT Vehicle From Cars ORDER BY ID", objConn);
+                    OleDbDataReader readerCarList = getCarList.ExecuteReader();
+                    while (readerCarList.Read())
+                    {
+                        carCount++;      /** Increment counter by 1 **/
+                     
+                    }
                     OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours;", objConn);
                     text = "";
                     OleDbDataReader readerCar = objCar.ExecuteReader();
                     while (readerCar.Read())
                     {
                         text = "";
-                        text += readerCar.GetString(1) + "," + readerCar.GetValue(2).ToString() + "," + readerCar.GetValue(3).ToString() + "," + readerCar.GetValue(4).ToString() + ","
-                              + readerCar.GetValue(5).ToString() + "," + readerCar.GetValue(6).ToString() + "," + readerCar.GetValue(7).ToString() + "," + readerCar.GetValue(8).ToString() + ","
-                              + readerCar.GetValue(9).ToString() + ",";
+                        for (int i = 1; i <= carCount; i++)
+                        {
+                            text += readerCar.GetValue(i).ToString() + ",";
+                        }
+                      
                         file.WriteLine(text);
                     }
                     file.WriteLine();
@@ -117,16 +136,7 @@ namespace CTBTeam
 
             catch (Exception ex)
             {
-
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                }
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                {
-                    file.WriteLine(Date.Today.ToString() + "--Create Current Hours--" + ex.ToString());
-                    file.Close();
-                }
+                Log.getInstance.WriteToLog("Create Current Project Hours", ex, Server);
             }
             try
             {
@@ -137,16 +147,8 @@ namespace CTBTeam
             }
                 catch (Exception ex)
             {
-                    if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                    {
-                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-                    }
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                    {
-                        file.WriteLine(Date.Today.ToString() + "--Download Current Hours--" + ex.ToString());
-                        file.Close();
-                    }
-                }
+                Log.getInstance.WriteToLog("Download Database", ex, Server);
+            }
         }
              
 

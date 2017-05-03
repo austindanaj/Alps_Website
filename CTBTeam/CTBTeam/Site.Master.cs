@@ -24,6 +24,12 @@ namespace CTBTeam
             if (!(bool)Session["admin"]) { 
                 admin.Visible = false;
             }
+            if (string.IsNullOrEmpty((string)Session["Date"]))
+            {
+                DateTime dt = DateTime.Now;                
+                while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
+                Session["Date"] = dt.ToShortDateString().Replace('/', '_');
+            }
         }
     }
 }

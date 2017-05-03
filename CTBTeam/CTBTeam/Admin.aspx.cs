@@ -43,8 +43,9 @@ namespace CTBTeam
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
                     
-                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Emp_Name) VALUES (@value1);", objConn);
-                    objCmd.Parameters.AddWithValue("@value1", txtName.Text);                  
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", txtName.Text);
+                    objCmd.Parameters.AddWithValue("@value2", !chkPartTime.Checked);
                     objCmd.ExecuteNonQuery();
 
                     objCmd = new OleDbCommand("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", objConn);
@@ -93,25 +94,29 @@ namespace CTBTeam
 
                 try
                 {
+                    string[] array = txtProject.Text.Split(',');
                     if (txtProject.Text.Contains(" "))
                     {
-                        txtProject.Text = txtProject.Text.Replace(" ", "_");
+                        array[0] = array[0].Replace(" ", "_");
                     }
+                    array[1] = array[1].Replace(" ", "");
                     String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
                                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
 
-                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (PROJ_NAME) VALUES (@value1);", objConn);
-                    objCmd.Parameters.AddWithValue("@value1", txtProject.Text);
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (PROJ_NAME, PROJ_CATEGORY) VALUES (@value1, @value2);", objConn);
+                    objCmd.Parameters.AddWithValue("@value1", array[0]);
+                    objCmd.Parameters.AddWithValue("@value2", array[1]);
+
                     objCmd.ExecuteNonQuery();
 
-                    objCmd = new OleDbCommand("ALTER TABLE ProjectHours ADD " + txtProject.Text + " number;", objConn);
+                    objCmd = new OleDbCommand("ALTER TABLE ProjectHours ADD " + array[0] + " number;", objConn);
                   //  objCmd = new OleDbCommand("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", objConn);
                     //  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
                     objCmd.ExecuteNonQuery();
 
-                    objCmd = new OleDbCommand("UPDATE ProjectHours SET " + txtProject.Text + " =0;", objConn);
+                    objCmd = new OleDbCommand("UPDATE ProjectHours SET " + array[0] + " =0;", objConn);
                     objCmd.ExecuteNonQuery();
 
                     objConn.Close();
@@ -355,7 +360,7 @@ namespace CTBTeam
                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Full_Time FROM Users ORDER BY Emp_Name", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
@@ -417,7 +422,7 @@ namespace CTBTeam
                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY PROJ_NAME", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME, PROJ_CATEGORY FROM Projects ORDER BY PROJ_NAME", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();
