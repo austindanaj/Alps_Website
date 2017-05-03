@@ -138,6 +138,7 @@
     <Content Include="HexGenerator.exe" />
     <Content Include="Logs\CurrentHours\Current-Hours_2-27-2017.txt" />
     <Content Include="Logs\PhoneLog\Phone-report.txt" />
+    <Content Include="Inventory.aspx" />
     <Content Include="PhoneCheckOut.aspx" />
     <Content Include="List.aspx" />
     <Content Include="Logs\TimeLog\Time-log.txt" />
@@ -215,6 +216,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Inventory.aspx.cs">
+      <DependentUpon>Inventory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Inventory.aspx.designer.cs">
+      <DependentUpon>Inventory.aspx</DependentUpon>
+    </Compile>
     <Compile Include="PhoneCheckOut.aspx.cs">
       <DependentUpon>PhoneCheckOut.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
