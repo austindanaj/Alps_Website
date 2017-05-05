@@ -149,7 +149,7 @@ namespace CTBTeam
                         }
                         
                     }
-                    headerRow = h.date.ToShortDateString() + "," + headerRow;
+                    headerRow = date + "," + headerRow;
 
                     /** Get the contents of file **/
                     string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
@@ -207,7 +207,7 @@ namespace CTBTeam
                         }
 
                         /** Set header row to previous week + created header row **/
-                        headerRow = h.date.ToShortDateString() + "," + headerRow;
+                        headerRow = date + "," + headerRow;
 
                         /** Write header row to file **/
                         file.WriteLine(headerRow);
