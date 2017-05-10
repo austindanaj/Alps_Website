@@ -16,27 +16,22 @@
             color: white;
         }
     </style>
-    <div class="jumbotron" style="float:left">
+    <div class="row">
+        <div class="col-md-5">
 
+            <h1 style="font-weight:700;font-size:70px;">Project Hours</h1>
 
-        <h1>Project Hours</h1>
-        <p class="lead"></p>
-
-        <p>
-            <asp:Button runat="server" OnClick=" View_More_onClick"
-                Text="Click Here" CssClass="btn btn-primary btn-lg" />
-        </p>
-
-
-        
-            <asp:Image ID="Image1" runat="server" ImageUrl="~/Globe.png"  CssClass="image_main" />
-      
+            <p>
+                <asp:Button runat="server" OnClick=" View_More_onClick"
+                    Text="Click Here" CssClass="btn btn-primary btn-lg" />
+            </p>
+        </div>
+        <div class="col-md-5">
+            <asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Globe.png"  CssClass="image_main" />
+        </div>
     </div>
-
-  
-    <div>
-    </div>
-    <asp:Image ID="Image2" runat="server" ImageUrl="~/CTBProjects.png" Width="800" Height="400"/>
+    <br />
+    <asp:Image ID="Image2" runat="server" ImageUrl="~/CTBProjects.png" Width="100%" Height="650"/>
 
       <div class="row">
         <div class="col-md-4">
