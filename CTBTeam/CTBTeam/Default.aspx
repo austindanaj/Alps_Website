@@ -16,7 +16,7 @@
             color: white;
         }
     </style>
-    <div class="jumbotron">
+    <div class="jumbotron" style="float:left">
 
 
         <h1>Project Hours</h1>
@@ -29,7 +29,7 @@
 
 
         
-            <asp:Image ID="Image1" runat="server" ImageUrl="~/Globe.png" Width="500px" Height="250px" CssClass="image_main" />
+            <asp:Image ID="Image1" runat="server" ImageUrl="~/Globe.png"  CssClass="image_main" />
       
     </div>
 

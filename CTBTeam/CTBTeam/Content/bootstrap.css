@@ -1186,7 +1186,7 @@ h6,
   font-family: inherit;
   font-weight: 500;
   line-height: 1.1;
-  color: inherit;
+  color: #FFF;
 }
 h1 small,
 h2 small,
@@ -3057,9 +3057,9 @@ fieldset[disabled] a.btn {
   pointer-events: none;
 }
 .btn-default {
-  color: #333;
-  background-color: #fff;
-  border-color: #ccc;
+	background-color: #333;
+	border-color: #ccc;
+	color: #9d9d9d;
 }
 .btn-default:focus,
 .btn-default.focus {
@@ -3114,9 +3114,9 @@ fieldset[disabled] .btn-default.focus {
   background-color: #333;
 }
 .btn-primary {
-  color: #fff;
-  background-color: #337ab7;
-  border-color: #2e6da4;
+  background-color: #333;
+    border-color: #ccc;
+    color: #9d9d9d;
 }
 .btn-primary:focus,
 .btn-primary.focus {
@@ -4964,7 +4964,7 @@ a.badge:focus {
 }
 .jumbotron h1,
 .jumbotron .h1 {
-  color: inherit;
+  color: #fff;
 }
 .jumbotron p {
   margin-bottom: 15px;
