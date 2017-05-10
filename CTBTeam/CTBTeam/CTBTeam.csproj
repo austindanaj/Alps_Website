@@ -133,6 +133,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="CRC.exe" />
+    <Content Include="CTBProjects.png" />
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

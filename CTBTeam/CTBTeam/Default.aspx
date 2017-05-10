@@ -33,7 +33,12 @@
       
     </div>
 
-    <div class="row">
+  
+    <div>
+    </div>
+    <asp:Image ID="Image2" runat="server" ImageUrl="~/CTBProjects.png" Width="800" Height="400"/>
+
+      <div class="row">
         <div class="col-md-4">
             <h2>Current Hours</h2>
             <p>
@@ -70,8 +75,6 @@
                     Text="Download" CssClass="btn btn-default" />
             </p>
         </div>
-    </div>
-    <div>
     </div>
 </asp:Content>
 
