@@ -23,7 +23,7 @@ namespace CTBTeam
      
         string userName;
         string date = "";
-        HoursManagement h;
+       // HoursManagement h;
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -67,21 +67,35 @@ namespace CTBTeam
          **/
         public void getDate() {
             //Hoursfile h is opened as a property for the class
-            h = HoursManagement.open(Server.MapPath(HoursManagement.PATH));
-           
+            //   h = HoursManagement.open(Server.MapPath(HoursManagement.PATH));
+
             //Makes sure the date is a Monday; if it isn't it needs to be updated. (Sunday counts as last week)
             /*
             while (h.date.DayOfWeek != DayOfWeek.Monday)
                 h.date = h.date.AddDays(-1);
                 */
-           // h.save(Server.MapPath(HoursManagement.PATH));
+            // h.save(Server.MapPath(HoursManagement.PATH));
 
-           // date = h.date.Month + @"/" + h.date.Day + @"/" + h.date.Year;
-           // lblWeekOf.Text = "Week Of: " + date;
-            
-            string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
-            date = arrLine[arrLine.Length - 1];
-            lblWeekOf.Text = "Week Of: " + date;
+            // date = h.date.Month + @"/" + h.date.Day + @"/" + h.date.Year;
+            // lblWeekOf.Text = "Week Of: " + date;
+            try
+            {
+                string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
+                date = arrLine[arrLine.Length - 1];
+                lblWeekOf.Text = "Week Of: " + date;
+            }catch(Exception ex)
+            {
+                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
+                {
+                    file.WriteLine(Date.Today.ToString() + "--Date Check--" + ex.StackTrace);
+                    file.Close();
+                }
+                
+            }
         }
 
         /**
@@ -165,7 +179,7 @@ namespace CTBTeam
                         }
                         
                     }
-                    headerRow = h.date.ToShortDateString() + "," + headerRow;
+                    //headerRow =  + "," + headerRow;
 
                     /** Get the contents of file **/
                     string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
@@ -223,7 +237,7 @@ namespace CTBTeam
                         }
 
                         /** Set header row to previous week + created header row **/
-                        headerRow = h.date.ToShortDateString() + "," + headerRow;
+                        headerRow = Date.Parse(date).ToShortDateString() + "," + headerRow;
 
                         /** Write header row to file **/
                         file.WriteLine(headerRow);
@@ -345,7 +359,7 @@ namespace CTBTeam
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    file.WriteLine(Date.Today.ToString() + "--Date Change--" + ex.ToString());
+                    file.WriteLine(Date.Today.ToString() + "--Date Change--" + ex.StackTrace);
                     file.Close();
                 }
                 return false;
@@ -356,7 +370,7 @@ namespace CTBTeam
         //Searches the database to match the pattern given by the
         //searchbox element in Hours.aspx.
         protected void On_Click_Search_DB(object sender, EventArgs e) {
-            String s = searchbox.Text;
+           /* String s = searchbox.Text;
             
             if (s is null || s.Equals("")) {
                 //Some sort of exception or do nothing condition to correct the user
@@ -367,7 +381,7 @@ namespace CTBTeam
                 OleDbConnection objconn = new OleDbConnection(connectionString);
                 OleDbCommand searchDbCommand = new OleDbCommand("Select * from ");
                 */
-            }
+           // }
         }
 
         //=======================================================

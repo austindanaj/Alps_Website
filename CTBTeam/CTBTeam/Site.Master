@@ -58,7 +58,7 @@
                         <li><a runat="server" href="~/TimeOff">Schedule</a></li>                        
                         <li><a runat="server" href="~/List">Purchase List</a></li>
                      <li><a runat="server" href="~/PhoneCheckOut">Phone Checkout</a></li>
-                        <li><a runat="server" href="~/Inventory">Inventory</a></li>
+                      <%--<li><a runat="server" href="~/Inventory">Inventory</a></li>--%>
                     </ul>
 
                     <ul class="nav navbar-nav  navbar-right">
@@ -75,7 +75,7 @@
           
             </asp:ContentPlaceHolder>
             <hr />
-            <footer>
+            <footer class="footer">
                 <p>&copy; <%: DateTime.Now.Year %> - CTB Website</p>
             </footer>
         </div>

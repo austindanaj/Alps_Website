@@ -133,7 +133,18 @@
     
    
 }
-
+.footer {
+    color: white;
+}.image_main {
+    float: right;
+} 
+.jumbotron {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    color: inherit;
+    background-color: transparent;
+}
 
 .Grid {background-color: #fff; margin: 5px 0 10px 0; border: solid 1px #525252; border-collapse:collapse; font-family:Calibri; color: #474747;}
 .Grid td {

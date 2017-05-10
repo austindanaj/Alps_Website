@@ -18,10 +18,11 @@
             <asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
         </div>
         <div class="col-md-6" style="text-align: right;">
-                 <%-- The css you want still needs to be selected for the next two lines --%>
+                 <%-- The css you want still needs to be selected for the next two lines 
         <asp:TextBox ID="searchbox" runat="server" TextMode="SingleLine" maxlength="30" tooltip="Enter what you would like to search" placeholder="Search" />
         <asp:DropDownList ID="searchDropDown" runat="server" />
         <asp:Button ID="searchboxbutton" runat="server" Text="Search" OnClick="On_Click_Search_DB" />
+                     --%>
         </div>
     </div>
     <div>

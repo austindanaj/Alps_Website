@@ -136,6 +136,7 @@
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Globe.png" />
     <Content Include="Gradient.jpg" />
     <Content Include="HexGenerator.exe" />
     <Content Include="Logs\CurrentHours\Current-Hours_2-27-2017.txt" />

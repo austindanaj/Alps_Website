@@ -22,33 +22,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label lblTitle;
         
         /// <summary>
-        /// searchbox control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox searchbox;
-        
-        /// <summary>
-        /// searchDropDown control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList searchDropDown;
-        
-        /// <summary>
-        /// searchboxbutton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button searchboxbutton;
-        
-        /// <summary>
         /// lblWeekOf control.
         /// </summary>
         /// <remarks>
