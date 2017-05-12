@@ -15,7 +15,7 @@
             <asp:Label ID="lblTitle" runat="server" Text="Phone Checkout" CssClass="lbl-main"></asp:Label>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-25">
 
             <asp:Label ID="OS" runat="server" Text="Phone Type:" CssClass="lbl-os"></asp:Label>
 
@@ -45,7 +45,8 @@
                 RepeatDirection="Vertical"
                 RepeatLayout="Table"
                 TextAlign="Right"
-                runat="server">
+                runat="server"
+				style="color:White;">
                 <asp:ListItem>Leakage</asp:ListItem>
                 <asp:ListItem>Range</asp:ListItem>
                 <asp:ListItem>Passive</asp:ListItem>
@@ -75,7 +76,7 @@
 
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-50">
             <div class="form-gr">
 
                 <br />

@@ -14,7 +14,7 @@
     <br />
     <br />
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-50">
             <asp:Label ID="lblName" runat="server" Text="Item Name:  " CssClass="lbl-purchase">
                 <asp:TextBox ID="txtName" runat="server" CssClass="txt-purchase" placeholder="Batteries"></asp:TextBox>
             </asp:Label>
@@ -50,7 +50,7 @@
         </div>
         <br />
         <br />
-        <div class="col-md-6">
+        <div class="col-md-50">
             <asp:GridView ID="grdList" runat="server" CssClass="gridview"></asp:GridView>
         </div>
     </div>

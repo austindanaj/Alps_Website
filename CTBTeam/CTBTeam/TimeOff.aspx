@@ -18,7 +18,7 @@
         <br />
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-50">
 
                 <asp:Calendar ID="cldTimeOff" runat="server" BackColor="White" BorderColor="White" BorderWidth="1px" Font-Names="Verdana" Font-Size="9pt" ForeColor="Black" Height="388px" NextPrevFormat="FullMonth" Width="593px" OnSelectionChanged="Calendar_SelectionChanged">
                     <DayHeaderStyle Font-Bold="True" Font-Size="8pt" />
@@ -37,7 +37,7 @@
                 <br />
 
             </div>
-            <div class="col-md-6">
+            <div class="col-md-50">
                 <div class="form-gr">
                     <asp:BulletedList ID="bulletList" runat="server" CssClass="bullet-list" BulletStyle="Numbered">
                         <asp:ListItem>Sign in</asp:ListItem>

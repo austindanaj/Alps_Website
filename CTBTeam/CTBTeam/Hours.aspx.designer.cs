@@ -22,6 +22,24 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label lblTitle;
         
         /// <summary>
+        /// ddlselectWeek control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlselectWeek;
+        
+        /// <summary>
+        /// btnselectWeek control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnselectWeek;
+        
+        /// <summary>
         /// lblWeekOf control.
         /// </summary>
         /// <remarks>
@@ -49,13 +67,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// ddlAllNames control.
+        /// ddlFullTimeNames control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlAllNames;
+        protected global::System.Web.UI.WebControls.DropDownList ddlFullTimeNames;
         
         /// <summary>
         /// ddlAllProjects control.

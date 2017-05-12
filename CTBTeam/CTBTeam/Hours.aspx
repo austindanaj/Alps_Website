@@ -14,15 +14,13 @@
     <div class="row">
 
 
-        <div class="col-md-6">
+        <div class="col-md-50">
             <asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
         </div>
-        <div class="col-md-6" style="text-align: right;">
-                 <%-- The css you want still needs to be selected for the next two lines 
-        <asp:TextBox ID="searchbox" runat="server" TextMode="SingleLine" maxlength="30" tooltip="Enter what you would like to search" placeholder="Search" />
-        <asp:DropDownList ID="searchDropDown" runat="server" />
-        <asp:Button ID="searchboxbutton" runat="server" Text="Search" OnClick="On_Click_Search_DB" />
-                     --%>
+        <div class="col-md-50" style="text-align: left;">
+			<br />
+			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" AutoPostBack="true"></asp:DropDownList>
+			<asp:Button ID="btnselectWeek" CssClass="btn-primary" runat="server" Text="Go to week"/>
         </div>
     </div>
     <div>
@@ -37,12 +35,12 @@
     <br />
     <br />
     <div class="row">
-        <div class="col-md-4" style="text-align: center;">
+        <div class="col-md-25" style="text-align: center;">
 
-            <asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
+            <asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent - Full time" />
             <br />
             <br />
-            <asp:DropDownList ID="ddlAllNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNamesPercent" AutoPostBack="true"></asp:DropDownList>
+            <asp:DropDownList ID="ddlFullTimeNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNamesPercent" AutoPostBack="true"></asp:DropDownList>
             <br />
             <br />
             <asp:DropDownList ID="ddlAllProjects" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectProjectsPercent" AutoPostBack="true"></asp:DropDownList>
@@ -54,7 +52,7 @@
             <asp:Button ID="Button1" runat="server" OnClick="On_Click_Submit_Percent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
 
         </div>
-        <div class="col-md-6">
+        <div class="col-md-50">
                 <asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
                 BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
                 Width="700px" BorderlineColor="64, 0, 64" >
@@ -83,9 +81,9 @@
     <br />
     <br />
     <div class="row">
-        <div class="col-md-4" style="text-align: center;">
+        <div class="col-md-25" style="text-align: center;">
 
-            <asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Project Hours" />
+            <asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Project Hours - Terns" />
             <br />
             <br />
             <asp:DropDownList ID="ddlNamesProject" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNameProject" AutoPostBack="true"></asp:DropDownList>
@@ -100,12 +98,9 @@
             <asp:Button ID="btnSubmitProject" runat="server" OnClick="On_Click_Submit_Projects" Text="Submit" CssClass="btn-home" Text-Align="Center" />
 
         </div>
-        <div class="col-md-6">
-              <asp:GridView ID="dgvProject" runat="server" CssClass="Grid" HeaderStyle-BackColor="#000099"
-                    AlternatingRowStyle-CssClass="alt"
-                    PagerStyle-CssClass="pgr"
-                    HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
-                    RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true" PageSize="10"
+        <div class="col-md-50">
+              <asp:GridView ID="dgvProject" runat="server" CssClass="gridview"
+				AutoGenerateColumns="true"
                 OnPageIndexChanging="OnPageIndexChanging1">
             </asp:GridView>
         
@@ -115,9 +110,9 @@
     <br />
     <br />
     <div class="row">
-        <div class="col-md-4" style="text-align: center;">
+        <div class="col-md-25" style="text-align: center;">
 
-            <asp:Label ID="Label4" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" />
+            <asp:Label ID="Label4" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours - Terns" />
             <br />
             <br />
             <asp:DropDownList ID="ddlNamesCar" CssClass="drp-home" runat="server" OnSelectedIndexChanged="didSelectNameCar" AutoPostBack="true"></asp:DropDownList>
@@ -134,14 +129,11 @@
         </div>
 
 
-        <div class="col-md-6">
+        <div class="col-md-50">
 
-            <asp:GridView ID="dgvCars" runat="server" CssClass="Grid" HeaderStyle-BackColor="#000099"
-                    AlternatingRowStyle-CssClass="alt"
-                    PagerStyle-CssClass="pgr"
-                    HeaderStyle-ForeColor="White" RowStyle-BackColor="#A1DCF2" AlternatingRowStyle-BackColor="White"
-                    RowStyle-ForeColor="#3A3A3A" AutoGenerateColumns="true" AllowPaging="true"  PageSize="10"
-                OnPageIndexChanging="OnPageIndexChanging2">
+            <asp:GridView ID="dgvCars" runat="server" CssClass="gridview"
+                AutoGenerateColumns="true"
+                OnPageIndexChanging="OnPageIndexChanging1">
             </asp:GridView>
 
         </div>

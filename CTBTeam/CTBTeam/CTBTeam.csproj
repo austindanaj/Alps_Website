@@ -220,6 +220,9 @@
   <ItemGroup>
     <Compile Include="AccessConnection.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="SuperPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Log.cs" />
     <Compile Include="PhoneCheckOut.aspx.cs">
       <DependentUpon>PhoneCheckOut.aspx</DependentUpon>

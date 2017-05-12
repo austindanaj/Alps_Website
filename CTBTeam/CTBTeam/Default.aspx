@@ -17,7 +17,7 @@
         }
     </style>
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-41_6">
 
             <h1 style="font-weight:700;font-size:70px;">Project Hours</h1>
 
@@ -26,7 +26,7 @@
                     Text="Click Here" CssClass="btn btn-primary btn-lg" />
             </p>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-41_6">
             <asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Globe.png"  CssClass="image_main" />
         </div>
     </div>
@@ -34,7 +34,7 @@
     <asp:Image ID="Image2" runat="server" ImageUrl="~/CTBProjects.png" Width="100%" Height="650"/>
 
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-25">
             <h2>Current Hours</h2>
             <p>
             </p>
@@ -43,7 +43,7 @@
                     Text="Download" CssClass="btn btn-default" />
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-25">
             <h2>Time Log</h2>
             <p>
             </p>
@@ -52,7 +52,7 @@
                     Text="Download" CssClass="btn btn-default" />
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-25">
             <h2>Hex Generator</h2>
             <p>
             </p>
@@ -61,7 +61,7 @@
                     Text="Download" CssClass="btn btn-default" />
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-25">
             <h2>Phone Log</h2>
             <p>
             </p>

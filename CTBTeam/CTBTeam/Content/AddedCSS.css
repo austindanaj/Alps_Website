@@ -116,7 +116,7 @@
 	width: 2000px;
 	height: 30px;
 	border-radius: 5px;
-	border: 2px solid #555;
+	border: 2px solid #ccc;
 	font-size: 16px;
 	
 }
@@ -160,16 +160,16 @@
 .Grid {background-color: #333; margin: 5px 0 10px 0; border: solid 1px #525252; border-collapse:collapse; font-family:Calibri; color: #474747;}
 .Grid td {
       padding: 2px;
-      border: solid 1px #c1c1c1; }
+      border: solid 1px #c1c1c1;
+}
 .Grid th  {
       padding : 4px 2px;
       color: #fff;
-      background: #333 url(Images/grid-header.png) repeat-x top;
+	  background: #333;
       border-left: solid 1px #525252;
-      font-size: 0.9em; }
-.Grid .alt {
-      background: # url(Images/grid-alt.png) repeat-x top; }
-.Grid .pgr {background: #363670 url(Images/grid-pgr.png) repeat-x top; }
+      font-size: 0.9em;
+}
+
 .Grid .pgr table { margin: 3px 0; }
 .Grid .pgr td { border-width: 0; padding: 0 6px; border-left: solid 1px #666; font-weight: bold; color: #fff; line-height: 12px; }  
 .Grid .pgr a { color: Gray; text-decoration: none; }
@@ -236,8 +236,8 @@
 	font-weight: bold;
 	background-color: #333;
 	border-color: #ccc;
-	color: #9d9d9d;
-	border: 2px solid black;
+	color: #fff;
+	border: 2px solid #ccc;
 	padding: 8px;
 	text-align: center;
 }
@@ -251,7 +251,7 @@
 }
 
 input[type='checkbox'] {
-   
+	color: #9d9d9d;
     margin-right: 5px;
     width:18px;
     height:18px;
@@ -285,7 +285,7 @@ input[type='checkbox'] {
 .login {
   position: relative;
   z-index: 1;
-  background: #000000;
+  background: #222;
   max-width: 360px;
   margin: 0 auto 100px;
   padding: 45px;
@@ -294,8 +294,9 @@ input[type='checkbox'] {
 }
 .login input {
   font-family: "Roboto", sans-serif;
+  color: #fff;
   outline: 0;
-  background: #f2f2f2;
+  background: #444;
   width: 100%;
   border: 0;
   margin: 0 0 15px;
