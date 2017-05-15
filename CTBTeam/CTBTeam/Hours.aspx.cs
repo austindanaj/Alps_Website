@@ -435,9 +435,9 @@ namespace CTBTeam {
 		}
 		protected void didSelectProjectsPercent(object sender, EventArgs e) {
 			ddlPercentage.Items.Clear();
-			ddlPercentage.Items.Add("--Select A Percent--");
+			ddlPercentage.Items.Add("--Select A Percent (Out of 40 hrs)--");
 			for (int i = 5; i <= 100; i += 5) {
-				ddlPercentage.Items.Add("" + i + "%");
+				ddlPercentage.Items.Add("" + i + "% -- " + (40 * ((float) i / 100)) + " hours");
 			}
 		}
 		public void populateListProjectPercent() {
