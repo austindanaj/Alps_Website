@@ -11,8 +11,6 @@
 		}
 	</style>
 	<div class="row">
-
-
 		<div class="col-md-50">
 			<asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
 		</div>
