@@ -140,7 +140,7 @@ namespace CTBTeam {
 						backUpToTxt(readerProject, file, projectCount);
 						readerProject.Close();
 
-						objProject = new OleDbCommand("SELECT Emp_Name, Project, Percentage FROM PercentLog ORDER BY Emp_Name ;", objConn);
+						objProject = new OleDbCommand("SELECT ID, Emp_Name, Project, Category, Percentage, Full_Time FROM PercentageLog ORDER BY Emp_Name ;", objConn);
 						readerProject = objProject.ExecuteReader();
 
 						backUpToTxt(readerProject, file, percentCount);
@@ -719,7 +719,7 @@ namespace CTBTeam {
 					s = "SELECT Vehicle From Cars ORDER BY ID";
 					break;
 				case GET_LIST.PERCENT:
-					s = "SELECT Percentage From PercentageLog order by ID";
+					s = "SELECT Column_Name From PercentColumns order by ID";
 					break;
 				default:
 					return null;
