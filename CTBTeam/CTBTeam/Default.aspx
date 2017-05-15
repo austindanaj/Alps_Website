@@ -17,7 +17,7 @@
         }
     </style>
     <div class="row">
-        <div class="col-md-41_6">
+        <div class="col-md-50">
 
             <h1 style="font-weight:700;font-size:70px;">Project Hours</h1>
 
@@ -26,7 +26,7 @@
                     Text="Click Here" CssClass="btn btn-primary btn-lg" />
             </p>
         </div>
-        <div class="col-md-41_6">
+        <div class="col-md-50">
             <asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Globe.png"  CssClass="image_main" />
         </div>
     </div>
