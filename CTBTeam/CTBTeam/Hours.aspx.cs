@@ -719,7 +719,7 @@ namespace CTBTeam {
 					s = "SELECT Vehicle From Cars ORDER BY ID";
 					break;
 				case GET_LIST.PERCENT:
-					s = "SELECT Percent From PercentageLog order by ID";
+					s = "SELECT Percentage From PercentageLog order by ID";
 					break;
 				default:
 					return null;
@@ -732,7 +732,7 @@ namespace CTBTeam {
 			
 			while (reader.Read()) {
 				counter++;      /** Increment counter by 1 **/
-				s += reader.GetString(0) + ",";    //Add it to the list of things
+				s += reader.GetValue(0).ToString() + ",";    //Add it to the list of things
 			}
 
 			object[] o = {counter, s};
