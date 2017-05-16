@@ -105,7 +105,7 @@ namespace CTBTeam
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
 
-                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (PROJ_NAME, PROJ_CATEGORY) VALUES (@value1, @value2);", objConn);
+                    OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (Project, Category) VALUES (@value1, @value2);", objConn);
                     objCmd.Parameters.AddWithValue("@value1", array[0]);
                     objCmd.Parameters.AddWithValue("@value2", array[1]);
 
@@ -215,7 +215,7 @@ namespace CTBTeam
                     OleDbConnection objConn = new OleDbConnection(connectionString);
                     objConn.Open();
 
-                    OleDbCommand objCmd = new OleDbCommand("DELETE FROM Projects WHERE PROJ_NAME=@value1;", objConn);
+                    OleDbCommand objCmd = new OleDbCommand("DELETE FROM Projects WHERE Project=@value1;", objConn);
                     objCmd.Parameters.AddWithValue("@value1", txtPR.Text);
                     objCmd.ExecuteNonQuery();
 
@@ -422,7 +422,7 @@ namespace CTBTeam
                                    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
                 OleDbConnection objConn = new OleDbConnection(connectionString);
                 objConn.Open();
-                OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME, PROJ_CATEGORY FROM Projects ORDER BY PROJ_NAME", objConn);
+                OleDbCommand objCmdSelect = new OleDbCommand("SELECT Project, Category FROM Projects ORDER BY Project", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
                 objAdapter.SelectCommand = objCmdSelect;
                 DataSet objDataSet = new DataSet();

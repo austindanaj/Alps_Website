@@ -29,13 +29,13 @@ namespace CTBTeam {
 
 				populatePastWeekDropDown();
 				populateNames();
-				populateDataCars();
-				populateDataProject();
+				populateDataCars(0);
+				populateDataProject(0);
 				populateDataPercentage();
 
 				if (datechange()) {
-					populateDataCars();
-					populateDataProject();
+					populateDataCars(0);
+					populateDataProject(0);
 					getDate();
 				}
 
@@ -302,12 +302,45 @@ namespace CTBTeam {
 															"WHERE Emp_Name=@value2", objConn);
 					objCmdProject.Parameters.AddWithValue("@value1", int.Parse(txtHoursProjects.Text));
 					objCmdProject.Parameters.AddWithValue("@value2", ddlNamesProject.Text);
-
-
+                    
 					objCmdProject.ExecuteNonQuery();
 
+                    OleDbCommand objCmdName = new OleDbCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
+                    objCmdName.Parameters.AddWithValue("@name", ddlFullTimeNames.Text);
+                    OleDbDataReader namereader = objCmdName.ExecuteReader();
+                    bool fulltime = false;
+                    while (namereader.Read())
+                    {
+                        fulltime = namereader.GetBoolean(0);
+                    }
 
-					objConn.Close();
+
+                    OleDbCommand objCmdCat = new OleDbCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
+                    objCmdCat.Parameters.AddWithValue("@project", ddlAllProjects.Text);
+                    OleDbDataReader catreader = objCmdCat.ExecuteReader();
+                    string cat = "";
+                    while (catreader.Read())
+                    {
+                        cat = catreader.GetValue(0).ToString();
+                    }
+
+                    DateTime dt = DateTime.Now;
+                    while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
+
+                    OleDbCommand objCmdCars = new OleDbCommand("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
+                                                                "VALUES (@name, @project, @cat, @percent, @date, @fulltime);", objConn);
+                    objCmdCars.Parameters.AddWithValue("@name", ddlFullTimeNames.Text);
+                    objCmdCars.Parameters.AddWithValue("@project", ddlAllProjects.Text);
+                    objCmdCars.Parameters.AddWithValue("@cat", cat);
+                    objCmdCars.Parameters.AddWithValue("@percent", Math.Round((double.Parse( txtHoursProjects.Text)/ 40) * 100, 0));
+                    objCmdCars.Parameters.AddWithValue("@date", DateTime.Parse(dt.ToShortDateString()));
+                    objCmdCars.Parameters.AddWithValue("@fulltime", fulltime);
+
+                    objCmdCars.ExecuteNonQuery();
+
+
+
+                    objConn.Close();
 
 					// reset();
 				}
@@ -315,8 +348,8 @@ namespace CTBTeam {
 					writeStackTrace("Hours Submit", ex);
 				}
 
-				// populateDataCars();
-				populateDataProject();
+                // populateDataCars();
+                Response.Redirect("~/Hours");
 			}
 		}
 		protected void On_Click_Submit_Percent(object sender, EventArgs e) {
@@ -348,7 +381,7 @@ namespace CTBTeam {
 					}
 
 
-					OleDbCommand objCmdCat = new OleDbCommand("SELECT PROJ_CATEGORY FROM Projects WHERE PROJ_NAME=@project;", objConn);
+					OleDbCommand objCmdCat = new OleDbCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
 					objCmdCat.Parameters.AddWithValue("@project", ddlAllProjects.Text);
 					OleDbDataReader catreader = objCmdCat.ExecuteReader();
 					string cat = "";
@@ -420,7 +453,7 @@ namespace CTBTeam {
 					writeStackTrace("Hours Submit", ex);
 				}
 
-				populateDataCars();
+				populateDataCars(0);
 				// populateDataProject();
 			}
 		}
@@ -448,7 +481,7 @@ namespace CTBTeam {
 
 				OleDbConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY PROJ_NAME", objConn);
+				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
 				OleDbDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlAllProjects.Items.Add(new ListItem(reader.GetString(0)));
@@ -524,7 +557,7 @@ namespace CTBTeam {
 									   "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 				OleDbConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT PROJ_NAME FROM Projects ORDER BY PROJ_NAME", objConn);
+				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
 				OleDbDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlProjects.Items.Add(new ListItem(reader.GetString(0)));
@@ -627,7 +660,7 @@ namespace CTBTeam {
 								break;
 							case "B":
 								point.Color = System.Drawing.Color.SpringGreen;
-								text = "CTB/R&D";
+								text = "Time Off";
 								break;
 							case "C":
 								point.Color = System.Drawing.Color.Salmon;
@@ -635,7 +668,7 @@ namespace CTBTeam {
 								break;
 							case "D":
 								point.Color = System.Drawing.Color.Violet;
-								text = "Production Dev (Non-Auto)";
+								text = "Design in Market (Non-Auto)";
 								break;
 						}
 						point.Label = string.Format("{0:P} - {1}", point.YValues[0], point.AxisLabel);
@@ -654,7 +687,7 @@ namespace CTBTeam {
 			}
 		}
 
-		public void populateDataCars() {
+		public void populateDataCars(int startIndex) {
 			try {
 				OleDbConnection objConn = openDBConnection();
 				objConn.Open();
@@ -663,7 +696,13 @@ namespace CTBTeam {
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
-				objDataSet.Tables[0].Columns.RemoveAt(0);
+                objDataSet.Tables[0].Columns.RemoveAt(0);
+                int length = objDataSet.Tables[0].Columns.Count;
+                for (int i = startIndex + 6; i < length; i++)
+                {
+                    objDataSet.Tables[0].Columns.RemoveAt(startIndex + 6);
+                }
+               
 				dgvCars.DataSource = objDataSet.Tables[0].DefaultView;
 				dgvCars.DataBind();
 
@@ -674,8 +713,8 @@ namespace CTBTeam {
 				writeStackTrace("Populate Vehicles", ex);
 			}
 		}
-
-		public void populateDataProject() {
+        
+		public void populateDataProject(int startIndex) {
 			try {
 				OleDbConnection objConn = openDBConnection();
 				objConn.Open();
@@ -684,7 +723,13 @@ namespace CTBTeam {
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
-				objDataSet.Tables[0].Columns.RemoveAt(0);
+                objDataSet.Tables[0].Columns.RemoveAt(0);
+                int length = objDataSet.Tables[0].Columns.Count;
+                for (int i = startIndex + 6; i < length; i++)
+                {
+                    objDataSet.Tables[0].Columns.RemoveAt(startIndex + 6);
+                }
+				//objDataSet.Tables[0].Columns.RemoveAt(0);
 				dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
 				dgvProject.DataBind();
 
@@ -696,24 +741,23 @@ namespace CTBTeam {
 		}
 
 		protected void OnPageIndexChanging1(object sender, GridViewPageEventArgs e) {
-			populateDataProject();
+			populateDataProject(0);
 			dgvProject.PageIndex = e.NewPageIndex;
 			dgvProject.DataBind();
 		}
 
 		protected void OnPageIndexChanging2(object sender, GridViewPageEventArgs e) {
-			populateDataCars();
+			populateDataCars(0);
 			dgvCars.PageIndex = e.NewPageIndex;
 			dgvCars.DataBind();
 		}
 
 		private object[] getList(CTBTeam.Hours.GET_LIST enumSwitch, OleDbConnection objConn) {
 			string s;
-			//TODO: The DB commands aren't right with my version of DB.
-			//There's no PROJ_NAME or Project table.
+		
 			switch (enumSwitch) {
 				case GET_LIST.PROJECT:
-					s = "SELECT PROJ_NAME From Projects ORDER BY ID";
+					s = "SELECT Project From Projects ORDER BY ID";
 					break;
 				case GET_LIST.VEHICLE:
 					s = "SELECT Vehicle From Cars ORDER BY ID";
