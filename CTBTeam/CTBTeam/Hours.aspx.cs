@@ -505,16 +505,10 @@ namespace CTBTeam {
 				objConn.Close();
 			}
 			catch (Exception ex) {
-				if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
-					System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
-				}
-				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
-					file.WriteLine(Date.Today.ToString() + "--Populate Names--" + ex.ToString());
-					file.Close();
-				}
-
+				writeStackTrace("Populate Names", ex);
 			}
 		}
+
 		public void populateListProjects() {
 			try {
 				ddlProjects.Items.Clear();
@@ -737,10 +731,6 @@ namespace CTBTeam {
 
 			object[] o = {counter, s};
 			return o;
-		}
-
-		private void throwJSAlert(string s) {
-			ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('" + s + "');", true);
 		}
 
 		private void backUpToTxt(OleDbDataReader reader, StreamWriter file, int count) {

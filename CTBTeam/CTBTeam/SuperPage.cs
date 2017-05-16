@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.OleDb;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using Date = System.DateTime;
@@ -20,6 +21,10 @@ namespace CTBTeam {
 
 		protected OleDbConnection openDBConnection() {
 			return new OleDbConnection(dbVersion12_0 + "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";");
+		}
+
+		protected void throwJSAlert(string s) {
+			ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('" + s + "');", true);
 		}
 	}
 }

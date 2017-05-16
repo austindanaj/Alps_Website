@@ -13,24 +13,6 @@ namespace CTBTeam {
     public partial class TimeOff {
         
         /// <summary>
-        /// cldTimeOff control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar cldTimeOff;
-        
-        /// <summary>
-        /// bltList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.BulletedList bltList;
-        
-        /// <summary>
         /// bulletList control.
         /// </summary>
         /// <remarks>
@@ -49,22 +31,58 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.DropDownList ddlNames;
         
         /// <summary>
-        /// Button1 control.
+        /// ddlTimeTakenOff control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTimeTakenOff;
         
         /// <summary>
-        /// Button3 control.
+        /// btnAddTimeOff control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button3;
+        protected global::System.Web.UI.WebControls.Button btnAddTimeOff;
+        
+        /// <summary>
+        /// btnRemoveTimeOff control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRemoveTimeOff;
+        
+        /// <summary>
+        /// cldTimeOffStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Calendar cldTimeOffStart;
+        
+        /// <summary>
+        /// cldTimeOffEnd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Calendar cldTimeOffEnd;
+        
+        /// <summary>
+        /// bltList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.BulletedList bltList;
         
         /// <summary>
         /// Image1 control.
