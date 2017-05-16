@@ -799,5 +799,23 @@ namespace CTBTeam {
 			}
 			file.WriteLine();      /** write blank line to file **/
 		}
-	}
+        protected void Previous_Button_Clicked(object sender, EventArgs e)
+        {
+            if (/* */)
+            { 
+                if((int) Session["ProjectCol"] == 0)
+                {
+                    Session["ProjectCol"] = 0;
+                }
+            }
+            else
+            {
+
+            }
+        }
+        protected void Next_Button_Clicked(object sender, EventArgs e)
+        {
+
+        }
+    }
 }
