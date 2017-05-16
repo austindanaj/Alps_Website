@@ -692,8 +692,12 @@ namespace CTBTeam {
 				objAdapter.Fill(objDataSet);
                 objDataSet.Tables[0].Columns.RemoveAt(0);
                 int length = objDataSet.Tables[0].Columns.Count;
-                for (int i = startIndex + 6; i < length; i++)
+                for (int i = 1; i < startIndex; i++)
                 {
+                    objDataSet.Tables[0].Columns.RemoveAt(1);
+                }
+                for (int i = startIndex + 6; i < length; i++)
+                {                
                     objDataSet.Tables[0].Columns.RemoveAt(startIndex + 6);
                 }
                
@@ -719,12 +723,16 @@ namespace CTBTeam {
 				objAdapter.Fill(objDataSet);
                 objDataSet.Tables[0].Columns.RemoveAt(0);
                 int length = objDataSet.Tables[0].Columns.Count;
+                for (int i = 1; i < startIndex; i++)
+                {
+                    objDataSet.Tables[0].Columns.RemoveAt(1);
+                }
                 for (int i = startIndex + 6; i < length; i++)
                 {
                     objDataSet.Tables[0].Columns.RemoveAt(startIndex + 6);
                 }
-				//objDataSet.Tables[0].Columns.RemoveAt(0);
-				dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
+                //objDataSet.Tables[0].Columns.RemoveAt(0);
+                dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
 				dgvProject.DataBind();
 
 				objConn.Close();
