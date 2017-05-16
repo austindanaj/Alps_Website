@@ -29,13 +29,13 @@ namespace CTBTeam {
 
 				populatePastWeekDropDown();
 				populateNames();
-				populateDataCars(0);
-				populateDataProject(0);
+				populateDataCars((int)Session["ProjectCol"]);
+				populateDataProject((int)Session["VehicleCol"]);
 				populateDataPercentage();
 
 				if (datechange()) {
-					populateDataCars(0);
-					populateDataProject(0);
+					populateDataCars((int)Session["ProjectCol"]);
+					populateDataProject((int)Session["VehicleCol"]);
 					getDate();
 				}
 
@@ -453,7 +453,7 @@ namespace CTBTeam {
 					writeStackTrace("Hours Submit", ex);
 				}
 
-				populateDataCars(0);
+				populateDataCars((int)Session["VehicleCol"]);
 				// populateDataProject();
 			}
 		}
@@ -691,14 +691,15 @@ namespace CTBTeam {
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
                 objDataSet.Tables[0].Columns.RemoveAt(0);
-                int length = objDataSet.Tables[0].Columns.Count;
+              
                 for (int i = 1; i < startIndex; i++)
                 {
                     objDataSet.Tables[0].Columns.RemoveAt(1);
                 }
-                for (int i = startIndex + 6; i < length; i++)
+                int length = objDataSet.Tables[0].Columns.Count;
+                for (int i = 7; i < length; i++)
                 {                
-                    objDataSet.Tables[0].Columns.RemoveAt(startIndex + 6);
+                    objDataSet.Tables[0].Columns.RemoveAt(7);
                 }
                
 				dgvCars.DataSource = objDataSet.Tables[0].DefaultView;
@@ -721,15 +722,22 @@ namespace CTBTeam {
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
-                objDataSet.Tables[0].Columns.RemoveAt(0);
-                int length = objDataSet.Tables[0].Columns.Count;
+
+                //Removes ID Column
+                objDataSet.Tables[0].Columns.RemoveAt(0);    
+
+                //Get # of columns with ID removed
+               
+
+
                 for (int i = 1; i < startIndex; i++)
                 {
                     objDataSet.Tables[0].Columns.RemoveAt(1);
                 }
-                for (int i = startIndex + 6; i < length; i++)
+                int length = objDataSet.Tables[0].Columns.Count;
+                for (int i = 7; i < length; i++)
                 {
-                    objDataSet.Tables[0].Columns.RemoveAt(startIndex + 6);
+                    objDataSet.Tables[0].Columns.RemoveAt(7);
                 }
                 //objDataSet.Tables[0].Columns.RemoveAt(0);
                 dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
@@ -743,13 +751,13 @@ namespace CTBTeam {
 		}
 
 		protected void OnPageIndexChanging1(object sender, GridViewPageEventArgs e) {
-			populateDataProject(0);
+			populateDataProject((int)Session["ProjectCol"]);
 			dgvProject.PageIndex = e.NewPageIndex;
 			dgvProject.DataBind();
 		}
 
 		protected void OnPageIndexChanging2(object sender, GridViewPageEventArgs e) {
-			populateDataCars(0);
+			populateDataCars((int)Session["VehicleCol"]);
 			dgvCars.PageIndex = e.NewPageIndex;
 			dgvCars.DataBind();
 		}
@@ -799,23 +807,51 @@ namespace CTBTeam {
 			}
 			file.WriteLine();      /** write blank line to file **/
 		}
-        protected void Previous_Button_Clicked(object sender, EventArgs e)
+        protected void NP_Button_Clicked(object sender, EventArgs e)
         {
-            if (/* */)
-            { 
-                if((int) Session["ProjectCol"] == 0)
+           
+            if (sender.Equals(btnProjectPrevious))
+            {
+                Session["ProjectCol"] = (int) Session["ProjectCol"] - 6;
+
+                if((int) Session["ProjectCol"] <1)
                 {
-                    Session["ProjectCol"] = 0;
+                    Session["ProjectCol"] = 1;
                 }
+                populateDataProject((int)Session["ProjectCol"]);
             }
-            else
+            else if (sender.Equals(btnProjectNext))
             {
 
+                Session["ProjectCol"] = (int)Session["ProjectCol"] + 6;
+
+                if ((int)Session["ProjectCol"] > 18)
+                {
+                    Session["ProjectCol"] = 18;
+                }
+                populateDataProject((int)Session["ProjectCol"]);
+            }
+            else if (sender.Equals(btnVehiclePrevious))
+            {
+                Session["VehicleCol"] = (int)Session["VehicleCol"] - 6;
+
+                if ((int)Session["VehicleCol"] < 1)
+                {
+                    Session["VehicleCol"] = 1;
+                }
+                populateDataCars((int)Session["VehicleCol"]);
+            }
+            else if (sender.Equals(btnVehicleNext))
+            {
+                Session["VehicleCol"] = (int)Session["VehicleCol"] + 6;
+
+                if ((int)Session["VehicleCol"] > 18)
+                {
+                    Session["VehicleCol"] = 12;
+                }
+                populateDataCars((int)Session["VehicleCol"]);
             }
         }
-        protected void Next_Button_Clicked(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

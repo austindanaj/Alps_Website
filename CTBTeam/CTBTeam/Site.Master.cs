@@ -24,6 +24,14 @@ namespace CTBTeam
             if (!(bool)Session["admin"]) { 
                 admin.Visible = false;
             }
+            if (Session["ProjectCol"] == null)
+            {
+                Session["ProjectCol"] = 1;
+            }
+            if (Session["VehicleCol"] == null)
+            {
+                Session["VehicleCol"] = 1;
+            }
             if (string.IsNullOrEmpty((string)Session["Date"]))
             {
                 DateTime dt = DateTime.Now;                

@@ -95,8 +95,8 @@
 				AutoGenerateColumns="true"
 				OnPageIndexChanging="OnPageIndexChanging1">
 			</asp:GridView>
-			<asp:Button runat="server" ID="btnProjectPrevious" Text="←" CssClass="btn-home" Width="500px" />
-			<asp:Button runat="server" ID="btnProjectNext" Text="→" CssClass="btn-home" Width="500px" />
+			<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="NP_Button_Clicked" CssClass="btn-home" Width="500px" />
+			<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="NP_Button_Clicked" CssClass="btn-home" Width="500px" />
 		</div>
 	</div>
 	<br />
@@ -128,8 +128,8 @@
 				AutoGenerateColumns="true"
 				OnPageIndexChanging="OnPageIndexChanging1">
 			</asp:GridView>
-			<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" CssClass="btn-home" Width="500px" />
-			<asp:Button runat="server" ID="btnVehicleNext" Text="→" CssClass="btn-home" Width="500px" />
+			<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="NP_Button_Clicked" CssClass="btn-home" Width="500px" />
+			<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="NP_Button_Clicked" CssClass="btn-home" Width="500px" />
 		</div>
 
 	</div>
