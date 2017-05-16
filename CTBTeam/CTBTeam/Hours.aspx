@@ -65,12 +65,8 @@
 				</Series>
 				<ChartAreas>
 					<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
-
 				</ChartAreas>
 			</asp:Chart>
-
-
-
 		</div>
 	</div>
 	<br />
@@ -99,7 +95,8 @@
 				AutoGenerateColumns="true"
 				OnPageIndexChanging="OnPageIndexChanging1">
 			</asp:GridView>
-
+			<asp:Button runat="server" ID="btnProjectPrevious" Text="←" CssClass="btn-home" Width="500px" />
+			<asp:Button runat="server" ID="btnProjectNext" Text="→" CssClass="btn-home" Width="500px" />
 		</div>
 	</div>
 	<br />
@@ -131,7 +128,8 @@
 				AutoGenerateColumns="true"
 				OnPageIndexChanging="OnPageIndexChanging1">
 			</asp:GridView>
-
+			<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" CssClass="btn-home" Width="500px" />
+			<asp:Button runat="server" ID="btnVehicleNext" Text="→" CssClass="btn-home" Width="500px" />
 		</div>
 
 	</div>
