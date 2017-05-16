@@ -62,7 +62,7 @@ namespace CTBTeam
 
                     int projectCount = 0;
 
-                    OleDbCommand getProjectList = new OleDbCommand("SELECT PROJ_NAME From Projects ORDER BY ID", objConn);
+                    OleDbCommand getProjectList = new OleDbCommand("SELECT Project From Projects ORDER BY ID", objConn);
                     OleDbDataReader readerProjectList = getProjectList.ExecuteReader();
                     while (readerProjectList.Read())
                     {
