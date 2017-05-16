@@ -19,7 +19,7 @@
             <br />
             <asp:TextBox Class="txt-admin" ID="txtName" runat="server" placeholder="First and Last Name"></asp:TextBox>
 
-            <asp:Button Class="btn-admin" ID="btnName" runat="server" OnClick="User_Clicked" Text="Add User"></asp:Button>
+            <asp:Button Class="btn-home" Width="100px" ID="btnName" runat="server" OnClick="User_Clicked" Text="Add User"></asp:Button>
             <br />
             <asp:CheckBox ID="chkAddToVehcileHours" runat="server" Text="Add to Vehicle Hours" style="color:white"/>
                <br />
@@ -32,7 +32,7 @@
             <br />
             <asp:TextBox Class="txt-admin" ID="txtNR" runat="server" placeholder="First and Last Name"></asp:TextBox>
 
-            <asp:Button Class="btn-admin" ID="btnNR" runat="server" OnClick="Remove_User_Clicked" Text="Remove User"></asp:Button>
+            <asp:Button Class="btn-home" Width="115px" ID="btnNR" runat="server" OnClick="Remove_User_Clicked" Text="Remove User"></asp:Button>
             <br />
 
             <br />
@@ -48,7 +48,7 @@
             <br />
             <asp:TextBox Class="txt-admin" ID="txtProject" runat="server" placeholder="Project Name, Category"></asp:TextBox>
 
-            <asp:Button Class="btn-admin" ID="btnProject" runat="server" OnClick="Project_Clicked" Text="Add Project"></asp:Button>
+            <asp:Button Class="btn-home" Width="120px" ID="btnProject" runat="server" OnClick="Project_Clicked" Text="Add Project"></asp:Button>
             <br />
             	<h6>A – Advanced Development Project</h6>
             	<h6>B – TimeOff</h6>
@@ -59,7 +59,7 @@
             <br />
             <asp:TextBox Class="txt-admin" ID="txtPR" runat="server" placeholder="Project Name"></asp:TextBox>
 
-            <asp:Button Class="btn-admin" ID="btnPR" runat="server" OnClick="Remove_Project_Clicked" Text="Remove Project"></asp:Button>
+            <asp:Button Class="btn-home" Width="128px" ID="btnPR" runat="server" OnClick="Remove_Project_Clicked" Text="Remove Project"></asp:Button>
             <br />
             <br />
             <asp:GridView ID="dgvProjects" runat="server" Width="200" HeaderStyle-BackColor="#3AC0F2"
@@ -74,7 +74,7 @@
             <br />
             <asp:TextBox Class="txt-admin" ID="txtCar" runat="server" placeholder="Vehicle Name"></asp:TextBox>
 
-            <asp:Button Class="btn-admin" ID="btnCar" runat="server" OnClick="Car_Clicked" Text="Add Vehicle"></asp:Button>
+            <asp:Button Class="btn-home" Width="120px" ID="btnCar" runat="server" OnClick="Car_Clicked" Text="Add Vehicle"></asp:Button>
             <br />
                  <br />
                  <br />
@@ -86,7 +86,7 @@
             <br />
             <asp:TextBox Class="txt-admin" ID="txtCR" runat="server" placeholder="Vehicle Name"></asp:TextBox>
 
-            <asp:Button Class="btn-admin" ID="btnCR" runat="server" OnClick="Remove_Car_Clicked" Text="Remove Vehicle"></asp:Button>
+            <asp:Button Class="btn-home" Width="140px" ID="btnCR" runat="server" OnClick="Remove_Car_Clicked" Text="Remove Vehicle"></asp:Button>
             <br />
             <br />
                <asp:GridView ID="dgvCars" runat="server" Width="200" HeaderStyle-BackColor="#3AC0F2"

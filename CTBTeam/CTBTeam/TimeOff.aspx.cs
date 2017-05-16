@@ -20,7 +20,7 @@ namespace CTBTeam {
 		}
 
 		private void calendarInit() {
-			if (Session["user"] != null) {
+			if (Session["user"] == null) {
 				cldTimeOffStart.Visible = false;
 				cldTimeOffEnd.Visible = false;
 			}
@@ -83,7 +83,7 @@ namespace CTBTeam {
 		}
 
 		protected void addTimeOff(object sender, EventArgs e) {
-			if (string.IsNullOrEmpty((string)Session["User"])) {
+			if (!string.IsNullOrEmpty((string)Session["User"])) {
 				try {
 					Date start = cldTimeOffStart.SelectedDate;
 					Date end = cldTimeOffEnd.SelectedDate;
