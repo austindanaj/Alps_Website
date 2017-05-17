@@ -14,7 +14,7 @@ namespace CTBTeam {
 				System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
 			}
 			using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
-				file.WriteLine(Date.Today.ToString() + " --" + s + "--" + ex.StackTrace);
+				file.WriteLine(Date.Today.ToString() + "--Populate Projects--" + ex.ToString());
 				file.Close();
 			}
 		}
