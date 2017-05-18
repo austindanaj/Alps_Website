@@ -46,7 +46,7 @@
 			<asp:DropDownList ID="ddlPercentage" CssClass="drp-home" runat="server"></asp:DropDownList>
 			<br />
 			<br />
-			<asp:Button ID="Button1" runat="server" OnClick="On_Click_Submit_Percent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="buttonSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
             <asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
 		</div>
 		<div class="col-md-50">
