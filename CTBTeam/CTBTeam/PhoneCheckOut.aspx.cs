@@ -15,7 +15,7 @@ using System.Drawing;
 
 namespace CTBTeam
 {
-    public partial class PhoneCheckOut : Page
+    public partial class PhoneCheckOut : SuperPage
     {
 
 
@@ -45,10 +45,10 @@ namespace CTBTeam
             // gets information form database
             try
             {
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+            
+    
 
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
@@ -63,7 +63,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -87,10 +87,10 @@ namespace CTBTeam
             // gets information form database
             try
             {
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+            
+    
 
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
                 OleDbDataReader reader = objCmdSelect.ExecuteReader();
@@ -105,7 +105,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -126,9 +126,9 @@ namespace CTBTeam
             {
                 drpPhone.Items.Clear();
                 drpPhone.Items.Add(new ListItem("--Select A Phone--"));
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+            
+    
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
 
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -147,7 +147,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -162,9 +162,9 @@ namespace CTBTeam
                 drpCheckIn.Items.Clear();
                 drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+            
+    
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
 
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -183,7 +183,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -209,9 +209,9 @@ namespace CTBTeam
                 Vehicle.Items.Clear();
                 Vehicle.Items.Add(new ListItem("--Select A Vehicle--"));
 
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+            
+    
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
 
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
@@ -229,7 +229,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -278,12 +278,8 @@ namespace CTBTeam
              * Initialzes the grid view table(gvTable) with all the current information in the database
              * 
              * */
-            try
-            {
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+            try {
+				OleDbConnection objConn = openDBConnection();
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Available, Car, Person, Purpose, Period FROM PhoneCheckout ORDER BY Model", objConn);
                 OleDbDataAdapter objAdapter = new OleDbDataAdapter();
@@ -300,7 +296,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -379,10 +375,7 @@ namespace CTBTeam
             {
                 try
                 {
-                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-
-                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    OleDbConnection objConn = openDBConnection();
                     objConn.Open();
                     OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp, Period=@period  WHERE Model=@model", objConn);
                     objCmdSelect.Parameters.AddWithValue("@name", drpPerson.Text);
@@ -402,7 +395,7 @@ namespace CTBTeam
                     /*
                     if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                     {
-                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                        
                     }
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                     {
@@ -421,9 +414,9 @@ namespace CTBTeam
                 {
                     drpPhone.Items.Clear();
                     drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                             "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                
+        
+                    OleDbConnection objConn = openDBConnection();
                     objConn.Open();
 
                     OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -442,7 +435,7 @@ namespace CTBTeam
                 {
                     if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                     {
-                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                        
                     }
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                     {
@@ -458,9 +451,9 @@ namespace CTBTeam
                     drpCheckIn.Items.Clear();
                     drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
-                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                             "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                
+        
+                    OleDbConnection objConn = openDBConnection();
                     objConn.Open();
 
                     OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -479,7 +472,7 @@ namespace CTBTeam
                 {
                     if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                     {
-                        System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                        
                     }
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                     {
@@ -505,10 +498,7 @@ namespace CTBTeam
 
             try
             {
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                     "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
                 OleDbCommand objCmdSelect = new OleDbCommand("UPDATE PhoneCheckout SET Person=@name, Car=@car, Available=@bool, Purpose=@temp, Period=@period WHERE Model=@model", objConn);
                 objCmdSelect.Parameters.AddWithValue("@name", temp);
@@ -527,7 +517,7 @@ namespace CTBTeam
                 /*
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -547,9 +537,9 @@ namespace CTBTeam
                 drpPhone.Items.Clear();
                 drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+            
+    
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
 
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -568,7 +558,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -584,9 +574,9 @@ namespace CTBTeam
                 drpCheckIn.Items.Clear();
                 drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
-                String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                         "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                OleDbConnection objConn = new OleDbConnection(connectionString);
+            
+    
+                OleDbConnection objConn = openDBConnection();
                 objConn.Open();
 
                 OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -605,7 +595,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -639,7 +629,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
@@ -676,7 +666,7 @@ namespace CTBTeam
             {
                 if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {
-                    System.IO.File.Create(@"" + Server.MapPath("~/Debug/StackTrace.txt"));
+                    
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
                 {

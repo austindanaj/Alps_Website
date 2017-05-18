@@ -40,7 +40,7 @@ namespace CTBTeam {
 				try {
 					String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
 								  "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-					OleDbConnection objConn = new OleDbConnection(connectionString);
+					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
 

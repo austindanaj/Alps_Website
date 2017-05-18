@@ -11,7 +11,7 @@ using Date = System.DateTime;
 
 namespace CTBTeam
 {
-    public partial class _Default : Page
+    public partial class _Default : SuperPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -36,11 +36,7 @@ namespace CTBTeam
 
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt")))
                 {
-                    
-
-                    String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-                                 "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
-                    OleDbConnection objConn = new OleDbConnection(connectionString);
+                    OleDbConnection objConn = openDBConnection();
                     objConn.Open();
 
                     OleDbCommand fieldProjectNames = new OleDbCommand("SELECT * FROM ProjectHours", objConn);
