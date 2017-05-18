@@ -113,18 +113,25 @@ namespace CTBTeam {
 					OleDbCommand objCmd = new OleDbCommand("INSERT INTO TimeOff " +
 															"(Emp_Name, Start_Date, End_Date) VALUES (@value1, @value2, @value3);", objConn);
 
+                 
+
+
 					objCmd.Parameters.AddWithValue("@value1", ddlNames.Text);
 					objCmd.Parameters.AddWithValue("@value2", start);
 					objCmd.Parameters.AddWithValue("@value3", end);
-					objCmd.ExecuteNonQuery();
-
+                    objCmd.ExecuteNonQuery();
+                    int modified = (int)objCmd.ExecuteScalar();
+                     
+                    /*
+                   
 					objCmd = new OleDbCommand("Select ID from TimeOff where Start_Date=@value1 and End_Date=@value2 and Emp_Name=@value3;", objConn);
 					objCmd.Parameters.AddWithValue("@value3", ddlNames.Text);
 					objCmd.Parameters.AddWithValue("@value1", start);
 					objCmd.Parameters.AddWithValue("@value2", end);
 					OleDbDataReader reader = objCmd.ExecuteReader();
+                    */
 
-					ddlTimeTakenOff.Items.Add(new ListItem(reader.Read().ToString() + ": " + start.ToShortDateString() + " - " + end.ToShortDateString()));
+					ddlTimeTakenOff.Items.Add(new ListItem(modified + ": " + start.ToShortDateString() + " - " + end.ToShortDateString()));
 					objConn.Close();
 
 					Session["success?"] = true;
@@ -136,8 +143,10 @@ namespace CTBTeam {
 		}
 
 		protected void nameChange(object sender, EventArgs e) {
-			//if (ddlNames.SelectedValue.ToString().Equals("--Select A Name--")) return;
-			ddlTimeTakenOff.Items.Clear();
+            try
+            {
+                //if (ddlNames.SelectedValue.ToString().Equals("--Select A Name--")) return;
+                ddlTimeTakenOff.Items.Clear();
 			OleDbConnection objConn = openDBConnection();
 			objConn.Open();
 
@@ -146,14 +155,21 @@ namespace CTBTeam {
 			OleDbDataReader reader = cmd.ExecuteReader();
 			ddlTimeTakenOff.Items.Add("--Select a time off period--");
 			while (reader.Read()) {
-				ddlTimeTakenOff.Items.Add(new ListItem(reader.GetValue(0).ToString() + ": " + reader.GetValue(1).ToString() + " - " + reader.GetValue(2).ToString()));
+				ddlTimeTakenOff.Items.Add(new ListItem(reader.GetValue(0).ToString() + ": " + 
+                    DateTime.Parse(reader.GetValue(1).ToString()).ToShortDateString() + " - " + 
+                    DateTime.Parse(reader.GetValue(2).ToString()).ToShortDateString()));
 			}
 
 			objConn.Close();
-		}
+            }
+            catch (Exception ex)
+            {
+                writeStackTrace("Name Change", ex);
+            }
+        }
 
 		protected void removeTimeOff(object sender, EventArgs e) {
-			if (string.IsNullOrEmpty((string)Session["User"])) {
+			if (!string.IsNullOrEmpty((string)Session["User"])) {
 				try {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
