@@ -25,7 +25,7 @@ namespace CTBTeam {
 				getDate();
 				populatePastWeekDropDown();
 				populateNames();
-
+				successDialog(successOrFail);
 				//In the event that PageLoad class doens't load, we init
 				//the session projectcol and vehiclecol cookies since they
 				//are used right below.
@@ -431,13 +431,12 @@ namespace CTBTeam {
 
 				objConn.Close();
 
-				// reset();
+				Session["success?"] = true;
+				Response.Redirect("~/Hours");
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
 			}
-
-			Response.Redirect("~/Hours");
 		}
 
 		private void submitPercent() {
@@ -477,12 +476,13 @@ namespace CTBTeam {
 				objCmdCars.ExecuteNonQuery();
 
 				objConn.Close();
-
-				Response.Redirect("~/Hours");
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
 			}
+
+			Session["success?"] = true;
+			Response.Redirect("~/Hours");
 		}
 
 		private void submitCars() {
@@ -720,6 +720,9 @@ namespace CTBTeam {
 				for (int i = 7; i < length; i++) {
 					objDataSet.Tables[0].Columns.RemoveAt(7);
 				}
+
+				for (int i = 0; i < objDataSet.Tables[0].Columns.Count; i++)
+					objDataSet.Tables[0].Columns[i].ColumnName = objDataSet.Tables[0].Columns[i].ColumnName.Replace('_', ' ');
 
 				switch (type) {
 					case DATA_TYPE.VEHICLE:

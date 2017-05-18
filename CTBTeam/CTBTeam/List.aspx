@@ -11,9 +11,10 @@
            
         }
     </style>
-    <br />
-    <br />
+    
     <div class="row">
+		<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
+		<br />
         <div class="col-md-50">
             <asp:Label ID="lblName" runat="server" Text="Item Name:  " CssClass="lbl-purchase">
                 <asp:TextBox ID="txtName" runat="server" CssClass="txt-purchase" placeholder="Batteries"></asp:TextBox>
@@ -48,8 +49,6 @@
                 <asp:Button ID="btnSubmit" runat="server" Text="Add Item" CssClass="btn btn-primary btn-lg" OnClick="btnSubmit_Click" />
             </div>
         </div>
-        <br />
-        <br />
         <div class="col-md-50">
             <asp:GridView ID="grdList" runat="server" CssClass="gridview"></asp:GridView>
         </div>

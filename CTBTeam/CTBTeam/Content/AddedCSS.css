@@ -1,4 +1,16 @@
-﻿
+﻿.feedback-textbox {
+	background: #45a93a;
+	display: inline-block;
+	resize: none;
+	border-radius: 5px;
+	border: 2px solid #fff;
+	font-size: 16px;
+	width: 80px;
+	padding-left: 5px;
+	background-color: #4CAF50;
+	color: #fff;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;

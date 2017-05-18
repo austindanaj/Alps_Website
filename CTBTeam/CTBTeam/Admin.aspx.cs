@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.OleDb;
 using System.Data;
+using System.Threading;
 
 namespace CTBTeam {
 	public partial class Admin : SuperPage {
@@ -9,33 +10,29 @@ namespace CTBTeam {
 				populateUsers();
 				populateProjects();
 				populateVehicles();
+				successDialog(successOrFail);
 			}
 		}
+
 		protected void User_Clicked(object sender, EventArgs e) {
 			if (!(txtName.Text.Equals(""))) {
 				try {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.Parameters.AddWithValue("@value2", !chkPartTime.Checked);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.ExecuteNonQuery();
-
+					object[] val1And2 = { txtName.Text, !chkPartTime.Checked};
+					object[] val1 = { txtName.Text };
+					executeVoidSQLQuery("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", val1And2, objConn);
+					executeVoidSQLQuery("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", val1, objConn);
+					
 					if (chkAddToVehcileHours.Checked == true) {
-						objCmd = new OleDbCommand("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", objConn);
-						objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-						objCmd.ExecuteNonQuery();
+						executeVoidSQLQuery("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", val1, objConn);
 					}
 
 					objConn.Close();
-					//     populateUsers();
+					Session["success?"] = true;
 					Response.Redirect("~/Admin");
-					ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully added');", true);
+				} catch (ThreadAbortException tae) {
 				}
 				catch (Exception ex) {
 					writeStackTrace("Add User", ex);
@@ -49,8 +46,6 @@ namespace CTBTeam {
 
 		protected void Project_Clicked(object sender, EventArgs e) {
 			if (!(txtProject.Text.Equals(""))) {
-
-
 				try {
 					string[] array = txtProject.Text.Split(',');
 					if (txtProject.Text.Contains(" ")) {
@@ -60,96 +55,76 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("INSERT INTO Projects (Project, Category) VALUES (@value1, @value2);", objConn);
-					objCmd.Parameters.AddWithValue("@value1", array[0]);
-					objCmd.Parameters.AddWithValue("@value2", array[1]);
-
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("ALTER TABLE ProjectHours ADD " + array[0] + " number;", objConn);
-					//  objCmd = new OleDbCommand("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", objConn);
-					//  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("UPDATE ProjectHours SET " + array[0] + " =0;", objConn);
-					objCmd.ExecuteNonQuery();
+					object[] parameters = { array[0], array[1] };
+					executeVoidSQLQuery("INSERT INTO Projects (Project, Category) VALUES (@value1, @value2);", parameters, objConn);
+					executeVoidSQLQuery("ALTER TABLE ProjectHours ADD " + array[0] + " number;", null, objConn);
+					executeVoidSQLQuery("UPDATE ProjectHours SET " + array[0] + " =0;", null, objConn);
 
 					objConn.Close();
-					// populateProjects();
+
+					Session["success?"] = true;
 					Response.Redirect("~/Admin");
-					ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Project successfully added');", true);
+				}
+				catch (ThreadAbortException tae) {
 				}
 				catch (Exception ex) {
 					writeStackTrace("Add Project", ex);
 				}
 			}
 			else {
-				ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+				throwJSAlert("Fill in all fields.");
 			}
 		}
+
 		protected void Car_Clicked(object sender, EventArgs e) {
 			if (!(txtCar.Text.Equals(""))) {
 				try {
 					if (txtCar.Text.Contains(" ")) {
 						txtCar.Text = txtCar.Text.Replace(" ", "_");
 					}
-					String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-									"Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("INSERT INTO Cars (Vehicle) VALUES (@value1);", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtCar.Text);
-					objCmd.ExecuteNonQuery();
+					object[] parameters = { txtCar.Text };
+					executeVoidSQLQuery("INSERT INTO Cars (Vehicle) VALUES (@value1);", parameters, objConn);
+					executeVoidSQLQuery("ALTER TABLE VehicleHours ADD " + (string) parameters[0] + " number;", null, objConn);
+					executeVoidSQLQuery("UPDATE VehicleHours SET " + (string)parameters[0] + " =0;", null, objConn);
 
-					objCmd = new OleDbCommand("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", objConn);
-					//  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("UPDATE VehicleHours SET " + txtCar.Text + " =0;", objConn);
-					objCmd.ExecuteNonQuery();
 					objConn.Close();
-					// populateVehicles();
+					Session["success?"] = true;
 					Response.Redirect("~/Admin");
-					ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Vehicle successfully added');", true);
+				}
+				catch (ThreadAbortException tae) {
 				}
 				catch (Exception ex) {
 					writeStackTrace("Add Vehicle", ex);
 				}
-
-
 			}
 			else {
-				ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+				throwJSAlert("Fill in all fields");
 			}
 
 		}
 
 		protected void Remove_Project_Clicked(object sender, EventArgs e) {
 			if (!(txtPR.Text.Equals(""))) {
-
-
 				try {
 					if (txtPR.Text.Contains(" ")) {
 						txtPR.Text = txtCar.Text.Replace(" ", "_");
 					}
-					String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-									"Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("DELETE FROM Projects WHERE Project=@value1;", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtPR.Text);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("ALTER TABLE ProjectHours DROP COLUMN " + txtPR.Text + ";", objConn);
-					//  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.ExecuteNonQuery();
+					object[] parameters = {txtPR.Text};
+					executeVoidSQLQuery("DELETE FROM Projects WHERE Project=@value1;", parameters, objConn);
+					executeVoidSQLQuery("ALTER TABLE ProjectHours DROP COLUMN " + parameters[0] + ";", null, objConn);
 
 					objConn.Close();
-					// populateProjects();
+					Session["success?"] = true;
 					Response.Redirect("~/Admin");
-					ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Project successfully removed');", true);
+				}
+				catch (ThreadAbortException tae) {
 				}
 				catch (Exception ex) {
 					writeStackTrace("Remove Project", ex);
@@ -162,33 +137,27 @@ namespace CTBTeam {
 		protected void Remove_Car_Clicked(object sender, EventArgs e) {
 			if (!(txtCR.Text.Equals(""))) {
 				try {
-					if (txtCR.Text.Contains(" ")) {
-						txtCR.Text = txtCar.Text.Replace(" ", "_");
-					}
-					String connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" +
-									"Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
+					txtCR.Text = txtCar.Text.Replace(" ", "_");
+					
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("DELETE FROM Cars WHERE Vehicle=@value1;", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtCR.Text);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("ALTER TABLE VehicleHours DROP COLUMN " + txtCR.Text + ";", objConn);
-					//  objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.ExecuteNonQuery();
+					object[] parameters = { txtCR.Text };
+					executeVoidSQLQuery("DELETE FROM Cars WHERE Vehicle=@value1;", parameters, objConn);
+					executeVoidSQLQuery("ALTER TABLE VehicleHours DROP COLUMN " + parameters[0] + ";", null, objConn);					
 
 					objConn.Close();
-					//populateVehicles();
+					Session["success?"] = true;
 					Response.Redirect("~/Admin");
-					ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Vehicle successfully removed');", true);
+				}
+				catch (ThreadAbortException tae) {
 				}
 				catch (Exception ex) {
 					writeStackTrace("Remove Vehicle", ex);
 				}
 			}
 			else {
-				ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+				throwJSAlert("Error: Line blank! Please fill in all fields!");
 			}
 		}
 		protected void Remove_User_Clicked(object sender, EventArgs e) {
@@ -197,30 +166,22 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("DELETE FROM Users WHERE Emp_Name=@value1;", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtNR.Text);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtNR.Text);
-					objCmd.ExecuteNonQuery();
-
-					objCmd = new OleDbCommand("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtNR.Text);
-					objCmd.ExecuteNonQuery();
-
-
+					object[] parameters = { txtNR.Text };
+					executeVoidSQLQuery("DELETE FROM Users WHERE Emp_Name=@value1;", parameters, objConn);
+					executeVoidSQLQuery("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", parameters, objConn);
+					executeVoidSQLQuery("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", parameters, objConn);
+					
 					objConn.Close();
-					//   populateUsers();
+					Session["success?"] = true;
 					Response.Redirect("~/Admin");
-					ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('User successfully removed');", true);
 				}
+				catch (ThreadAbortException tae) { }
 				catch (Exception ex) {
 					writeStackTrace("Remove User", ex);
 				}
 			}
 			else {
-				ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Line blank! Please fill in all fields!');", true);
+				throwJSAlert("Error: Line blank! Please fill in all fields!");
 			}
 		}
 

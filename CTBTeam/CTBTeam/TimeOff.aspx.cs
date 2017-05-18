@@ -127,7 +127,7 @@ namespace CTBTeam {
 					ddlTimeTakenOff.Items.Add(new ListItem(reader.Read().ToString() + ": " + start.ToShortDateString() + " - " + end.ToShortDateString()));
 					objConn.Close();
 
-					throwJSAlert("Time off for " + start.ToShortDateString() + " to " + end.ToShortDateString() + " has been added successfully.");
+					Session["success?"] = true;
 				}
 				catch (Exception ex) {
 					writeStackTrace("Time off", ex);

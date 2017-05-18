@@ -11,6 +11,8 @@
 		}
 	</style>
 	<div class="row">
+		<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
+		<br />
 		<div class="col-md-50">
 			<asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
 		</div>
@@ -91,10 +93,7 @@
 
 		</div>
 		<div class="col-md-50">
-			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview"
-				AutoGenerateColumns="true"
-				OnPageIndexChanging="tableUpdate">
-			</asp:GridView>
+			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" AutoGenerateColumns="true" style="width:940px;"/>
 			<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 			<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 		</div>
@@ -124,10 +123,7 @@
 
 		<div class="col-md-50">
 
-			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview"
-				AutoGenerateColumns="true"
-				OnPageIndexChanging="tableUpdate">
-			</asp:GridView>
+			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" AutoGenerateColumns="true" OnPageIndexChanging="tableUpdate" style="width:940px;"/>
 			<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 			<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 		</div>

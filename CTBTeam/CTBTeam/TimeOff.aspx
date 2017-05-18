@@ -11,9 +11,7 @@
 		}
 	</style>
 	<div class="form-group">
-
-		<br />
-
+		<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
 		<br />
 		<div class="form-gr">
 			<asp:BulletedList ID="bulletList" runat="server" CssClass="bullet-list" BulletStyle="Numbered">

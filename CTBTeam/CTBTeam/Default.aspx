@@ -11,10 +11,6 @@
             -o-background-size: cover;
             background-size: cover;
         }
-
-        h1 {
-            color: white;
-        }
     </style>
     <div class="row">
         <div class="col-md-50">
