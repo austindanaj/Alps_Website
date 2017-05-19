@@ -42,7 +42,8 @@ namespace CTBTeam {
 					objConn.Close();
 					return;
 				}
-			}catch (ThreadAbortException ex) {}
+			}
+			catch (ThreadAbortException ex) { }
 			catch (Exception ex) {
 				writeStackTrace("Login", ex);
 			}

@@ -20,7 +20,8 @@
 			</asp:BulletedList>
 			<br />
 			<div style="text-align: center;">
-				<asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="nameChange" AutoPostBack="true" /><br /><br />
+				<asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="nameChange" AutoPostBack="true" /><br />
+				<br />
 				<asp:DropDownList ID="ddlTimeTakenOff" CssClass="drp-home" runat="server" />
 				<br />
 				<br />
@@ -38,7 +39,7 @@
 					<NextPrevStyle Font-Bold="True" Font-Size="8pt" ForeColor="#555555" VerticalAlign="Bottom" />
 					<OtherMonthDayStyle ForeColor="#555555" />
 					<SelectedDayStyle BackColor="#222222" ForeColor="White" />
-					<TitleStyle BackColor="#333333" BorderColor="White" BorderWidth="1px" Font-Bold="True" Font-Size="12pt" ForeColor="#999999"/>
+					<TitleStyle BackColor="#333333" BorderColor="White" BorderWidth="1px" Font-Bold="True" Font-Size="12pt" ForeColor="#999999" />
 					<TodayDayStyle BackColor="#111111" />
 				</asp:Calendar>
 			</div>
@@ -49,7 +50,7 @@
 					<NextPrevStyle Font-Bold="True" Font-Size="8pt" ForeColor="#555555" VerticalAlign="Bottom" />
 					<OtherMonthDayStyle ForeColor="#555555" />
 					<SelectedDayStyle BackColor="#222222" ForeColor="White" />
-					<TitleStyle BackColor="#333333" BorderColor="White" BorderWidth="1px" Font-Bold="True" Font-Size="12pt" ForeColor="#999999"/>
+					<TitleStyle BackColor="#333333" BorderColor="White" BorderWidth="1px" Font-Bold="True" Font-Size="12pt" ForeColor="#999999" />
 					<TodayDayStyle BackColor="#111111" />
 				</asp:Calendar>
 			</div>

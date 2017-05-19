@@ -15,7 +15,7 @@ namespace CTBTeam {
 				Period(30); // Populates date of which phones will be checked out (30 days from current day)
 			}
 		}
-		
+
 		protected void populateDataPerson() {
 			//Method for the intial population of person 
 

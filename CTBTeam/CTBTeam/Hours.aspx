@@ -49,7 +49,7 @@
 			<br />
 			<br />
 			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="buttonSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
-            <asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
+			<asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
 		</div>
 		<div class="col-md-50">
 			<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
@@ -93,7 +93,7 @@
 
 		</div>
 		<div class="col-md-50">
-			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" AutoGenerateColumns="true" style="width:940px;"/>
+			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" AutoGenerateColumns="true" Style="width: 940px;" />
 			<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 			<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 		</div>
@@ -123,7 +123,7 @@
 
 		<div class="col-md-50">
 
-			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" AutoGenerateColumns="true" OnPageIndexChanging="tableUpdate" style="width:940px;"/>
+			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" AutoGenerateColumns="true" OnPageIndexChanging="tableUpdate" Style="width: 940px;" />
 			<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 			<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 		</div>

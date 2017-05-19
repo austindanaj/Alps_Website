@@ -2,7 +2,6 @@
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Data;
-using System.Threading;
 
 namespace CTBTeam {
 	public partial class List : SuperPage {
@@ -13,7 +12,8 @@ namespace CTBTeam {
 				if (!string.IsNullOrEmpty((string)Session["User"])) {
 					btnSubmit.Visible = true;
 					successDialog(successOrFail);
-				} else {
+				}
+				else {
 					btnSubmit.Visible = false;
 				}
 			}
@@ -34,14 +34,15 @@ namespace CTBTeam {
 				try {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
-					object[] o = { txtName.Text,  Math.Abs(quantity),  txtDesc.Text,  Math.Abs(price),  drpPrio.Text,  txtLink.Text,  (string)Session["User"],  Date.Now.ToString()};
+					object[] o = { txtName.Text, Math.Abs(quantity), txtDesc.Text, Math.Abs(price), drpPrio.Text, txtLink.Text, (string)Session["User"], Date.Now.ToString() };
 					executeVoidSQLQuery("INSERT INTO PurchaseOrder (Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added) " +
 																"VALUES(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8)", o, objConn);
 					objConn.Close();
 					Session["success?"] = true;
 					redirectSafely("~/List");
-				} catch (Exception ex) {
-					writeStackTrace("Submit click",ex);
+				}
+				catch (Exception ex) {
+					writeStackTrace("Submit click", ex);
 				}
 			}
 		}
@@ -57,7 +58,7 @@ namespace CTBTeam {
 				objAdapter.Fill(objDataSet);
 				grdList.DataSource = objDataSet.Tables[0].DefaultView;
 				grdList.DataBind();
-				objConn.Close();				
+				objConn.Close();
 			}
 			catch (Exception ex) {
 				writeStackTrace("Populate List", ex);

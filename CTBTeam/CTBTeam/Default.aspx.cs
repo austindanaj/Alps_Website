@@ -3,7 +3,6 @@ using System.Data.OleDb;
 using System.Data;
 using Date = System.DateTime;
 
-
 namespace CTBTeam {
 	public partial class _Default : SuperPage {
 		protected void Page_Load(object sender, EventArgs e) {

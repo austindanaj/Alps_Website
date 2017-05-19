@@ -11,7 +11,7 @@
 		}
 	</style>
 	<div class="row">
-		<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox"/>
+		<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
 		<br />
 		<div class="col-md-33">
 			<asp:Label ID="lblName" runat="server" Text="Add User" CssClass="username"></asp:Label>

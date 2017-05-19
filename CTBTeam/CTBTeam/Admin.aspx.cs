@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.OleDb;
 using System.Data;
-using System.Threading;
 
 namespace CTBTeam {
 	public partial class Admin : SuperPage {
@@ -20,7 +19,7 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					object[] val1And2 = { txtName.Text, !chkPartTime.Checked};
+					object[] val1And2 = { txtName.Text, !chkPartTime.Checked };
 					executeVoidSQLQuery("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", val1And2, objConn);
 					executeVoidSQLQuery("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
 
@@ -128,12 +127,12 @@ namespace CTBTeam {
 			if (!(txtCR.Text.Equals(""))) {
 				try {
 					txtCR.Text = txtCar.Text.Replace(" ", "_");
-					
+
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
-					
+
 					executeVoidSQLQuery("DELETE FROM Cars WHERE Vehicle=@value1;", txtCR.Text, objConn);
-					executeVoidSQLQuery("ALTER TABLE VehicleHours DROP COLUMN " + txtCR.Text + ";", null, objConn);					
+					executeVoidSQLQuery("ALTER TABLE VehicleHours DROP COLUMN " + txtCR.Text + ";", null, objConn);
 
 					objConn.Close();
 					Session["success?"] = true;
@@ -156,11 +155,11 @@ namespace CTBTeam {
 					executeVoidSQLQuery("DELETE FROM Users WHERE Emp_Name=@value1;", txtNR.Text, objConn);
 					executeVoidSQLQuery("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", txtNR.Text, objConn);
 					executeVoidSQLQuery("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", txtNR.Text, objConn);
-					
+
 					objConn.Close();
 					Session["success?"] = true;
 					redirectSafely("~/Admin");
-				 }
+				}
 				catch (Exception ex) {
 					writeStackTrace("Remove User", ex);
 				}
