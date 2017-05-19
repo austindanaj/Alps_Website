@@ -17,9 +17,7 @@ namespace CTBTeam {
 			}
 		}
 		protected void View_More_onClick(object sender, EventArgs e) {
-
-			Response.Redirect("Hours.aspx");
-
+			redirectSafely("Hours.aspx");
 		}
 
 		protected void download_database(object sender, EventArgs e) {
@@ -127,12 +125,6 @@ namespace CTBTeam {
 			}
 		}
 
-
-
-
-
-
-
 		protected void download_timelog(object sender, EventArgs e) {
 			Response.ContentType = "Application/txt";
 			Response.AppendHeader("Content-Disposition", "attachment; filename=Time-log.txt");
@@ -147,7 +139,6 @@ namespace CTBTeam {
 		}
 
 		protected void download_Phones_file(object sender, EventArgs e) {
-
 			Response.ContentType = "Application/txt";
 			Response.AppendHeader("Content-Disposition", "attachment; filename=Phone-report.txt");
 			Response.TransmitFile(Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"));

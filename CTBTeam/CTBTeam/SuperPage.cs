@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.OleDb;
+using System.IO;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -24,7 +25,7 @@ namespace CTBTeam {
 		}
 
 		protected void throwJSAlert(string s) {
-			ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('" + s + "');");
+			Response.Write("<script>alert('" + s + "');</script>");
 		}
 
 		protected void executeVoidSQLQuery(string command, object[] parameters, OleDbConnection conn) {
@@ -43,11 +44,33 @@ namespace CTBTeam {
 				writeStackTrace("executeVoidSQLQuery", e);
 			}
 		}
-		
+
+		protected void executeVoidSQLQuery(string command, object parameter, OleDbConnection conn) {
+			try {
+				if (conn == null)
+					conn = openDBConnection();
+				OleDbCommand objCmd = new OleDbCommand(command, conn);
+
+				if (null != parameter) {
+					objCmd.Parameters.AddWithValue("@value1", parameter);
+				}
+				objCmd.ExecuteNonQuery();
+			}
+			catch (Exception e) {
+				writeStackTrace("executeVoidSQLQuery", e);
+			}
+		}
+
 		protected void successDialog(System.Web.UI.WebControls.TextBox successOrFail) {
 			if (Session["success?"] != null)
 				successOrFail.Visible = (bool)Session["success?"];
 			Session["success?"] = false;
+		}
+
+		protected void redirectSafely(string path) {
+			Server.ClearError();
+			Response.Redirect(path, false);
+			Context.ApplicationInstance.CompleteRequest();
 		}
 	}
 }

@@ -136,6 +136,7 @@
     <Content Include="CTBProjects.png" />
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
+    <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Globe.png" />
     <Content Include="Gradient.jpg" />
@@ -220,6 +221,13 @@
   <ItemGroup>
     <Compile Include="AccessConnection.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="ToeTruck.aspx.cs">
+      <DependentUpon>ToeTruck.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ToeTruck.aspx.designer.cs">
+      <DependentUpon>ToeTruck.aspx</DependentUpon>
+    </Compile>
     <Compile Include="SuperPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

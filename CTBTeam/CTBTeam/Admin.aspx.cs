@@ -21,18 +21,16 @@ namespace CTBTeam {
 					objConn.Open();
 
 					object[] val1And2 = { txtName.Text, !chkPartTime.Checked};
-					object[] val1 = { txtName.Text };
 					executeVoidSQLQuery("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", val1And2, objConn);
-					executeVoidSQLQuery("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", val1, objConn);
+					executeVoidSQLQuery("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
 					
 					if (chkAddToVehcileHours.Checked == true) {
-						executeVoidSQLQuery("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", val1, objConn);
+						executeVoidSQLQuery("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
 					}
 
 					objConn.Close();
 					Session["success?"] = true;
-					Response.Redirect("~/Admin");
-				} catch (ThreadAbortException tae) {
+					redirectSafely("~/Admin");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Add User", ex);
@@ -63,9 +61,7 @@ namespace CTBTeam {
 					objConn.Close();
 
 					Session["success?"] = true;
-					Response.Redirect("~/Admin");
-				}
-				catch (ThreadAbortException tae) {
+					redirectSafely("~/Admin");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Add Project", ex);
@@ -86,16 +82,13 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					object[] parameters = { txtCar.Text };
-					executeVoidSQLQuery("INSERT INTO Cars (Vehicle) VALUES (@value1);", parameters, objConn);
-					executeVoidSQLQuery("ALTER TABLE VehicleHours ADD " + (string) parameters[0] + " number;", null, objConn);
-					executeVoidSQLQuery("UPDATE VehicleHours SET " + (string)parameters[0] + " =0;", null, objConn);
+					executeVoidSQLQuery("INSERT INTO Cars (Vehicle) VALUES (@value1);", txtCar.Text, objConn);
+					executeVoidSQLQuery("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", null, objConn);
+					executeVoidSQLQuery("UPDATE VehicleHours SET " + txtCar.Text + " =0;", null, objConn);
 
 					objConn.Close();
 					Session["success?"] = true;
-					Response.Redirect("~/Admin");
-				}
-				catch (ThreadAbortException tae) {
+					redirectSafely("~/Admin");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Add Vehicle", ex);
@@ -116,15 +109,12 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					object[] parameters = {txtPR.Text};
-					executeVoidSQLQuery("DELETE FROM Projects WHERE Project=@value1;", parameters, objConn);
-					executeVoidSQLQuery("ALTER TABLE ProjectHours DROP COLUMN " + parameters[0] + ";", null, objConn);
+					executeVoidSQLQuery("DELETE FROM Projects WHERE Project=@value1;", txtPR.Text, objConn);
+					executeVoidSQLQuery("ALTER TABLE ProjectHours DROP COLUMN " + txtPR.Text + ";", null, objConn);
 
 					objConn.Close();
 					Session["success?"] = true;
-					Response.Redirect("~/Admin");
-				}
-				catch (ThreadAbortException tae) {
+					redirectSafely("~/Admin");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Remove Project", ex);
@@ -141,16 +131,13 @@ namespace CTBTeam {
 					
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
-
-					object[] parameters = { txtCR.Text };
-					executeVoidSQLQuery("DELETE FROM Cars WHERE Vehicle=@value1;", parameters, objConn);
-					executeVoidSQLQuery("ALTER TABLE VehicleHours DROP COLUMN " + parameters[0] + ";", null, objConn);					
+					
+					executeVoidSQLQuery("DELETE FROM Cars WHERE Vehicle=@value1;", txtCR.Text, objConn);
+					executeVoidSQLQuery("ALTER TABLE VehicleHours DROP COLUMN " + txtCR.Text + ";", null, objConn);					
 
 					objConn.Close();
 					Session["success?"] = true;
-					Response.Redirect("~/Admin");
-				}
-				catch (ThreadAbortException tae) {
+					redirectSafely("~/Admin");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Remove Vehicle", ex);
@@ -166,16 +153,14 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					object[] parameters = { txtNR.Text };
-					executeVoidSQLQuery("DELETE FROM Users WHERE Emp_Name=@value1;", parameters, objConn);
-					executeVoidSQLQuery("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", parameters, objConn);
-					executeVoidSQLQuery("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", parameters, objConn);
+					executeVoidSQLQuery("DELETE FROM Users WHERE Emp_Name=@value1;", txtNR.Text, objConn);
+					executeVoidSQLQuery("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", txtNR.Text, objConn);
+					executeVoidSQLQuery("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", txtNR.Text, objConn);
 					
 					objConn.Close();
 					Session["success?"] = true;
-					Response.Redirect("~/Admin");
-				}
-				catch (ThreadAbortException tae) { }
+					redirectSafely("~/Admin");
+				 }
 				catch (Exception ex) {
 					writeStackTrace("Remove User", ex);
 				}

@@ -34,22 +34,12 @@ namespace CTBTeam {
 				try {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
-					OleDbCommand objCmd = new OleDbCommand("INSERT INTO PurchaseOrder " +
-																"(Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added) " +
-																"VALUES(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8)", objConn);
-					objCmd.Parameters.AddWithValue("@value1", txtName.Text);
-					objCmd.Parameters.AddWithValue("@value2", Math.Abs(quantity));
-					objCmd.Parameters.AddWithValue("@value3", txtDesc.Text);
-					objCmd.Parameters.AddWithValue("@value4", Math.Abs(price));
-					objCmd.Parameters.AddWithValue("@value5", drpPrio.Text);
-					objCmd.Parameters.AddWithValue("@value6", txtLink.Text);
-					objCmd.Parameters.AddWithValue("@value7", (string)Session["User"]);
-					objCmd.Parameters.AddWithValue("@value8", Date.Now.ToString());
-					objCmd.ExecuteNonQuery();
+					object[] o = { txtName.Text,  Math.Abs(quantity),  txtDesc.Text,  Math.Abs(price),  drpPrio.Text,  txtLink.Text,  (string)Session["User"],  Date.Now.ToString()};
+					executeVoidSQLQuery("INSERT INTO PurchaseOrder (Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added) " +
+																"VALUES(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8)", o, objConn);
 					objConn.Close();
-					//populateTable();
 					Session["success?"] = true;
-					Response.Redirect("~/List");
+					redirectSafely("~/List");
 				} catch (Exception ex) {
 					writeStackTrace("Submit click",ex);
 				}
@@ -67,10 +57,7 @@ namespace CTBTeam {
 				objAdapter.Fill(objDataSet);
 				grdList.DataSource = objDataSet.Tables[0].DefaultView;
 				grdList.DataBind();
-				objConn.Close();
-				
-			} catch (ThreadAbortException tae) {
-				
+				objConn.Close();				
 			}
 			catch (Exception ex) {
 				writeStackTrace("Populate List", ex);

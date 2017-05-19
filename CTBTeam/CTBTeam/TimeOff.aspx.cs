@@ -6,23 +6,21 @@ using System.Web.UI;
 using Date = System.DateTime;
 using System.Data.OleDb;
 using System.Web.UI.WebControls;
+using System.Threading;
 
 namespace CTBTeam {
 	public partial class TimeOff : SuperPage {
-		private enum DATE_VALID {OUT_OF_ORDER, VALID, INVALID};
+		private enum DATE_VALID { OUT_OF_ORDER, VALID, INVALID };
 
 		protected void Page_Load(object sender, EventArgs e) {
+			if (Session["user"] == null) {
+				btnAddTimeOff.Visible = false;
+				btnRemoveTimeOff.Visible = false;
+			}
 			if (!IsPostBack) {
-				calendarInit();
 				populateNames();
 				cldTimeOffStart.SelectedDate = DateTime.Now;
-			}
-		}
-
-		private void calendarInit() {
-			if (Session["user"] == null) {
-				cldTimeOffStart.Visible = false;
-				cldTimeOffEnd.Visible = false;
+				successDialog(successOrFail);
 			}
 		}
 
@@ -41,6 +39,8 @@ namespace CTBTeam {
 				}
 
 				objConn.Close();
+				if (sender.Equals(cldTimeOffStart))
+					cldTimeOffEnd.SelectedDate = cldTimeOffStart.SelectedDate;
 			}
 			catch (Exception ex) {
 				writeStackTrace("Calendar Date Picked", ex);
@@ -71,12 +71,13 @@ namespace CTBTeam {
 					Date otherVacationEnd = (Date)reader.GetValue(1);
 					//The only time a vacation time is valid is if it starts after the others end, or it
 					//begins and ends before the rest.
-					if (start.CompareTo(otherVacationEnd) > 0 || end.CompareTo(otherVacationStart) < 0) {
-						return true;
-					}
+					if ((start.CompareTo(otherVacationEnd) <= 0 && start.CompareTo(otherVacationStart) >= 0) ||
+						(end.CompareTo(otherVacationEnd) <= 0 && end.CompareTo(otherVacationStart) >= 0))
+						return false;
 				}
-				return false;
-			} catch (Exception e) {
+				return true;
+			}
+			catch (Exception e) {
 				writeStackTrace("doesntConflict", e);
 				return false;
 			}
@@ -91,7 +92,8 @@ namespace CTBTeam {
 					switch (validCalendarSelection(start, end)) {
 						case DATE_VALID.INVALID:
 							cldTimeOffStart.SelectedDate = Date.Today;
-							throwJSAlert("Selection makes no sense.");
+							cldTimeOffEnd.SelectedDate = Date.Today;
+							throwJSAlert("Can only request days off in the future.");
 							return;
 						case DATE_VALID.OUT_OF_ORDER:
 							Date d = end;
@@ -110,31 +112,11 @@ namespace CTBTeam {
 						return;
 					}
 
-					OleDbCommand objCmd = new OleDbCommand("INSERT INTO TimeOff " +
-															"(Emp_Name, Start_Date, End_Date) VALUES (@value1, @value2, @value3);", objConn);
-
-                 
-
-
-					objCmd.Parameters.AddWithValue("@value1", ddlNames.Text);
-					objCmd.Parameters.AddWithValue("@value2", start);
-					objCmd.Parameters.AddWithValue("@value3", end);
-                    objCmd.ExecuteNonQuery();
-                    int modified = (int)objCmd.ExecuteScalar();
-                     
-                    /*
-                   
-					objCmd = new OleDbCommand("Select ID from TimeOff where Start_Date=@value1 and End_Date=@value2 and Emp_Name=@value3;", objConn);
-					objCmd.Parameters.AddWithValue("@value3", ddlNames.Text);
-					objCmd.Parameters.AddWithValue("@value1", start);
-					objCmd.Parameters.AddWithValue("@value2", end);
-					OleDbDataReader reader = objCmd.ExecuteReader();
-                    */
-
-					ddlTimeTakenOff.Items.Add(new ListItem(modified + ": " + start.ToShortDateString() + " - " + end.ToShortDateString()));
-					objConn.Close();
+					object[] o = { ddlNames.Text, start, end };
+					executeVoidSQLQuery("INSERT INTO TimeOff (Emp_Name, Start_Date, End_Date) VALUES (@value1, @value2, @value3);", o, objConn);
 
 					Session["success?"] = true;
+					redirectSafely("~/TimeOff");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Time off", ex);
@@ -143,30 +125,28 @@ namespace CTBTeam {
 		}
 
 		protected void nameChange(object sender, EventArgs e) {
-            try
-            {
-                //if (ddlNames.SelectedValue.ToString().Equals("--Select A Name--")) return;
-                ddlTimeTakenOff.Items.Clear();
-			OleDbConnection objConn = openDBConnection();
-			objConn.Open();
+			try {
+				//if (ddlNames.SelectedValue.ToString().Equals("--Select A Name--")) return;
+				ddlTimeTakenOff.Items.Clear();
+				OleDbConnection objConn = openDBConnection();
+				objConn.Open();
 
-			OleDbCommand cmd = new OleDbCommand("Select ID, Start_Date, End_Date from TimeOff where Emp_Name=@value1", objConn);
-			cmd.Parameters.AddWithValue("@value1", ddlNames.SelectedValue.ToString());
-			OleDbDataReader reader = cmd.ExecuteReader();
-			ddlTimeTakenOff.Items.Add("--Select a time off period--");
-			while (reader.Read()) {
-				ddlTimeTakenOff.Items.Add(new ListItem(reader.GetValue(0).ToString() + ": " + 
-                    DateTime.Parse(reader.GetValue(1).ToString()).ToShortDateString() + " - " + 
-                    DateTime.Parse(reader.GetValue(2).ToString()).ToShortDateString()));
+				OleDbCommand cmd = new OleDbCommand("Select ID, Start_Date, End_Date from TimeOff where Emp_Name=@value1", objConn);
+				cmd.Parameters.AddWithValue("@value1", ddlNames.SelectedValue.ToString());
+				OleDbDataReader reader = cmd.ExecuteReader();
+				ddlTimeTakenOff.Items.Add("--Select a time off period--");
+				while (reader.Read()) {
+					ddlTimeTakenOff.Items.Add(new ListItem(reader.GetValue(0).ToString() + ": " +
+						DateTime.Parse(reader.GetValue(1).ToString()).ToShortDateString() + " - " +
+						DateTime.Parse(reader.GetValue(2).ToString()).ToShortDateString()));
+				}
+
+				objConn.Close();
 			}
-
-			objConn.Close();
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Name Change", ex);
-            }
-        }
+			catch (Exception ex) {
+				writeStackTrace("Name Change", ex);
+			}
+		}
 
 		protected void removeTimeOff(object sender, EventArgs e) {
 			if (!string.IsNullOrEmpty((string)Session["User"])) {
@@ -174,17 +154,12 @@ namespace CTBTeam {
 					OleDbConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmd = new OleDbCommand("DELETE FROM TimeOff WHERE ID=@value1", objConn);
+					string s = ddlTimeTakenOff.SelectedValue;
+					executeVoidSQLQuery("DELETE FROM TimeOff WHERE ID=@value1", s.Substring(0, s.IndexOf(':')), objConn);
 
-					string selection = ddlTimeTakenOff.SelectedValue, s = ddlTimeTakenOff.SelectedValue;
-					s = s.Substring(0,s.IndexOf(':'));
-					objCmd.Parameters.AddWithValue("@value1", s);
+					ddlTimeTakenOff.Items.Remove(s);
 
-					objCmd.ExecuteNonQuery();
-
-					ddlTimeTakenOff.Items.Remove(selection);
-
-					throwJSAlert("Your time off for " + selection + " has been successfully removed");
+					throwJSAlert("Your time off for " + s + " has been successfully removed");
 				}
 				catch (Exception ex) {
 					writeStackTrace("Remove Time Off", ex);

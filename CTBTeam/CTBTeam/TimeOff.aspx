@@ -21,7 +21,7 @@
 			</asp:BulletedList>
 			<br />
 			<div style="text-align: center;">
-				<asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="nameChange" AutoPostBack="true" /><br />
+				<asp:DropDownList ID="ddlNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="nameChange" AutoPostBack="true" /><br /><br />
 				<asp:DropDownList ID="ddlTimeTakenOff" CssClass="drp-home" runat="server" />
 				<br />
 				<br />
@@ -33,7 +33,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-50">
-				<h6>Start date</h6>
+				<h2>Start date</h2>
 				<asp:Calendar ID="cldTimeOffStart" runat="server" OnSelectionChanged="getCurrentDate" BackColor="#333333" BorderColor="White" BorderWidth="1px" Font-Names="Verdana" Font-Size="9pt" ForeColor="#999999" Height="388px" NextPrevFormat="FullMonth" Width="593px">
 					<DayHeaderStyle Font-Bold="True" Font-Size="8pt" />
 					<NextPrevStyle Font-Bold="True" Font-Size="8pt" ForeColor="#555555" VerticalAlign="Bottom" />
@@ -44,7 +44,7 @@
 				</asp:Calendar>
 			</div>
 			<div class="col-md-50">
-				<h6>End Date</h6>
+				<h2>End Date</h2>
 				<asp:Calendar ID="cldTimeOffEnd" runat="server" OnSelectionChanged="getCurrentDate" BackColor="#333333" BorderColor="White" BorderWidth="1px" Font-Names="Verdana" Font-Size="9pt" ForeColor="#999999" Height="388px" NextPrevFormat="FullMonth" Width="593px">
 					<DayHeaderStyle Font-Bold="True" Font-Size="8pt" />
 					<NextPrevStyle Font-Bold="True" Font-Size="8pt" ForeColor="#555555" VerticalAlign="Bottom" />

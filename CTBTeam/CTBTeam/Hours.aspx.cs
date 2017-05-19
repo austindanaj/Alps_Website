@@ -43,7 +43,8 @@ namespace CTBTeam {
 					btnSubmitCar.Visible = true;
 					btnSubmitProject.Visible = true;
 					btnSubmitPercent.Visible = true;
-				} else {
+				}
+				else {
 					btnSubmitCar.Visible = false;
 					btnSubmitProject.Visible = false;
 					btnSubmitPercent.Visible = false;
@@ -387,54 +388,36 @@ namespace CTBTeam {
 			try {
 				OleDbConnection objConn = openDBConnection();
 				objConn.Open();
+				object[] o = { int.Parse(txtHoursProjects.Text), ddlNamesProject.Text };
+				executeVoidSQLQuery("UPDATE ProjectHours SET " + ddlProjects.Text + "=@value1 WHERE Emp_Name=@value2", o, objConn);
 
-				OleDbCommand objCmdProject = new OleDbCommand("UPDATE ProjectHours " +
-														"SET " + ddlProjects.Text + "=@value1 " +
-														"WHERE Emp_Name=@value2", objConn);
-				objCmdProject.Parameters.AddWithValue("@value1", int.Parse(txtHoursProjects.Text));
-				objCmdProject.Parameters.AddWithValue("@value2", ddlNamesProject.Text);
-
-				objCmdProject.ExecuteNonQuery();
-
-                    OleDbCommand objCmdName = new OleDbCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
-                    objCmdName.Parameters.AddWithValue("@name", ddlNamesProject.Text);
-                    OleDbDataReader namereader = objCmdName.ExecuteReader();
-                    bool fulltime = false;
-                    while (namereader.Read())
-                    {
-                        fulltime = namereader.GetBoolean(0);
-                    }
+				OleDbCommand objCmdName = new OleDbCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
+				objCmdName.Parameters.AddWithValue("@name", ddlNamesProject.Text);
+				OleDbDataReader namereader = objCmdName.ExecuteReader();
+				bool fulltime = false;
+				while (namereader.Read()) {
+					fulltime = namereader.GetBoolean(0);
+				}
 
 
-                    OleDbCommand objCmdCat = new OleDbCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
-                    objCmdCat.Parameters.AddWithValue("@project", ddlProjects.Text);
-                    OleDbDataReader catreader = objCmdCat.ExecuteReader();
-                    string cat = "";
-                    while (catreader.Read())
-                    {
-                        cat = catreader.GetValue(0).ToString();
-                    }
+				OleDbCommand objCmdCat = new OleDbCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
+				objCmdCat.Parameters.AddWithValue("@project", ddlProjects.Text);
+				OleDbDataReader catreader = objCmdCat.ExecuteReader();
+				string cat = "";
+				while (catreader.Read()) {
+					cat = catreader.GetValue(0).ToString();
+				}
 
 				DateTime dt = DateTime.Now;
 				while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
 
-                    OleDbCommand objCmdCars = new OleDbCommand("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
-                                                                "VALUES (@name, @project, @cat, @percent, @date, @fulltime);", objConn);
-                    objCmdCars.Parameters.AddWithValue("@name", ddlNamesProject.Text);
-                    objCmdCars.Parameters.AddWithValue("@project", ddlProjects.Text);
-                    objCmdCars.Parameters.AddWithValue("@cat", cat);
-                    objCmdCars.Parameters.AddWithValue("@percent", Math.Round((double.Parse( txtHoursProjects.Text)/ 40) * 100, 0));
-                    objCmdCars.Parameters.AddWithValue("@date", DateTime.Parse(dt.ToShortDateString()));
-                    objCmdCars.Parameters.AddWithValue("@fulltime", fulltime);
-
-				objCmdCars.ExecuteNonQuery();
-
-
-
+				object[] parameters = { ddlNamesProject.Text, ddlProjects.Text, cat, Math.Round((double.Parse(txtHoursProjects.Text) / 40) * 100, 0), DateTime.Parse(dt.ToShortDateString()), fulltime };
+				executeVoidSQLQuery("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
+													   "VALUES (@value1, @value2, @value3, @value4, @value5, @value6);", parameters, objConn);
 				objConn.Close();
 
 				Session["success?"] = true;
-				Response.Redirect("~/Hours");
+				redirectSafely("~/Hours");
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
@@ -466,17 +449,9 @@ namespace CTBTeam {
 				DateTime dt = DateTime.Now;
 				while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
 
-				OleDbCommand objCmdCars = new OleDbCommand("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
-															"VALUES (@name, @project, @cat, @percent, @date, @fulltime);", objConn);
-				objCmdCars.Parameters.AddWithValue("@name", ddlFullTimeNames.Text);
-				objCmdCars.Parameters.AddWithValue("@project", ddlAllProjects.Text);
-				objCmdCars.Parameters.AddWithValue("@cat", cat);
-				objCmdCars.Parameters.AddWithValue("@percent", double.Parse(ddlPercentage.Text.Substring(0, ddlPercentage.Text.IndexOf('%'))));
-				objCmdCars.Parameters.AddWithValue("@date", DateTime.Parse(dt.ToShortDateString()));
-				objCmdCars.Parameters.AddWithValue("@fulltime", fulltime);
-
-				objCmdCars.ExecuteNonQuery();
-
+				object[] o = { ddlFullTimeNames.Text, ddlAllProjects.Text, cat, double.Parse(ddlPercentage.Text.Substring(0, ddlPercentage.Text.IndexOf('%'))), DateTime.Parse(dt.ToShortDateString()), fulltime };
+				executeVoidSQLQuery("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
+															"VALUES (@value1, @value2, @value3, @value4, @value5, @value6);", o, objConn);
 				objConn.Close();
 			}
 			catch (Exception ex) {
@@ -484,32 +459,23 @@ namespace CTBTeam {
 			}
 
 			Session["success?"] = true;
-			Response.Redirect("~/Hours");
+			redirectSafely("~/Hours");
 		}
 
 		private void submitCars() {
 			try {
 				OleDbConnection objConn = openDBConnection();
 				objConn.Open();
-
-				OleDbCommand objCmdCars = new OleDbCommand("UPDATE VehicleHours " +
-														"SET " + ddlCars.Text + "=@value1 " +
-														"WHERE Emp_Name=@value2", objConn);
-				objCmdCars.Parameters.AddWithValue("@value1", int.Parse(txtHoursCars.Text));
-				objCmdCars.Parameters.AddWithValue("@value2", ddlNamesCar.Text);
-
-				objCmdCars.ExecuteNonQuery();
+				object[] o = { int.Parse(txtHoursCars.Text), ddlNamesCar.Text };
+				executeVoidSQLQuery("UPDATE VehicleHours SET " + ddlCars.Text + "=@value1 " + "WHERE Emp_Name=@value2", o, objConn);
 
 				objConn.Close();
-
-				// reset();
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
 			}
 
 			populateDataCars((int)Session["VehicleCol"]);
-			// populateDataProject();
 		}
 
 		//===================================================
@@ -679,7 +645,7 @@ namespace CTBTeam {
 
 					}
 				}
-                lblTotalHours.Text = "Hours: " + runningSum + " / " + (20 * 40);
+				lblTotalHours.Text = "Hours: " + runningSum + " / " + (20 * 40);
 				objConn.Close();
 
 				// dgvCars.HeaderRow.Cells[0].Visible = false;

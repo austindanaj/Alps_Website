@@ -9,7 +9,7 @@ namespace CTBTeam {
 				if (!string.IsNullOrEmpty((string)Session["User"])) {
 					Session["User"] = null;
 					Session["loginStatus"] = "Sign in";
-					Response.Redirect("~/");
+					redirectSafely("~/");
 				}
 			}
 		}
@@ -33,7 +33,7 @@ namespace CTBTeam {
 				}
 				if (count > 0) {
 					Session["loginStatus"] = "Sign Out";
-					Response.Redirect("Hours.aspx");
+					redirectSafely("Hours.aspx");
 					objConn.Close();
 					return;
 				}
