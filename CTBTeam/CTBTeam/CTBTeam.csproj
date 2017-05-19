@@ -136,6 +136,7 @@
     <Content Include="CTBProjects.png" />
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
+    <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Globe.png" />
@@ -221,6 +222,13 @@
   <ItemGroup>
     <Compile Include="AccessConnection.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="ttc823jdnajs3.aspx.cs">
+      <DependentUpon>ttc823jdnajs3.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ttc823jdnajs3.aspx.designer.cs">
+      <DependentUpon>ttc823jdnajs3.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ToeTruck.aspx.cs">
       <DependentUpon>ToeTruck.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

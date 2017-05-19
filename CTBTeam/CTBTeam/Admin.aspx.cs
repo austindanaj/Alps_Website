@@ -23,7 +23,7 @@ namespace CTBTeam {
 					object[] val1And2 = { txtName.Text, !chkPartTime.Checked};
 					executeVoidSQLQuery("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", val1And2, objConn);
 					executeVoidSQLQuery("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
-					
+
 					if (chkAddToVehcileHours.Checked == true) {
 						executeVoidSQLQuery("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
 					}
