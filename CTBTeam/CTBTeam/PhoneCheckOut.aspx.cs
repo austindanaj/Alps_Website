@@ -2,7 +2,7 @@
 using System.Web.UI.WebControls;
 
 using Date = System.DateTime;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Data;
 
 namespace CTBTeam {
@@ -24,10 +24,10 @@ namespace CTBTeam {
 
 			// gets information form database
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT DISTINCT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					drpPerson.Items.Add(new ListItem(reader.GetString(0))); ;  //adds items to the drop down list
 				}
@@ -49,10 +49,10 @@ namespace CTBTeam {
 
 			// gets information form database
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					drpOs.Items.Add(new ListItem(reader.GetString(0))); ;
 				}
@@ -75,14 +75,14 @@ namespace CTBTeam {
 				drpPhone.Items.Add(new ListItem("--Select A Phone--"));
 
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
 				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
 				objCmdSelect.Parameters.AddWithValue("@bool", true);
 
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
 				}
@@ -100,14 +100,14 @@ namespace CTBTeam {
 
 
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
 				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
 				objCmdSelect.Parameters.AddWithValue("@bool", false);
 
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
 				}
@@ -129,13 +129,13 @@ namespace CTBTeam {
 
 
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
 
 
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					Vehicle.Items.Add(new ListItem(reader.GetString(0))); ;
 				}
@@ -183,10 +183,10 @@ namespace CTBTeam {
              * 
              * */
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model, Available, Car, Person, Purpose, Period FROM PhoneCheckout ORDER BY Model", objConn);
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Model, Available, Car, Person, Purpose, Period FROM PhoneCheckout ORDER BY Model", objConn);
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
@@ -245,7 +245,7 @@ namespace CTBTeam {
              */
 			else {
 				try {
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 					object[] o = { drpPerson.Text, Vehicle.Text, false, temp, drpFrom.Text + " - " + drpTo.Text, drpPhone.SelectedItem.Text };
 
@@ -267,14 +267,14 @@ namespace CTBTeam {
 					drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
 
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+					SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
 					objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
 					objCmdSelect.Parameters.AddWithValue("@bool", true);
 
-					OleDbDataReader reader = objCmdSelect.ExecuteReader();
+					SqlDataReader reader = objCmdSelect.ExecuteReader();
 					while (reader.Read()) {
 						drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
 					}
@@ -299,14 +299,14 @@ namespace CTBTeam {
 
 
 
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+					SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
 					objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
 					objCmdSelect.Parameters.AddWithValue("@bool", false);
 
-					OleDbDataReader reader = objCmdSelect.ExecuteReader();
+					SqlDataReader reader = objCmdSelect.ExecuteReader();
 					while (reader.Read()) {
 						drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
 					}
@@ -332,7 +332,7 @@ namespace CTBTeam {
 
 
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 				object[] o = { temp, temp, true, temp, temp, drpCheckIn.SelectedItem.Text };
 				executeVoidSQLQuery("UPDATE PhoneCheckout SET Person=@value1, Car=@value2, Available=@value3, Purpose= @value4, Period = @value5 WHERE Model=@value6", o, objConn);
@@ -362,14 +362,14 @@ namespace CTBTeam {
 				drpPhone.Items.Clear();
 				drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
 				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
 				objCmdSelect.Parameters.AddWithValue("@bool", true);
 
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
 				}
@@ -388,14 +388,14 @@ namespace CTBTeam {
 
 
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
 				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
 				objCmdSelect.Parameters.AddWithValue("@bool", false);
 
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
 				}

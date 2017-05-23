@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Data.OleDb;
-using System.IO;
-using System.Threading;
-using System.Web;
+using System.Data.SqlClient;
 using System.Web.UI;
 using Date = System.DateTime;
 
 namespace CTBTeam {
 	public class SuperPage : Page {
-		private readonly string dbVersion12_0 = "Provider=Microsoft.ACE.OLEDB.12.0;";
+		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
+		private readonly static string DEPLOYMENT_CONNECTION_STRING = "";
 
 		protected void writeStackTrace(string s, Exception ex) {
 			if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
@@ -20,19 +18,20 @@ namespace CTBTeam {
 			}
 		}
 
-		protected OleDbConnection openDBConnection() {
-			return new OleDbConnection(dbVersion12_0 + "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";");
+		protected SqlConnection openDBConnection() {
+			return new SqlConnection(LOCALHOST_CONNECTION_STRING);
+			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
 		}
 
 		protected void throwJSAlert(string s) {
 			Response.Write("<script>alert('" + s + "');</script>");
 		}
 
-		protected void executeVoidSQLQuery(string command, object[] parameters, OleDbConnection conn) {
+		protected void executeVoidSQLQuery(string command, object[] parameters, SqlConnection conn) {
 			try {
 				if (conn == null)
 					conn = openDBConnection();
-				OleDbCommand objCmd = new OleDbCommand(command, conn);
+				SqlCommand objCmd = new SqlCommand(command, conn);
 
 				int i = 1;
 				foreach (object s in parameters) {
@@ -45,11 +44,11 @@ namespace CTBTeam {
 			}
 		}
 
-		protected void executeVoidSQLQuery(string command, object parameter, OleDbConnection conn) {
+		protected void executeVoidSQLQuery(string command, object parameter, SqlConnection conn) {
 			try {
 				if (conn == null)
 					conn = openDBConnection();
-				OleDbCommand objCmd = new OleDbCommand(command, conn);
+				SqlCommand objCmd = new SqlCommand(command, conn);
 
 				if (null != parameter) {
 					objCmd.Parameters.AddWithValue("@value1", parameter);

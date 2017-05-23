@@ -1,4 +1,4 @@
-﻿using System.Data.OleDb;
+﻿using System.Data.SqlClient;
 
 using Date = System.DateTime;
 
@@ -71,7 +71,7 @@ namespace CTBTeam {
 		//backs up the DB if we move into a new week
 		private void datechange() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
 				//Get the data: 2 element object array.
@@ -89,8 +89,8 @@ namespace CTBTeam {
 				string percentList = (string)o[1];        /** List of percent **/
 
 				/** Command to get project hours header **/
-				OleDbCommand fieldProjectNames = new OleDbCommand("SELECT * FROM ProjectHours", objConn);
-				OleDbDataReader readerPNames = fieldProjectNames.ExecuteReader();
+				SqlCommand fieldProjectNames = new SqlCommand("SELECT * FROM ProjectHours", objConn);
+				SqlDataReader readerPNames = fieldProjectNames.ExecuteReader();
 
 				var table = readerPNames.GetSchemaTable();      /** Set the table of project hours to variable **/
 				var nameCol = table.Columns["ColumnName"];      /** Set the column name **/
@@ -118,20 +118,20 @@ namespace CTBTeam {
 				/** Now append to file **/
 				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true)) {
 					/** Command to get project hours  **/
-					OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours ORDER BY Emp_Name;", objConn);
-					OleDbDataReader readerProject = objProject.ExecuteReader();
+					SqlCommand objProject = new SqlCommand("SELECT * FROM ProjectHours ORDER BY Emp_Name;", objConn);
+					SqlDataReader readerProject = objProject.ExecuteReader();
 
 					backUpToTxt(readerProject, file, projectCount);
 					readerProject.Close();
 
-					objProject = new OleDbCommand("SELECT ID, Emp_Name, Project, Category, Percentage, Full_Time FROM PercentageLog ORDER BY Emp_Name ;", objConn);
+					objProject = new SqlCommand("SELECT ID, Emp_Name, Project, Category, Percentage, Full_Time FROM PercentageLog ORDER BY Emp_Name ;", objConn);
 					readerProject = objProject.ExecuteReader();
 
 					backUpToTxt(readerProject, file, percentCount);
 
 					/** Command to get car hours ( used to get header ) **/
-					OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
-					OleDbDataReader readerCNames = fieldCarNames.ExecuteReader();
+					SqlCommand fieldCarNames = new SqlCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
+					SqlDataReader readerCNames = fieldCarNames.ExecuteReader();
 
 					table = readerPNames.GetSchemaTable();      /** Set the table of vehicle hours to variable **/
 					nameCol = table.Columns["ColumnName"];      /** Set the column name **/
@@ -155,8 +155,8 @@ namespace CTBTeam {
 					readerCNames.Close();
 
 					/** Command to get vehicle hours **/
-					OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name;", objConn);
-					OleDbDataReader readerCar = objCar.ExecuteReader();
+					SqlCommand objCar = new SqlCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name;", objConn);
+					SqlDataReader readerCar = objCar.ExecuteReader();
 
 					/** Loop through each row **/
 					backUpToTxt(readerCar, file, carCount);
@@ -189,7 +189,7 @@ namespace CTBTeam {
 						}
 					}
 					/** Command for query **/
-					OleDbCommand objResetPH = new OleDbCommand(queryProject, objConn);
+					SqlCommand objResetPH = new SqlCommand(queryProject, objConn);
 					for (int i = 0; i < arrayProjectList.Length - 1; i++) {
 						objResetPH.Parameters.AddWithValue("@value" + (i + 1), 0);
 					}
@@ -208,7 +208,7 @@ namespace CTBTeam {
 						}
 					}
 
-					OleDbCommand objResetVH = new OleDbCommand(queryCar, objConn);
+					SqlCommand objResetVH = new SqlCommand(queryCar, objConn);
 					for (int i = 0; i < arrayCarList.Length - 1; i++) {
 						objResetVH.Parameters.AddWithValue("@value" + (i + 1), 0);
 					}
@@ -248,10 +248,10 @@ namespace CTBTeam {
 					ddlCars.Items.Clear();
 					ddlCars.Items.Add("--Select A Car--");
 
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
-					OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
-					OleDbDataReader reader = objCmdSelect.ExecuteReader();
+					SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
+					SqlDataReader reader = objCmdSelect.ExecuteReader();
 					while (reader.Read()) {
 						ddlCars.Items.Add(new ListItem(reader.GetString(0)));
 					}
@@ -386,23 +386,23 @@ namespace CTBTeam {
 
 		private void submitProjects() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 				object[] o = { int.Parse(txtHoursProjects.Text), ddlNamesProject.Text };
 				executeVoidSQLQuery("UPDATE ProjectHours SET " + ddlProjects.Text + "=@value1 WHERE Emp_Name=@value2", o, objConn);
 
-				OleDbCommand objCmdName = new OleDbCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
+				SqlCommand objCmdName = new SqlCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
 				objCmdName.Parameters.AddWithValue("@name", ddlNamesProject.Text);
-				OleDbDataReader namereader = objCmdName.ExecuteReader();
+				SqlDataReader namereader = objCmdName.ExecuteReader();
 				bool fulltime = false;
 				while (namereader.Read()) {
 					fulltime = namereader.GetBoolean(0);
 				}
 
 
-				OleDbCommand objCmdCat = new OleDbCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
+				SqlCommand objCmdCat = new SqlCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
 				objCmdCat.Parameters.AddWithValue("@project", ddlProjects.Text);
-				OleDbDataReader catreader = objCmdCat.ExecuteReader();
+				SqlDataReader catreader = objCmdCat.ExecuteReader();
 				string cat = "";
 				while (catreader.Read()) {
 					cat = catreader.GetValue(0).ToString();
@@ -426,21 +426,21 @@ namespace CTBTeam {
 
 		private void submitPercent() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdName = new OleDbCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
+				SqlCommand objCmdName = new SqlCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
 				objCmdName.Parameters.AddWithValue("@name", ddlFullTimeNames.Text);
-				OleDbDataReader namereader = objCmdName.ExecuteReader();
+				SqlDataReader namereader = objCmdName.ExecuteReader();
 				bool fulltime = false;
 				while (namereader.Read()) {
 					fulltime = namereader.GetBoolean(0);
 				}
 
 
-				OleDbCommand objCmdCat = new OleDbCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
+				SqlCommand objCmdCat = new SqlCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
 				objCmdCat.Parameters.AddWithValue("@project", ddlAllProjects.Text);
-				OleDbDataReader catreader = objCmdCat.ExecuteReader();
+				SqlDataReader catreader = objCmdCat.ExecuteReader();
 				string cat = "";
 				while (catreader.Read()) {
 					cat = catreader.GetValue(0).ToString();
@@ -464,7 +464,7 @@ namespace CTBTeam {
 
 		private void submitCars() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 				object[] o = { int.Parse(txtHoursCars.Text), ddlNamesCar.Text };
 				executeVoidSQLQuery("UPDATE VehicleHours SET " + ddlCars.Text + "=@value1 " + "WHERE Emp_Name=@value2", o, objConn);
@@ -492,10 +492,10 @@ namespace CTBTeam {
 				ddlAllProjects.Items.Clear();
 				ddlAllProjects.Items.Add("--Select A Project--");
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlAllProjects.Items.Add(new ListItem(reader.GetString(0)));
 				}
@@ -519,20 +519,20 @@ namespace CTBTeam {
 				ddlNamesCar.Items.Add(temp);
 				ddlFullTimeNames.Items.Add(temp);
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
 				objCmdSelect.Parameters.AddWithValue("@bool", false);
 
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlNamesProject.Items.Add(new ListItem(reader.GetString(0)));
 					ddlNamesCar.Items.Add(new ListItem(reader.GetString(0)));
 				}
 
 
-				objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
+				objCmdSelect = new SqlCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
 				objCmdSelect.Parameters.AddWithValue("@bool", true);
 				reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
@@ -551,10 +551,10 @@ namespace CTBTeam {
 			try {
 				ddlProjects.Items.Clear();
 				ddlProjects.Items.Add("--Select A Project--");
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlProjects.Items.Add(new ListItem(reader.GetString(0)));
 				}
@@ -567,18 +567,18 @@ namespace CTBTeam {
 
 		private void populateDataPercentage() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCount = new OleDbCommand("SELECT DISTINCT Emp_Name FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
+				SqlCommand objCount = new SqlCommand("SELECT DISTINCT Emp_Name FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
 				objCount.Parameters.AddWithValue("@date", DateTime.Parse(date));
-				OleDbDataReader readerCount = objCount.ExecuteReader();
+				SqlDataReader readerCount = objCount.ExecuteReader();
 				int empCount = 0;
 				while (readerCount.Read()) {
 					empCount++;
 				}
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT * FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT * FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
 				objCmdSelect.Parameters.AddWithValue("@date", DateTime.Parse(date));
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
@@ -660,23 +660,23 @@ namespace CTBTeam {
 		//with different enums
 		private void populateData(int startIndex, Hours.DATA_TYPE type) {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect;
+				SqlCommand objCmdSelect;
 
 				switch (type) {
 					case DATA_TYPE.VEHICLE:
-						objCmdSelect = new OleDbCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
+						objCmdSelect = new SqlCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
 						break;
 					case DATA_TYPE.PROJECT:
-						objCmdSelect = new OleDbCommand("SELECT * FROM ProjectHours where Emp_Name in (select Emp_Name from Users where Full_Time=false) ORDER BY Emp_Name", objConn);
+						objCmdSelect = new SqlCommand("SELECT * FROM ProjectHours where Emp_Name in (select Emp_Name from Users where Full_Time=false) ORDER BY Emp_Name", objConn);
 						break;
 					default:
 						writeStackTrace("Unexpected input into populateData", new ArgumentException(type.ToString()));
 						return;
 				}
 
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
@@ -739,7 +739,7 @@ namespace CTBTeam {
 		//PART 5: HELPER FUNCTIONS TO REDUCE REDUNDANT CODE
 		//===================================================
 
-		private object[] getList(CTBTeam.Hours.DATA_TYPE enumSwitch, OleDbConnection objConn) {
+		private object[] getList(CTBTeam.Hours.DATA_TYPE enumSwitch, SqlConnection objConn) {
 			string s;
 
 			switch (enumSwitch) {
@@ -758,7 +758,7 @@ namespace CTBTeam {
 
 			object[] o = new object[2];
 			try {
-				OleDbDataReader reader = new OleDbCommand(s, objConn).ExecuteReader();
+				SqlDataReader reader = new SqlCommand(s, objConn).ExecuteReader();
 
 				int counter = 0;
 				s = ""; //Reassign s to reuse the string pointer, micro optimization.
@@ -777,7 +777,7 @@ namespace CTBTeam {
 			return o;
 		}
 
-		private void backUpToTxt(OleDbDataReader reader, StreamWriter file, int count) {
+		private void backUpToTxt(SqlDataReader reader, StreamWriter file, int count) {
 			/** Loop through each row **/
 			try {
 				string text;

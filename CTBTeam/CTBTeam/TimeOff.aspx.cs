@@ -1,6 +1,6 @@
 ﻿using System;
 using Date = System.DateTime;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
 namespace CTBTeam {
@@ -22,13 +22,13 @@ namespace CTBTeam {
 		protected void getCurrentDate(object sender, EventArgs e) {
 			try {
 				bltList.Items.Clear();
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmd = new OleDbCommand("SELECT DISTINCT Emp_Name FROM TimeOff WHERE Start_Date between @start AND @end OR End_Date between @start and @end;", objConn);
+				SqlCommand objCmd = new SqlCommand("SELECT DISTINCT Emp_Name FROM TimeOff WHERE Start_Date between @start AND @end OR End_Date between @start and @end;", objConn);
 				objCmd.Parameters.AddWithValue("@start", cldTimeOffStart.SelectedDate);
 				objCmd.Parameters.AddWithValue("@end", cldTimeOffEnd.SelectedDate);
-				OleDbDataReader reader = objCmd.ExecuteReader();
+				SqlDataReader reader = objCmd.ExecuteReader();
 				while (reader.Read()) {
 					bltList.Items.Add(reader["Emp_Name"].ToString());
 				}
@@ -54,11 +54,11 @@ namespace CTBTeam {
 			return DATE_VALID.VALID;
 		}
 
-		private bool doesntConflict(OleDbConnection o, string name, Date start, Date end) {
+		private bool doesntConflict(SqlConnection o, string name, Date start, Date end) {
 			try {
-				OleDbCommand cmd = new OleDbCommand("Select Start_Date, End_Date from TimeOff where Emp_Name=@value1", o);
+				SqlCommand cmd = new SqlCommand("Select Start_Date, End_Date from TimeOff where Emp_Name=@value1", o);
 				cmd.Parameters.AddWithValue("@value1", name);
-				OleDbDataReader reader = cmd.ExecuteReader();
+				SqlDataReader reader = cmd.ExecuteReader();
 				if (!reader.HasRows)
 					return true;
 				while (reader.Read()) {
@@ -99,7 +99,7 @@ namespace CTBTeam {
 							break;
 					}
 
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					if (!doesntConflict(objConn, ddlNames.Text, start, end)) {
@@ -123,12 +123,12 @@ namespace CTBTeam {
 			try {
 				//if (ddlNames.SelectedValue.ToString().Equals("--Select A Name--")) return;
 				ddlTimeTakenOff.Items.Clear();
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand cmd = new OleDbCommand("Select ID, Start_Date, End_Date from TimeOff where Emp_Name=@value1", objConn);
+				SqlCommand cmd = new SqlCommand("Select ID, Start_Date, End_Date from TimeOff where Emp_Name=@value1", objConn);
 				cmd.Parameters.AddWithValue("@value1", ddlNames.SelectedValue.ToString());
-				OleDbDataReader reader = cmd.ExecuteReader();
+				SqlDataReader reader = cmd.ExecuteReader();
 				ddlTimeTakenOff.Items.Add("--Select a time off period--");
 				while (reader.Read()) {
 					ddlTimeTakenOff.Items.Add(new ListItem(reader.GetValue(0).ToString() + ": " +
@@ -146,7 +146,7 @@ namespace CTBTeam {
 		protected void removeTimeOff(object sender, EventArgs e) {
 			if (!string.IsNullOrEmpty((string)Session["User"])) {
 				try {
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					string s = ddlTimeTakenOff.SelectedValue;
@@ -167,10 +167,10 @@ namespace CTBTeam {
 
 				ddlNames.Items.Add("--Select A Name--");
 
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
-				OleDbDataReader reader = objCmdSelect.ExecuteReader();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
+				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlNames.Items.Add(new ListItem(reader.GetString(0)));
 				}

@@ -16,7 +16,7 @@
 		<div class="col-md-50">
 
 			<h1 style="font-weight: 700; font-size: 70px;">Project Hours</h1>
-
+			<asp:TextBox ID="temp" runat="server" />
 			<p>
 				<asp:Button runat="server" OnClick=" View_More_onClick"
 					Text="Click Here" CssClass="btn btn-primary btn-lg" />

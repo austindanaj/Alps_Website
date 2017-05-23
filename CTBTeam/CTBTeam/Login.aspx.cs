@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Threading;
 
 namespace CTBTeam {
@@ -16,15 +16,15 @@ namespace CTBTeam {
 
 		protected void Login_Clicked(Object sender, EventArgs e) {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 
-				OleDbCommand objCmd = new OleDbCommand("SELECT * FROM Account WHERE ACCT_ROLE=@value1 AND ACCT_PASSWORD=@value2", objConn);
+				SqlCommand objCmd = new SqlCommand("SELECT * FROM Account WHERE ACCT_ROLE=@value1 AND ACCT_PASSWORD=@value2", objConn);
 
 				objCmd.Parameters.AddWithValue("@value1", txtUser.Text);
 				objCmd.Parameters.AddWithValue("@value2", txtPass.Text);
 
-				OleDbDataReader reader = objCmd.ExecuteReader();
+				SqlDataReader reader = objCmd.ExecuteReader();
 				int count = 0;
 				while (reader.Read()) {
 					count++;

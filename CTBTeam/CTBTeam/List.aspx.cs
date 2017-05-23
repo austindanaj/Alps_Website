@@ -1,6 +1,6 @@
 ﻿using System;
 using Date = System.DateTime;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Data;
 
 namespace CTBTeam {
@@ -32,7 +32,7 @@ namespace CTBTeam {
 				}
 
 				try {
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 					object[] o = { txtName.Text, Math.Abs(quantity), txtDesc.Text, Math.Abs(price), drpPrio.Text, txtLink.Text, (string)Session["User"], Date.Now.ToString() };
 					executeVoidSQLQuery("INSERT INTO PurchaseOrder (Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added) " +
@@ -49,10 +49,10 @@ namespace CTBTeam {
 
 		public void populateTable() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added FROM PurchaseOrder", objConn);
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added FROM PurchaseOrder", objConn);
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);

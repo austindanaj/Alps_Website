@@ -24,7 +24,7 @@ namespace CTBTeam
             }
         }
 
-        //public static string CONNECTION_STRING = "Provider=Microsoft.ACE.OLEDB.12.0;" +
+        //public static string CONNECTION_STRING = "Provider=Microsoft.ACE.Sql.12.0;" +
                           //    "Data Source=" + Server.MapPath("~/CTBWebsiteData.accdb") + ";";
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Data;
 
 namespace CTBTeam {
@@ -16,7 +16,7 @@ namespace CTBTeam {
 		protected void User_Clicked(object sender, EventArgs e) {
 			if (!(txtName.Text.Equals(""))) {
 				try {
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					object[] val1And2 = { txtName.Text, !chkPartTime.Checked };
@@ -49,7 +49,7 @@ namespace CTBTeam {
 						array[0] = array[0].Replace(" ", "_");
 					}
 					array[1] = array[1].Replace(" ", "");
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					object[] parameters = { array[0], array[1] };
@@ -78,7 +78,7 @@ namespace CTBTeam {
 						txtCar.Text = txtCar.Text.Replace(" ", "_");
 					}
 
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					executeVoidSQLQuery("INSERT INTO Cars (Vehicle) VALUES (@value1);", txtCar.Text, objConn);
@@ -105,7 +105,7 @@ namespace CTBTeam {
 					if (txtPR.Text.Contains(" ")) {
 						txtPR.Text = txtCar.Text.Replace(" ", "_");
 					}
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					executeVoidSQLQuery("DELETE FROM Projects WHERE Project=@value1;", txtPR.Text, objConn);
@@ -128,7 +128,7 @@ namespace CTBTeam {
 				try {
 					txtCR.Text = txtCar.Text.Replace(" ", "_");
 
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					executeVoidSQLQuery("DELETE FROM Cars WHERE Vehicle=@value1;", txtCR.Text, objConn);
@@ -149,7 +149,7 @@ namespace CTBTeam {
 		protected void Remove_User_Clicked(object sender, EventArgs e) {
 			if (!(txtNR.Text.Equals(""))) {
 				try {
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
 					executeVoidSQLQuery("DELETE FROM Users WHERE Emp_Name=@value1;", txtNR.Text, objConn);
@@ -171,10 +171,10 @@ namespace CTBTeam {
 
 		public void populateUsers() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Emp_Name, Full_Time FROM Users ORDER BY Emp_Name", objConn);
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Emp_Name, Full_Time FROM Users ORDER BY Emp_Name", objConn);
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
@@ -189,10 +189,10 @@ namespace CTBTeam {
 		}
 		public void populateProjects() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);
@@ -207,10 +207,10 @@ namespace CTBTeam {
 		}
 		public void populateVehicles() {
 			try {
-				OleDbConnection objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
-				OleDbCommand objCmdSelect = new OleDbCommand("SELECT Project, Category FROM Projects ORDER BY Project", objConn);
-				OleDbDataAdapter objAdapter = new OleDbDataAdapter();
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Project, Category FROM Projects ORDER BY Project", objConn);
+				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
 				objAdapter.Fill(objDataSet);

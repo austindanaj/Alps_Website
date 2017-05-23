@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Data;
 using Date = System.DateTime;
 
@@ -19,13 +19,12 @@ namespace CTBTeam {
 			string date = arrLine[arrLine.Length - 1];
 			string fileName = date.Replace("/", "-");
 			try {
-
 				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt"))) {
-					OleDbConnection objConn = openDBConnection();
+					SqlConnection objConn = openDBConnection();
 					objConn.Open();
 
-					OleDbCommand fieldProjectNames = new OleDbCommand("SELECT * FROM ProjectHours", objConn);
-					OleDbDataReader readerPNames = fieldProjectNames.ExecuteReader();
+					SqlCommand fieldProjectNames = new SqlCommand("SELECT * FROM ProjectHours", objConn);
+					SqlDataReader readerPNames = fieldProjectNames.ExecuteReader();
 					var table = readerPNames.GetSchemaTable();
 					var nameCol = table.Columns["ColumnName"];
 					string headerRow = "";
@@ -41,17 +40,17 @@ namespace CTBTeam {
 
 					int projectCount = 0;
 
-					OleDbCommand getProjectList = new OleDbCommand("SELECT Project From Projects ORDER BY ID", objConn);
-					OleDbDataReader readerProjectList = getProjectList.ExecuteReader();
+					SqlCommand getProjectList = new SqlCommand("SELECT Project From Projects ORDER BY ID", objConn);
+					SqlDataReader readerProjectList = getProjectList.ExecuteReader();
 					while (readerProjectList.Read()) {
-						projectCount++;      /** Increment counter by 1 **/
+						projectCount++;      
 
 					}
 
 
-					OleDbCommand objProject = new OleDbCommand("SELECT * FROM ProjectHours;", objConn);
+					SqlCommand objProject = new SqlCommand("SELECT * FROM ProjectHours;", objConn);
 
-					OleDbDataReader readerProject = objProject.ExecuteReader();
+					SqlDataReader readerProject = objProject.ExecuteReader();
 					while (readerProject.Read()) {
 						text = "";
 						for (int i = 1; i <= projectCount; i++) {
@@ -63,8 +62,8 @@ namespace CTBTeam {
 					file.WriteLine();
 					readerProject.Close();
 
-					OleDbCommand fieldCarNames = new OleDbCommand("SELECT * FROM VehicleHours", objConn);
-					OleDbDataReader readerCNames = fieldCarNames.ExecuteReader();
+					SqlCommand fieldCarNames = new SqlCommand("SELECT * FROM VehicleHours", objConn);
+					SqlDataReader readerCNames = fieldCarNames.ExecuteReader();
 					table = readerCNames.GetSchemaTable();
 					nameCol = table.Columns["ColumnName"];
 					headerRow = "";
@@ -79,16 +78,16 @@ namespace CTBTeam {
 
 					int carCount = 0;
 
-					/** Command to get list of cars **/
-					OleDbCommand getCarList = new OleDbCommand("SELECT Vehicle From Cars ORDER BY ID", objConn);
-					OleDbDataReader readerCarList = getCarList.ExecuteReader();
+					
+					SqlCommand getCarList = new SqlCommand("SELECT Vehicle From Cars ORDER BY ID", objConn);
+					SqlDataReader readerCarList = getCarList.ExecuteReader();
 					while (readerCarList.Read()) {
-						carCount++;      /** Increment counter by 1 **/
+						carCount++;      
 
 					}
-					OleDbCommand objCar = new OleDbCommand("SELECT * FROM VehicleHours;", objConn);
+					SqlCommand objCar = new SqlCommand("SELECT * FROM VehicleHours;", objConn);
 					text = "";
-					OleDbDataReader readerCar = objCar.ExecuteReader();
+					SqlDataReader readerCar = objCar.ExecuteReader();
 					while (readerCar.Read()) {
 						text = "";
 						for (int i = 1; i <= carCount; i++) {
@@ -104,7 +103,6 @@ namespace CTBTeam {
 
 				}
 			}
-
 			catch (Exception ex) {
 				Log.getInstance.WriteToLog("Create Current Project Hours", ex, Server);
 			}
