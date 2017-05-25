@@ -5,107 +5,20 @@ using Date = System.DateTime;
 
 namespace CTBTeam {
 	public partial class _Default : SuperPage {
+		SqlConnection objConn;
+
 		protected void Page_Load(object sender, EventArgs e) {
-			if (string.IsNullOrEmpty((string)Session["loginStatus"])) {
+			if (Session["loginStatus"] == null) {
 				Session["loginStatus"] = "Sign In";
 			}
 		}
 		protected void View_More_onClick(object sender, EventArgs e) {
 			redirectSafely("Hours.aspx");
 		}
-
+		/*
 		protected void download_database(object sender, EventArgs e) {
-			string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
-			string date = arrLine[arrLine.Length - 1];
-			string fileName = date.Replace("/", "-");
-			try {
-				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/CurrentHours/Current-Hours_" + fileName + ".txt"))) {
-					SqlConnection objConn = openDBConnection();
-					objConn.Open();
-
-					SqlCommand fieldProjectNames = new SqlCommand("SELECT * FROM ProjectHours", objConn);
-					SqlDataReader readerPNames = fieldProjectNames.ExecuteReader();
-					var table = readerPNames.GetSchemaTable();
-					var nameCol = table.Columns["ColumnName"];
-					string headerRow = "";
-					foreach (DataRow row in table.Rows) {
-						if (!row[nameCol].Equals("ID")) {
-							headerRow += row[nameCol] + ",";
-						}
-
-					}
-					headerRow = Date.Parse(date).ToShortDateString() + "," + headerRow;
-					file.WriteLine(headerRow);
-					string text = "";
-
-					int projectCount = 0;
-
-					SqlCommand getProjectList = new SqlCommand("SELECT Project From Projects ORDER BY ID", objConn);
-					SqlDataReader readerProjectList = getProjectList.ExecuteReader();
-					while (readerProjectList.Read()) {
-						projectCount++;      
-
-					}
-
-
-					SqlCommand objProject = new SqlCommand("SELECT * FROM ProjectHours;", objConn);
-
-					SqlDataReader readerProject = objProject.ExecuteReader();
-					while (readerProject.Read()) {
-						text = "";
-						for (int i = 1; i <= projectCount; i++) {
-							text += readerProject.GetValue(i).ToString() + ",";
-						}
-
-						file.WriteLine(text);
-					}
-					file.WriteLine();
-					readerProject.Close();
-
-					SqlCommand fieldCarNames = new SqlCommand("SELECT * FROM VehicleHours", objConn);
-					SqlDataReader readerCNames = fieldCarNames.ExecuteReader();
-					table = readerCNames.GetSchemaTable();
-					nameCol = table.Columns["ColumnName"];
-					headerRow = "";
-					foreach (DataRow row in table.Rows) {
-						if (!row[nameCol].Equals("ID")) {
-							headerRow += row[nameCol] + ",";
-						}
-					}
-					headerRow = Date.Parse(date).ToShortDateString() + "," + headerRow;
-					file.WriteLine(headerRow);
-					readerCNames.Close();
-
-					int carCount = 0;
-
-					
-					SqlCommand getCarList = new SqlCommand("SELECT Vehicle From Cars ORDER BY ID", objConn);
-					SqlDataReader readerCarList = getCarList.ExecuteReader();
-					while (readerCarList.Read()) {
-						carCount++;      
-
-					}
-					SqlCommand objCar = new SqlCommand("SELECT * FROM VehicleHours;", objConn);
-					text = "";
-					SqlDataReader readerCar = objCar.ExecuteReader();
-					while (readerCar.Read()) {
-						text = "";
-						for (int i = 1; i <= carCount; i++) {
-							text += readerCar.GetValue(i).ToString() + ",";
-						}
-
-						file.WriteLine(text);
-					}
-					file.WriteLine();
-					file.Close();
-					readerCar.Close();
-					objConn.Close();
-
-				}
-			}
-			catch (Exception ex) {
-				Log.getInstance.WriteToLog("Create Current Project Hours", ex, Server);
-			}
+			objConn = openDBConnection();
+			
 			try {
 				Response.ContentType = "Application/txt";
 				Response.AppendHeader("Content-Disposition", "attachment; filename=Current-Hours_" + fileName + ".txt");
@@ -123,6 +36,7 @@ namespace CTBTeam {
 			Response.TransmitFile(Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
 			Response.End();
 		}
+		*/
 		protected void download_file_hexGenerator(object sender, EventArgs e) {
 			Response.ContentType = "Application/exe";
 			Response.AppendHeader("Content-Disposition", "attachment; filename=HexGenerator.exe");

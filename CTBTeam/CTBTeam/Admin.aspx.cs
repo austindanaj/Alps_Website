@@ -4,6 +4,8 @@ using System.Data;
 
 namespace CTBTeam {
 	public partial class Admin : SuperPage {
+		SqlConnection objConn;
+
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
 				populateUsers();
@@ -16,16 +18,16 @@ namespace CTBTeam {
 		protected void User_Clicked(object sender, EventArgs e) {
 			if (!(txtName.Text.Equals(""))) {
 				try {
-					SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 					objConn.Open();
 
-					object[] val1And2 = { txtName.Text, !chkPartTime.Checked };
-					executeVoidSQLQuery("INSERT INTO Users (Emp_Name, Full_Time) VALUES (@value1, @value2);", val1And2, objConn);
-					executeVoidSQLQuery("INSERT INTO ProjectHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
-
-					if (chkAddToVehcileHours.Checked == true) {
-						executeVoidSQLQuery("INSERT INTO VehicleHours (Emp_Name) VALUES (@value1);", txtName.Text, objConn);
+					if (!int.TryParse(txtAlna.Text, out int alna)) {
+						throwJSAlert("Alna number is not a number");
+						return;
 					}
+
+					object[] o = { alna, txtName.Text, !chkPartTime.Checked };
+					executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time) VALUES (@value1, @value2, @value3);", o, objConn);
 
 					objConn.Close();
 					Session["success?"] = true;
@@ -36,26 +38,37 @@ namespace CTBTeam {
 				}
 			}
 			else {
-				throwJSAlert("Error: Line blank! Please fill in all fields!");
+				throwJSAlert("Error: name blank! Please fill in all fields!");
 			}
 		}
-
 
 		protected void Project_Clicked(object sender, EventArgs e) {
 			if (!(txtProject.Text.Equals(""))) {
 				try {
-					string[] array = txtProject.Text.Split(',');
-					if (txtProject.Text.Contains(" ")) {
-						array[0] = array[0].Replace(" ", "_");
+					char projectCategory;
+					switch (category.SelectedIndex) {
+						case 0:
+							projectCategory = 'A';
+							break;
+						case 1:
+							projectCategory = 'B';
+							break;
+						case 2:
+							projectCategory = 'C';
+							break;
+						case 3:
+							projectCategory = 'D';
+							break;
+						default:
+							throwJSAlert("Not a valid option (did you select a radio button?)");
+							return;
 					}
-					array[1] = array[1].Replace(" ", "");
-					SqlConnection objConn = openDBConnection();
+
+					objConn = openDBConnection();
 					objConn.Open();
 
-					object[] parameters = { array[0], array[1] };
-					executeVoidSQLQuery("INSERT INTO Projects (Project, Category) VALUES (@value1, @value2);", parameters, objConn);
-					executeVoidSQLQuery("ALTER TABLE ProjectHours ADD " + array[0] + " number;", null, objConn);
-					executeVoidSQLQuery("UPDATE ProjectHours SET " + array[0] + " =0;", null, objConn);
+					object[] parameters = { txtProject.Text, projectCategory };
+					executeVoidSQLQuery("INSERT INTO Projects (Name, Category) VALUES (@value1, @value2);", parameters, objConn);
 
 					objConn.Close();
 
@@ -65,9 +78,8 @@ namespace CTBTeam {
 				catch (Exception ex) {
 					writeStackTrace("Add Project", ex);
 				}
-			}
-			else {
-				throwJSAlert("Fill in all fields.");
+			} else {
+				throwJSAlert("Project must have a name");
 			}
 		}
 
@@ -78,12 +90,10 @@ namespace CTBTeam {
 						txtCar.Text = txtCar.Text.Replace(" ", "_");
 					}
 
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 
-					executeVoidSQLQuery("INSERT INTO Cars (Vehicle) VALUES (@value1);", txtCar.Text, objConn);
-					executeVoidSQLQuery("ALTER TABLE VehicleHours ADD " + txtCar.Text + " number;", null, objConn);
-					executeVoidSQLQuery("UPDATE VehicleHours SET " + txtCar.Text + " =0;", null, objConn);
+					executeVoidSQLQuery("INSERT INTO Vehicles (Name) VALUES (@value1);", txtCar.Text, objConn);
 
 					objConn.Close();
 					Session["success?"] = true;
@@ -94,86 +104,53 @@ namespace CTBTeam {
 				}
 			}
 			else {
-				throwJSAlert("Fill in all fields");
+				throwJSAlert("Car needs a name");
 			}
 
-		}
+		}		
 
-		protected void Remove_Project_Clicked(object sender, EventArgs e) {
-			if (!(txtPR.Text.Equals(""))) {
-				try {
-					if (txtPR.Text.Contains(" ")) {
-						txtPR.Text = txtCar.Text.Replace(" ", "_");
-					}
-					SqlConnection objConn = openDBConnection();
-					objConn.Open();
+		protected void remove(object sender, EventArgs e) {
+			string command;
+			string text;
 
-					executeVoidSQLQuery("DELETE FROM Projects WHERE Project=@value1;", txtPR.Text, objConn);
-					executeVoidSQLQuery("ALTER TABLE ProjectHours DROP COLUMN " + txtPR.Text + ";", null, objConn);
-
-					objConn.Close();
-					Session["success?"] = true;
-					redirectSafely("~/Admin");
-				}
-				catch (Exception ex) {
-					writeStackTrace("Remove Project", ex);
-				}
+			if (sender.Equals(btnRemoveVehicle)) {
+				command = "Update Vehicles set Active=0 WHERE ID=@value1;";
+				text = txtRemoveVehicle.Text;
+			} else if(sender.Equals(btnRemoveUser)) {
+				command = "Update Employees set Active=0 where Alna_num=@value1";
+				text = txtRemoveUser.Text;
+			} else if(sender.Equals(btnRemoveProject)) {
+				command = "Update Projects set Active=0 WHERE ID=@value1;";
+				text = txtRemoveProject.Text;
+			} else {
+				throw new ArgumentException("This button isn't implemented");
 			}
-			else {
-				throwJSAlert("Error: Line blank! Please fill in all fields!");
+
+			if (!int.TryParse(text, out int id)) {
+				throwJSAlert("Not an integer!");
+				return;
 			}
-		}
-		protected void Remove_Car_Clicked(object sender, EventArgs e) {
-			if (!(txtCR.Text.Equals(""))) {
-				try {
-					txtCR.Text = txtCar.Text.Replace(" ", "_");
 
-					SqlConnection objConn = openDBConnection();
-					objConn.Open();
+			try {
+				objConn = openDBConnection();
+				objConn.Open();
 
-					executeVoidSQLQuery("DELETE FROM Cars WHERE Vehicle=@value1;", txtCR.Text, objConn);
-					executeVoidSQLQuery("ALTER TABLE VehicleHours DROP COLUMN " + txtCR.Text + ";", null, objConn);
+				executeVoidSQLQuery(command, id, objConn);
 
-					objConn.Close();
-					Session["success?"] = true;
-					redirectSafely("~/Admin");
-				}
-				catch (Exception ex) {
-					writeStackTrace("Remove Vehicle", ex);
-				}
+				objConn.Close();
+				Session["success?"] = true;
+				redirectSafely("~/Admin");
 			}
-			else {
-				throwJSAlert("Error: Line blank! Please fill in all fields!");
-			}
-		}
-		protected void Remove_User_Clicked(object sender, EventArgs e) {
-			if (!(txtNR.Text.Equals(""))) {
-				try {
-					SqlConnection objConn = openDBConnection();
-					objConn.Open();
-
-					executeVoidSQLQuery("DELETE FROM Users WHERE Emp_Name=@value1;", txtNR.Text, objConn);
-					executeVoidSQLQuery("DELETE FROM ProjectHours WHERE Emp_Name=@value1;", txtNR.Text, objConn);
-					executeVoidSQLQuery("DELETE FROM VehicleHours WHERE Emp_Name=@value1;", txtNR.Text, objConn);
-
-					objConn.Close();
-					Session["success?"] = true;
-					redirectSafely("~/Admin");
-				}
-				catch (Exception ex) {
-					writeStackTrace("Remove User", ex);
-				}
-			}
-			else {
-				throwJSAlert("Error: Line blank! Please fill in all fields!");
+			catch (Exception ex) {
+				writeStackTrace("Remove Vehicle", ex);
 			}
 		}
 
 		public void populateUsers() {
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Emp_Name, Full_Time FROM Users ORDER BY Emp_Name", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Alna_num, Employees.[Name], Full_time from Employees where Active=1 ORDER BY Alna_num", objConn);
 				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
@@ -189,9 +166,9 @@ namespace CTBTeam {
 		}
 		public void populateProjects() {
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT ID, Vehicles.[Name] FROM Vehicles where Active=1;", objConn);
 				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
@@ -207,9 +184,9 @@ namespace CTBTeam {
 		}
 		public void populateVehicles() {
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Project, Category FROM Projects ORDER BY Project", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT ID, Name, Category FROM Projects where Active=1;", objConn);
 				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();

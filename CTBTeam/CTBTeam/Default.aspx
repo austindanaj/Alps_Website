@@ -6,20 +6,14 @@
 	<style type="text/css">
 		body {
 			background: url('Gradient.jpg') no-repeat center center fixed;
-			-webkit-background-size: cover;
-			-moz-background-size: cover;
-			-o-background-size: cover;
 			background-size: cover;
 		}
 	</style>
 	<div class="row">
 		<div class="col-md-50">
-
 			<h1 style="font-weight: 700; font-size: 70px;">Project Hours</h1>
-			<asp:TextBox ID="temp" runat="server" />
 			<p>
-				<asp:Button runat="server" OnClick=" View_More_onClick"
-					Text="Click Here" CssClass="btn btn-primary btn-lg" />
+				<asp:Button runat="server" OnClick=" View_More_onClick" Text="Click Here" CssClass="btn btn-primary btn-lg" />
 			</p>
 		</div>
 		<div class="col-md-50">
@@ -33,25 +27,17 @@
 		<div class="col-md-25">
 			<h2>Current Hours</h2>
 			<p>
-			</p>
-			<p>
-				<asp:Button runat="server" OnClick="download_database"
-					Text="Download" CssClass="btn btn-default" />
+				<asp:Button runat="server" OnClick="download_database" Text="Download" CssClass="btn btn-default" />
 			</p>
 		</div>
 		<div class="col-md-25">
 			<h2>Time Log</h2>
 			<p>
-			</p>
-			<p>
-				<asp:Button runat="server" OnClick="download_timelog"
-					Text="Download" CssClass="btn btn-default" />
+				<asp:Button runat="server" OnClick="download_timelog" Text="Download" CssClass="btn btn-default" />
 			</p>
 		</div>
 		<div class="col-md-25">
 			<h2>Hex Generator</h2>
-			<p>
-			</p>
 			<p>
 				<asp:Button runat="server" OnClick="download_file_hexGenerator"
 					Text="Download" CssClass="btn btn-default" />

@@ -433,3 +433,32 @@ input[type='checkbox'] {
 	border-color: #ccc;
 	color: #9d9d9d;
 }
+
+.drp-login {
+	display: inline-block;
+	width: 100%;
+	height: 30px;
+	border: none;
+	font-size: 16px;
+	background-color: #333;
+	border-color: #ccc;
+	color: #9d9d9d;
+}
+
+.radio {
+	color: #FFFFFF;
+	font-size: 18px;
+	text-align: left;
+}
+/*
+.drp-login:hover {
+	display: block;
+}
+
+.drp-phones:hover {
+	display: block;
+}
+
+.drp-model:hover {
+	display: block;
+}*/

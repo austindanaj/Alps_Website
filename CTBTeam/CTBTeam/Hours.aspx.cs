@@ -10,8 +10,10 @@ using System.IO;
 
 namespace CTBTeam {
 	public partial class Hours : SuperPage {
+		SqlConnection objConn;
+
 		string userName;
-		string date = "0/00/0000";
+		Date date;
 		private enum DATA_TYPE { VEHICLE, PERCENT, PROJECT };
 
 		//===================================================
@@ -21,7 +23,6 @@ namespace CTBTeam {
 		//Loads the page with .NET specific stuff
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
-
 				getDate();
 				populatePastWeekDropDown();
 				populateNames();
@@ -30,15 +31,15 @@ namespace CTBTeam {
 				//the session projectcol and vehiclecol cookies since they
 				//are used right below.
 				if (Session["ProjectCol"] == null)
-					Session["ProjectCol"] = 0;
+					Session["ProjectCol"] = 1;
 				if (Session["VehicleCol"] == null)
-					Session["VehicleCol"] = 0;
+					Session["VehicleCol"] = 1;
 
 				populateDataCars((int)Session["ProjectCol"]);
 				populateDataProject((int)Session["VehicleCol"]);
 				populateDataPercentage();
 
-				if (!string.IsNullOrEmpty((string)Session["User"])) {
+				if (Session["User"] != null) {
 					userName = (string)Session["User"];
 					btnSubmitCar.Visible = true;
 					btnSubmitProject.Visible = true;
@@ -54,174 +55,25 @@ namespace CTBTeam {
 
 		//Gets the Monday of the current week from the Time-log.txt file.
 		private void getDate() {
-			try {
-				string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
-				date = arrLine[arrLine.Length - 1];
-				if (Date.Today.AddDays(-6) > Date.Parse(date)) {
-					datechange();
-				}
-				lblWeekOf.Text = "Week Of: " + date;
-			}
-			catch (Exception ex) {
-				writeStackTrace("getDate", ex);
-				lblWeekOf.Text = "Week Of: " + Date.Today.Day + "/" + Date.Today.Month + "/" + Date.Today.Year + " (Error reading Time-log.txt)";
-			}
+			objConn = openDBConnection();
+			objConn.Open();
+			SqlCommand cmd = new SqlCommand("SELECT MAX(Dates.[Dates]) FROM Dates", objConn);
+			SqlDataReader readerPNames = cmd.ExecuteReader();
+			readerPNames.Read();
+			date = (Date) readerPNames.GetValue(0);
+			if (Date.Today > date.AddDays(6))
+				datechange();
+			lblWeekOf.Text += date.Month + "/" + date.Day + "/" + date.Year;
 		}
 
 		//backs up the DB if we move into a new week
 		private void datechange() {
-			try {
-				SqlConnection objConn = openDBConnection();
-				objConn.Open();
+			date = date.AddDays(7);
 
-				//Get the data: 2 element object array.
-				//o[0] is counter, o[1] is the string list. Repeat for all tables.
-				object[] o = getList(DATA_TYPE.PROJECT, objConn);
-				int projectCount = (int)o[0];         /** Count of projects **/
-				string projectList = (string)o[1];      /** List of projects **/
-
-				o = getList(DATA_TYPE.VEHICLE, objConn);
-				int carCount = (int)o[0];           /** Count of projects **/
-				string carList = (string)o[1];        /** List of projects **/
-
-				o = getList(DATA_TYPE.PERCENT, objConn);
-				int percentCount = (int)o[0];
-				string percentList = (string)o[1];        /** List of percent **/
-
-				/** Command to get project hours header **/
-				SqlCommand fieldProjectNames = new SqlCommand("SELECT * FROM ProjectHours", objConn);
-				SqlDataReader readerPNames = fieldProjectNames.ExecuteReader();
-
-				var table = readerPNames.GetSchemaTable();      /** Set the table of project hours to variable **/
-				var nameCol = table.Columns["ColumnName"];      /** Set the column name **/
-				string headerRow = "";                          /** Header Row for Project Hours Log file **/
-
-				/** 
-				 * Loop through each row, if column is ID, dont add
-				 * This loop populates the header row for project hours
-				 **/
-				foreach (DataRow row in table.Rows) {
-					if (!row[nameCol].Equals("ID")) {
-						headerRow += row[nameCol] + ",";
-					}
-				}
-
-				/** Get the contents of file **/
-				string[] arrLine = System.IO.File.ReadAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"));
-
-				/** Replace the last line (the date of the previous week with the header row ) also appending the previous week**/
-				arrLine[arrLine.Length - 1] = Date.Parse(date).ToShortDateString() + "," + headerRow;
-
-				/** Write array to file, replacing contents with it (basically appending, but need to replace all to replace the last line **/
-				System.IO.File.WriteAllLines(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), arrLine);
-
-				/** Now append to file **/
-				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/TimeLog/Time-log.txt"), true)) {
-					/** Command to get project hours  **/
-					SqlCommand objProject = new SqlCommand("SELECT * FROM ProjectHours ORDER BY Emp_Name;", objConn);
-					SqlDataReader readerProject = objProject.ExecuteReader();
-
-					backUpToTxt(readerProject, file, projectCount);
-					readerProject.Close();
-
-					objProject = new SqlCommand("SELECT ID, Emp_Name, Project, Category, Percentage, Full_Time FROM PercentageLog ORDER BY Emp_Name ;", objConn);
-					readerProject = objProject.ExecuteReader();
-
-					backUpToTxt(readerProject, file, percentCount);
-
-					/** Command to get car hours ( used to get header ) **/
-					SqlCommand fieldCarNames = new SqlCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
-					SqlDataReader readerCNames = fieldCarNames.ExecuteReader();
-
-					table = readerPNames.GetSchemaTable();      /** Set the table of vehicle hours to variable **/
-					nameCol = table.Columns["ColumnName"];      /** Set the column name **/
-					headerRow = "";                             /** Header Row for Vehicle Hours Log file **/
-
-					/** 
-					 * Loop through each row, if column is ID, dont add
-					 * This loop populates the header row for vehicle hours
-					 **/
-					foreach (DataRow row in table.Rows) {
-						if (!row[nameCol].Equals("ID")) {
-							headerRow += row[nameCol] + ",";
-						}
-					}
-
-					/** Set header row to previous week + created header row **/
-					headerRow = Date.Parse(date).ToShortDateString() + "," + headerRow;
-
-					/** Write header row to file **/
-					file.WriteLine(headerRow);
-					readerCNames.Close();
-
-					/** Command to get vehicle hours **/
-					SqlCommand objCar = new SqlCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name;", objConn);
-					SqlDataReader readerCar = objCar.ExecuteReader();
-
-					/** Loop through each row **/
-					backUpToTxt(readerCar, file, carCount);
-					readerCar.Close();
-
-					/** Second check if date needs to be changed, if yes, find the monday of the week, then set date to monday, write to line **/
-					if (Date.Today.AddDays(-6) > Date.Parse(date)) {
-						DateTime dt = DateTime.Now;
-						file.Write(dt.ToShortDateString());
-					}
-
-
-
-
-					/** split list of projects into an array**/
-					string[] arrayProjectList = projectList.Split(',');
-					/** Start the query string **/
-					string queryProject = "UPDATE ProjectHours SET ";
-
-					/** Loop through the list of projects, and build the rest of the query, do use last array index, it is empty **/
-					for (int i = 0; i < arrayProjectList.Length - 1; i++) {
-						queryProject += arrayProjectList[i] + "=@value" + (i + 1);
-						if (i != arrayProjectList.Length - 2) {
-							/** If not last, then comma **/
-							queryProject += ", ";
-						}
-						else {
-							/** If last then semicolon to end query **/
-							queryProject += ";";
-						}
-					}
-					/** Command for query **/
-					SqlCommand objResetPH = new SqlCommand(queryProject, objConn);
-					for (int i = 0; i < arrayProjectList.Length - 1; i++) {
-						objResetPH.Parameters.AddWithValue("@value" + (i + 1), 0);
-					}
-
-					objResetPH.ExecuteNonQuery();
-
-					string[] arrayCarList = carList.Split(',');
-					string queryCar = "UPDATE VehicleHours SET ";
-					for (int i = 0; i < arrayCarList.Length - 1; i++) {
-						queryCar += arrayCarList[i] + "=@value" + (i + 1);
-						if (i != arrayCarList.Length - 2) {
-							queryCar += ", ";
-						}
-						else {
-							queryCar += ";";
-						}
-					}
-
-					SqlCommand objResetVH = new SqlCommand(queryCar, objConn);
-					for (int i = 0; i < arrayCarList.Length - 1; i++) {
-						objResetVH.Parameters.AddWithValue("@value" + (i + 1), 0);
-					}
-
-					objResetVH.ExecuteNonQuery();
-
-					objConn.Close();
-					file.Close();
-				}
-			}
-			catch (Exception ex) {
-				writeStackTrace("Date Change", ex);
-			}
+			//if we go on vacation it'll screw up. Add another 7.
+			if (Date.Today > date.AddDays(6))
+				datechange();
+			executeVoidSQLQuery("insert into Dates (Dates.[Date]) values (@value1)", date, objConn);
 		}
 
 		//===================================================
@@ -248,9 +100,9 @@ namespace CTBTeam {
 					ddlCars.Items.Clear();
 					ddlCars.Items.Add("--Select A Car--");
 
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
-					SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle", objConn);
+					SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicles.[Name] FROM Vehicles ORDER BY Vehicles.[Name]", objConn);
 					SqlDataReader reader = objCmdSelect.ExecuteReader();
 					while (reader.Read()) {
 						ddlCars.Items.Add(new ListItem(reader.GetString(0)));
@@ -386,38 +238,7 @@ namespace CTBTeam {
 
 		private void submitProjects() {
 			try {
-				SqlConnection objConn = openDBConnection();
-				objConn.Open();
-				object[] o = { int.Parse(txtHoursProjects.Text), ddlNamesProject.Text };
-				executeVoidSQLQuery("UPDATE ProjectHours SET " + ddlProjects.Text + "=@value1 WHERE Emp_Name=@value2", o, objConn);
-
-				SqlCommand objCmdName = new SqlCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
-				objCmdName.Parameters.AddWithValue("@name", ddlNamesProject.Text);
-				SqlDataReader namereader = objCmdName.ExecuteReader();
-				bool fulltime = false;
-				while (namereader.Read()) {
-					fulltime = namereader.GetBoolean(0);
-				}
-
-
-				SqlCommand objCmdCat = new SqlCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
-				objCmdCat.Parameters.AddWithValue("@project", ddlProjects.Text);
-				SqlDataReader catreader = objCmdCat.ExecuteReader();
-				string cat = "";
-				while (catreader.Read()) {
-					cat = catreader.GetValue(0).ToString();
-				}
-
-				DateTime dt = DateTime.Now;
-				while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
-
-				object[] parameters = { ddlNamesProject.Text, ddlProjects.Text, cat, Math.Round((double.Parse(txtHoursProjects.Text) / 40) * 100, 0), DateTime.Parse(dt.ToShortDateString()), fulltime };
-				executeVoidSQLQuery("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
-													   "VALUES (@value1, @value2, @value3, @value4, @value5, @value6);", parameters, objConn);
-				objConn.Close();
-
-				Session["success?"] = true;
-				redirectSafely("~/Hours");
+				
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
@@ -426,50 +247,17 @@ namespace CTBTeam {
 
 		private void submitPercent() {
 			try {
-				SqlConnection objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdName = new SqlCommand("SELECT Full_Time FROM Users WHERE Emp_Name=@name;", objConn);
-				objCmdName.Parameters.AddWithValue("@name", ddlFullTimeNames.Text);
-				SqlDataReader namereader = objCmdName.ExecuteReader();
-				bool fulltime = false;
-				while (namereader.Read()) {
-					fulltime = namereader.GetBoolean(0);
-				}
-
-
-				SqlCommand objCmdCat = new SqlCommand("SELECT Category FROM Projects WHERE Project=@project;", objConn);
-				objCmdCat.Parameters.AddWithValue("@project", ddlAllProjects.Text);
-				SqlDataReader catreader = objCmdCat.ExecuteReader();
-				string cat = "";
-				while (catreader.Read()) {
-					cat = catreader.GetValue(0).ToString();
-				}
-
-				DateTime dt = DateTime.Now;
-				while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);
-
-				object[] o = { ddlFullTimeNames.Text, ddlAllProjects.Text, cat, double.Parse(ddlPercentage.Text.Substring(0, ddlPercentage.Text.IndexOf('%'))), DateTime.Parse(dt.ToShortDateString()), fulltime };
-				executeVoidSQLQuery("INSERT INTO PercentageLog (Emp_Name, Project, Category, Percentage, Log_Date, Full_Time) " +
-															"VALUES (@value1, @value2, @value3, @value4, @value5, @value6);", o, objConn);
-				objConn.Close();
+				Session["success?"] = true;
+				redirectSafely("~/Hours");
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
 			}
-
-			Session["success?"] = true;
-			redirectSafely("~/Hours");
 		}
 
 		private void submitCars() {
 			try {
-				SqlConnection objConn = openDBConnection();
-				objConn.Open();
-				object[] o = { int.Parse(txtHoursCars.Text), ddlNamesCar.Text };
-				executeVoidSQLQuery("UPDATE VehicleHours SET " + ddlCars.Text + "=@value1 " + "WHERE Emp_Name=@value2", o, objConn);
-
-				objConn.Close();
+				
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
@@ -483,7 +271,6 @@ namespace CTBTeam {
 		//===================================================
 
 		private void populatePastWeekDropDown() {
-			ddlselectWeek.Items.Add(date);
 			ddlselectWeek.Items.Add("Not implemented yet, so this doesn't work.");
 		}
 
@@ -492,9 +279,9 @@ namespace CTBTeam {
 				ddlAllProjects.Items.Clear();
 				ddlAllProjects.Items.Add("--Select A Project--");
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Projects.[Name] FROM Projects ORDER BY Projects.[Name]", objConn);
 				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlAllProjects.Items.Add(new ListItem(reader.GetString(0)));
@@ -503,7 +290,7 @@ namespace CTBTeam {
 				chartPercent.EnableViewState = true;
 			}
 			catch (Exception ex) {
-				writeStackTrace("Populate Vehicles", ex);
+				writeStackTrace("Populate Project Percent", ex);
 			}
 		}
 
@@ -519,10 +306,10 @@ namespace CTBTeam {
 				ddlNamesCar.Items.Add(temp);
 				ddlFullTimeNames.Items.Add(temp);
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Employees.[Name] FROM Employees WHERE Full_time=@bool ORDER BY Employees.[Name]", objConn);
 				objCmdSelect.Parameters.AddWithValue("@bool", false);
 
 				SqlDataReader reader = objCmdSelect.ExecuteReader();
@@ -530,9 +317,9 @@ namespace CTBTeam {
 					ddlNamesProject.Items.Add(new ListItem(reader.GetString(0)));
 					ddlNamesCar.Items.Add(new ListItem(reader.GetString(0)));
 				}
+				reader.Close();
 
-
-				objCmdSelect = new SqlCommand("SELECT Emp_Name FROM Users WHERE Full_Time=@bool ORDER BY Emp_Name", objConn);
+				objCmdSelect = new SqlCommand("SELECT Employees.[Name] FROM Employees WHERE Full_time=@bool ORDER BY Employees.[Name]", objConn);
 				objCmdSelect.Parameters.AddWithValue("@bool", true);
 				reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
@@ -551,9 +338,9 @@ namespace CTBTeam {
 			try {
 				ddlProjects.Items.Clear();
 				ddlProjects.Items.Add("--Select A Project--");
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Project FROM Projects ORDER BY Project", objConn);
+				SqlCommand objCmdSelect = new SqlCommand("SELECT Projects.[Name] FROM Projects ORDER BY Projects.[Name]", objConn);
 				SqlDataReader reader = objCmdSelect.ExecuteReader();
 				while (reader.Read()) {
 					ddlProjects.Items.Add(new ListItem(reader.GetString(0)));
@@ -561,23 +348,21 @@ namespace CTBTeam {
 				objConn.Close();
 			}
 			catch (Exception ex) {
-				writeStackTrace("Populate Vehicles", ex);
+				writeStackTrace("Populate projects", ex);
 			}
 		}
 
 		private void populateDataPercentage() {
-			try {
-				SqlConnection objConn = openDBConnection();
+			/*try {
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCount = new SqlCommand("SELECT DISTINCT Emp_Name FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
-				objCount.Parameters.AddWithValue("@date", DateTime.Parse(date));
 				SqlDataReader readerCount = objCount.ExecuteReader();
 				int empCount = 0;
 				while (readerCount.Read()) {
 					empCount++;
 				}
 				SqlCommand objCmdSelect = new SqlCommand("SELECT * FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
-				objCmdSelect.Parameters.AddWithValue("@date", DateTime.Parse(date));
 				SqlDataAdapter objAdapter = new SqlDataAdapter();
 				objAdapter.SelectCommand = objCmdSelect;
 				DataSet objDataSet = new DataSet();
@@ -652,78 +437,21 @@ namespace CTBTeam {
 			}
 			catch (Exception ex) {
 				writeStackTrace("Populate Percent", ex);
-			}
+			}*/
 		}
 
 		//Populates data in the tables.
 		//populateDataCars and populateDataProject call this function
 		//with different enums
 		private void populateData(int startIndex, Hours.DATA_TYPE type) {
-			try {
-				SqlConnection objConn = openDBConnection();
-				objConn.Open();
-				SqlCommand objCmdSelect;
+			objConn = openDBConnection();
+			objConn.Open();
+			SqlCommand cmd = new SqlCommand("select Employees.Name,TempProjectHours.Proj_ID, TempProjectHours.Hours_worked from Employees inner join TempProjectHours On TempProjectHours.Alna_num = Employees.Alna_num;", objConn);
 
-				switch (type) {
-					case DATA_TYPE.VEHICLE:
-						objCmdSelect = new SqlCommand("SELECT * FROM VehicleHours ORDER BY Emp_Name", objConn);
-						break;
-					case DATA_TYPE.PROJECT:
-						objCmdSelect = new SqlCommand("SELECT * FROM ProjectHours where Emp_Name in (select Emp_Name from Users where Full_Time=false) ORDER BY Emp_Name", objConn);
-						break;
-					default:
-						writeStackTrace("Unexpected input into populateData", new ArgumentException(type.ToString()));
-						return;
-				}
-
-				SqlDataAdapter objAdapter = new SqlDataAdapter();
-				objAdapter.SelectCommand = objCmdSelect;
-				DataSet objDataSet = new DataSet();
-				objAdapter.Fill(objDataSet);
-				objDataSet.Tables[0].Columns.RemoveAt(0);
-
-				for (int i = 1; i < startIndex; i++) {
-					objDataSet.Tables[0].Columns.RemoveAt(1);
-				}
-				int length = objDataSet.Tables[0].Columns.Count;
-				for (int i = 7; i < length; i++) {
-					objDataSet.Tables[0].Columns.RemoveAt(7);
-				}
-
-				for (int i = 0; i < objDataSet.Tables[0].Columns.Count; i++)
-					objDataSet.Tables[0].Columns[i].ColumnName = objDataSet.Tables[0].Columns[i].ColumnName.Replace('_', ' ');
-
-				switch (type) {
-					case DATA_TYPE.VEHICLE:
-						dgvCars.DataSource = objDataSet.Tables[0].DefaultView;
-						dgvCars.DataBind();
-						break;
-					case DATA_TYPE.PROJECT:
-						dgvProject.DataSource = objDataSet.Tables[0].DefaultView;
-						dgvProject.DataBind();
-						break;
-					default:
-						return;
-				}
-
-				objConn.Close();
-				// dgvCars.HeaderRow.Cells[0].Visible = false;
-			}
-			catch (Exception ex) {
-				switch (type) {
-					case DATA_TYPE.VEHICLE:
-						writeStackTrace("populateData", ex);
-						break;
-					case DATA_TYPE.PROJECT:
-						writeStackTrace("populateData", ex);
-						break;
-					case DATA_TYPE.PERCENT:
-						writeStackTrace("populateData", ex);
-						break;
-					default:
-						writeStackTrace("populateData", ex);
-						return;
-				}
+			SqlDataReader reader = cmd.ExecuteReader();
+			DataTable table = new DataTable();
+			while (reader.Read()) {
+				//table.Columns.Add(reader.GetValue());
 			}
 		}
 

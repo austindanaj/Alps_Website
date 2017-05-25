@@ -5,11 +5,12 @@ using System.Data;
 
 namespace CTBTeam {
 	public partial class List : SuperPage {
+		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
 				populateTable();
-				if (!string.IsNullOrEmpty((string)Session["User"])) {
+				if (Session["User"] != null) {
 					btnSubmit.Visible = true;
 					successDialog(successOrFail);
 				}
@@ -20,7 +21,7 @@ namespace CTBTeam {
 		}
 
 		protected void btnSubmit_Click(object sender, EventArgs e) {
-			if (!string.IsNullOrEmpty((string)Session["User"])) {
+			if (Session["User"] != null) {
 				//Before even making a DB connection, check that parsed arguments are correct.
 				if (!int.TryParse(txtQuant.Text, out int quantity)) {
 					throwJSAlert("Quantity is not an integer value");
@@ -32,7 +33,7 @@ namespace CTBTeam {
 				}
 
 				try {
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 					object[] o = { txtName.Text, Math.Abs(quantity), txtDesc.Text, Math.Abs(price), drpPrio.Text, txtLink.Text, (string)Session["User"], Date.Now.ToString() };
 					executeVoidSQLQuery("INSERT INTO PurchaseOrder (Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added) " +
@@ -49,7 +50,7 @@ namespace CTBTeam {
 
 		public void populateTable() {
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Item, Qty, Description, Price, Priority, Link, Emp_Name, Date_Added FROM PurchaseOrder", objConn);
 				SqlDataAdapter objAdapter = new SqlDataAdapter();

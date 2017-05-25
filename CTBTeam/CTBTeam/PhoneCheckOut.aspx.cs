@@ -7,6 +7,7 @@ using System.Data;
 
 namespace CTBTeam {
 	public partial class PhoneCheckOut : SuperPage {
+		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
@@ -24,7 +25,7 @@ namespace CTBTeam {
 
 			// gets information form database
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCmdSelect = new SqlCommand("SELECT DISTINCT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
 				SqlDataReader reader = objCmdSelect.ExecuteReader();
@@ -49,7 +50,7 @@ namespace CTBTeam {
 
 			// gets information form database
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCmdSelect = new SqlCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
 				SqlDataReader reader = objCmdSelect.ExecuteReader();
@@ -75,7 +76,7 @@ namespace CTBTeam {
 				drpPhone.Items.Add(new ListItem("--Select A Phone--"));
 
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -100,7 +101,7 @@ namespace CTBTeam {
 
 
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -129,7 +130,7 @@ namespace CTBTeam {
 
 
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
@@ -183,7 +184,7 @@ namespace CTBTeam {
              * 
              * */
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Model, Available, Car, Person, Purpose, Period FROM PhoneCheckout ORDER BY Model", objConn);
 				SqlDataAdapter objAdapter = new SqlDataAdapter();
@@ -245,7 +246,7 @@ namespace CTBTeam {
              */
 			else {
 				try {
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 					object[] o = { drpPerson.Text, Vehicle.Text, false, temp, drpFrom.Text + " - " + drpTo.Text, drpPhone.SelectedItem.Text };
 
@@ -267,7 +268,7 @@ namespace CTBTeam {
 					drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
 
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 
 					SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -299,7 +300,7 @@ namespace CTBTeam {
 
 
 
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 
 					SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -332,7 +333,7 @@ namespace CTBTeam {
 
 
 			try {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				object[] o = { temp, temp, true, temp, temp, drpCheckIn.SelectedItem.Text };
 				executeVoidSQLQuery("UPDATE PhoneCheckout SET Person=@value1, Car=@value2, Available=@value3, Purpose= @value4, Period = @value5 WHERE Model=@value6", o, objConn);
@@ -362,7 +363,7 @@ namespace CTBTeam {
 				drpPhone.Items.Clear();
 				drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
@@ -388,7 +389,7 @@ namespace CTBTeam {
 
 
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);

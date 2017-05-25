@@ -12,27 +12,16 @@ namespace CTBTeam
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty((string)Session["loginStatus"]))
-            {
+            if (Session["loginStatus"] == null)
                 Session["loginStatus"] = "Sign In";
-               
-            }
-            if (string.IsNullOrEmpty((string)Session["User"]))
-            {
-                Session["admin"] = false;
-            }
-            if (!(bool)Session["admin"]) { 
+
+			if (Session["User"] == null)            
+				Session["admin"] = false;
+
+			if (!(bool)Session["admin"])
                 admin.Visible = false;
-            }
-            if (Session["ProjectCol"] == null)
-            {
-                Session["ProjectCol"] = 1;
-            }
-            if (Session["VehicleCol"] == null)
-            {
-                Session["VehicleCol"] = 1;
-            }
-            if (string.IsNullOrEmpty((string)Session["Date"]))
+
+			if (string.IsNullOrEmpty((string)Session["Date"]))
             {
                 DateTime dt = DateTime.Now;                
                 while (dt.DayOfWeek != DayOfWeek.Monday) dt = dt.AddDays(-1);

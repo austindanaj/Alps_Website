@@ -6,6 +6,7 @@ using System.Web.UI.WebControls;
 namespace CTBTeam {
 	public partial class TimeOff : SuperPage {
 		private enum DATE_VALID { OUT_OF_ORDER, VALID, INVALID };
+		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
 			if (Session["user"] == null) {
@@ -22,10 +23,10 @@ namespace CTBTeam {
 		protected void getCurrentDate(object sender, EventArgs e) {
 			try {
 				bltList.Items.Clear();
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
-				SqlCommand objCmd = new SqlCommand("SELECT DISTINCT Emp_Name FROM TimeOff WHERE Start_Date between @start AND @end OR End_Date between @start and @end;", objConn);
+				SqlCommand objCmd = new SqlCommand("SELECT Name FROM Employees WHERE Alna_num in (select Alna_num from TimeOff where (not (TimeOff.[End] < @start and  TimeOff.[Start] > @end)));", objConn);
 				objCmd.Parameters.AddWithValue("@start", cldTimeOffStart.SelectedDate);
 				objCmd.Parameters.AddWithValue("@end", cldTimeOffEnd.SelectedDate);
 				SqlDataReader reader = objCmd.ExecuteReader();
@@ -56,7 +57,7 @@ namespace CTBTeam {
 
 		private bool doesntConflict(SqlConnection o, string name, Date start, Date end) {
 			try {
-				SqlCommand cmd = new SqlCommand("Select Start_Date, End_Date from TimeOff where Emp_Name=@value1", o);
+				SqlCommand cmd = new SqlCommand("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Emp_Name=@value1", o);
 				cmd.Parameters.AddWithValue("@value1", name);
 				SqlDataReader reader = cmd.ExecuteReader();
 				if (!reader.HasRows)
@@ -79,7 +80,7 @@ namespace CTBTeam {
 		}
 
 		protected void addTimeOff(object sender, EventArgs e) {
-			if (!string.IsNullOrEmpty((string)Session["User"])) {
+			if (Session["User"] != null) {
 				try {
 					Date start = cldTimeOffStart.SelectedDate;
 					Date end = cldTimeOffEnd.SelectedDate;
@@ -99,7 +100,7 @@ namespace CTBTeam {
 							break;
 					}
 
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 
 					if (!doesntConflict(objConn, ddlNames.Text, start, end)) {
@@ -108,7 +109,7 @@ namespace CTBTeam {
 					}
 
 					object[] o = { ddlNames.Text, start, end };
-					executeVoidSQLQuery("INSERT INTO TimeOff (Emp_Name, Start_Date, End_Date) VALUES (@value1, @value2, @value3);", o, objConn);
+					executeVoidSQLQuery("INSERT INTO TimeOff (Emp_Name, TimeOff.[Start], TimeOff.[End]) VALUES (@value1, @value2, @value3);", o, objConn);
 
 					Session["success?"] = true;
 					redirectSafely("~/TimeOff");
@@ -123,10 +124,10 @@ namespace CTBTeam {
 			try {
 				//if (ddlNames.SelectedValue.ToString().Equals("--Select A Name--")) return;
 				ddlTimeTakenOff.Items.Clear();
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 
-				SqlCommand cmd = new SqlCommand("Select ID, Start_Date, End_Date from TimeOff where Emp_Name=@value1", objConn);
+				SqlCommand cmd = new SqlCommand("Select ID, TimeOff.[Start], TimeOff.[End] from TimeOff where Emp_Name=@value1", objConn);
 				cmd.Parameters.AddWithValue("@value1", ddlNames.SelectedValue.ToString());
 				SqlDataReader reader = cmd.ExecuteReader();
 				ddlTimeTakenOff.Items.Add("--Select a time off period--");
@@ -144,9 +145,9 @@ namespace CTBTeam {
 		}
 
 		protected void removeTimeOff(object sender, EventArgs e) {
-			if (!string.IsNullOrEmpty((string)Session["User"])) {
+			if (Session["User"] != null) {
 				try {
-					SqlConnection objConn = openDBConnection();
+					objConn = openDBConnection();
 					objConn.Open();
 
 					string s = ddlTimeTakenOff.SelectedValue;
@@ -167,7 +168,7 @@ namespace CTBTeam {
 
 				ddlNames.Items.Add("--Select A Name--");
 
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCmdSelect = new SqlCommand("SELECT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
 				SqlDataReader reader = objCmdSelect.ExecuteReader();

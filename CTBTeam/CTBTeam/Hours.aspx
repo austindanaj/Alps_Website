@@ -4,9 +4,6 @@
 	<style type="text/css">
 		body {
 			background: url('Gradient.jpg') no-repeat center center fixed;
-			-webkit-background-size: cover;
-			-moz-background-size: cover;
-			-o-background-size: cover;
 			background-size: cover;
 		}
 	</style>
@@ -23,9 +20,8 @@
 		</div>
 	</div>
 	<div>
-
 		<br />
-		<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title"></asp:Label>
+		<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: " CssClass="lbl time-title"></asp:Label>
 		<asp:Panel ID="Panel1" runat="server" Height="48px" Width="1536px">
 			<br />
 		</asp:Panel>
@@ -35,7 +31,6 @@
 	<br />
 	<div class="row">
 		<div class="col-md-25" style="text-align: center;">
-
 			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent - Full time" />
 			<br />
 			<br />

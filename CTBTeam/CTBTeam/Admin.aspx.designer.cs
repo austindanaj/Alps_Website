@@ -31,6 +31,15 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label lblName;
         
         /// <summary>
+        /// txtAlna control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtAlna;
+        
+        /// <summary>
         /// txtName control.
         /// </summary>
         /// <remarks>
@@ -38,24 +47,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        
-        /// <summary>
-        /// btnName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnName;
-        
-        /// <summary>
-        /// chkAddToVehcileHours control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAddToVehcileHours;
         
         /// <summary>
         /// chkPartTime control.
@@ -67,40 +58,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.CheckBox chkPartTime;
         
         /// <summary>
-        /// lblNR control.
+        /// btnName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblNR;
-        
-        /// <summary>
-        /// txtNR control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNR;
-        
-        /// <summary>
-        /// btnNR control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnNR;
-        
-        /// <summary>
-        /// dgvUsers control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvUsers;
+        protected global::System.Web.UI.WebControls.Button btnName;
         
         /// <summary>
         /// lblProject control.
@@ -121,6 +85,15 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.TextBox txtProject;
         
         /// <summary>
+        /// category control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList category;
+        
+        /// <summary>
         /// btnProject control.
         /// </summary>
         /// <remarks>
@@ -128,42 +101,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnProject;
-        
-        /// <summary>
-        /// lblPR control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPR;
-        
-        /// <summary>
-        /// txtPR control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPR;
-        
-        /// <summary>
-        /// btnPR control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnPR;
-        
-        /// <summary>
-        /// dgvProjects control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvProjects;
         
         /// <summary>
         /// lblCar control.
@@ -193,6 +130,60 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Button btnCar;
         
         /// <summary>
+        /// lblNR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNR;
+        
+        /// <summary>
+        /// txtRemoveUser control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRemoveUser;
+        
+        /// <summary>
+        /// btnRemoveUser control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRemoveUser;
+        
+        /// <summary>
+        /// lblPR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPR;
+        
+        /// <summary>
+        /// txtRemoveProject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRemoveProject;
+        
+        /// <summary>
+        /// btnRemoveProject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRemoveProject;
+        
+        /// <summary>
         /// lblCR control.
         /// </summary>
         /// <remarks>
@@ -202,22 +193,40 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label lblCR;
         
         /// <summary>
-        /// txtCR control.
+        /// txtRemoveVehicle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCR;
+        protected global::System.Web.UI.WebControls.TextBox txtRemoveVehicle;
         
         /// <summary>
-        /// btnCR control.
+        /// btnRemoveVehicle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCR;
+        protected global::System.Web.UI.WebControls.Button btnRemoveVehicle;
+        
+        /// <summary>
+        /// dgvUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView dgvUsers;
+        
+        /// <summary>
+        /// dgvProjects control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView dgvProjects;
         
         /// <summary>
         /// dgvCars control.

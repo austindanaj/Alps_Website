@@ -4,8 +4,8 @@
 	<style type="text/css">
 		body {
 			background: url('Gradient.jpg') no-repeat center center fixed;
-			-moz-background-size: cover;
-			-o-background-size: cover;
+			
+			
 			background-size: cover;
 		}
 	</style>

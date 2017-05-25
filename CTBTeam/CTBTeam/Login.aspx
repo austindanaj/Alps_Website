@@ -4,9 +4,6 @@
 	<style type="text/css">
 		body {
 			background: url('Gradient.jpg') no-repeat center center fixed;
-			-webkit-background-size: cover;
-			-moz-background-size: cover;
-			-o-background-size: cover;
 			background-size: cover;
 		}
 	</style>
@@ -18,13 +15,16 @@
 
 			<div class="login-form">
 
-				<asp:Label ID="lblLogin" runat="server" Text="Sign In" CssClass="username"></asp:Label>
+				<asp:Label ID="lblLogin" runat="server" Text="Sign In As:" CssClass="username"></asp:Label>
 				<br />
 				<br />
-				<asp:TextBox ID="txtUser" runat="server" placeholder="username"></asp:TextBox>
+				<asp:DropDownList ID="ddl" runat="server" CssClass="drp-login"/>
+				<br />
+				<br />
+				<br />
+				<asp:TextBox ID="txtUser" runat="server" placeholder="username"/>
 				<asp:TextBox ID="txtPass" runat="server" placeholder="password" TextMode="Password"></asp:TextBox>
 				<asp:Button ID="btnLogin" runat="server" OnClick="Login_Clicked" Text="Sign In"></asp:Button>
-
 			</div>
 		</div>
 	</div>
