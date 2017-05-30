@@ -27,13 +27,13 @@
 		<div class="col-md-25">
 			<h2>Current Hours</h2>
 			<p>
-				<asp:Button runat="server" OnClick="download_database" Text="Download" CssClass="btn btn-default" />
+				<%--><asp:Button runat="server" OnClick="download_database" Text="Download" CssClass="btn btn-default" />--%>
 			</p>
 		</div>
 		<div class="col-md-25">
 			<h2>Time Log</h2>
 			<p>
-				<asp:Button runat="server" OnClick="download_timelog" Text="Download" CssClass="btn btn-default" />
+				<%--<asp:Button runat="server" OnClick="download_timelog" Text="Download" CssClass="btn btn-default" />--%>
 			</p>
 		</div>
 		<div class="col-md-25">

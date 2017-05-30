@@ -13,6 +13,7 @@ namespace CTBTeam {
 					Session["loginStatus"] = "Sign in";
 					redirectSafely("~/");
 				}
+
 				loadEmployees();
 			}
 		}
@@ -20,7 +21,7 @@ namespace CTBTeam {
 		private void loadEmployees() {
 			objConn = openDBConnection();
 			objConn.Open();
-			SqlCommand objCmd = new SqlCommand("SELECT Name FROM Employees", objConn);
+			SqlCommand objCmd = new SqlCommand("SELECT Name FROM Employees where Active=1;", objConn);
 			SqlDataReader reader = objCmd.ExecuteReader();
 			while (reader.Read()) {
 				ddl.Items.Add(reader.GetString(0));
@@ -46,12 +47,14 @@ namespace CTBTeam {
 				Session["Admin"] = reader.GetBoolean(1);
 				reader.Close();
 
-				objCmd = new SqlCommand("Select Alna_num from Employees where Employees.[Name]=@value1", objConn);
+				objCmd = new SqlCommand("Select Alna_num, Name, Full_time from Employees where Employees.[Name]=@value1;", objConn);
 				objCmd.Parameters.AddWithValue("@value1", ddl.Text);
 				reader = objCmd.ExecuteReader();
 				reader.Read();
-				Session["User"] = reader.GetValue(0);
-				Session["loginStatus"] = "Sign Out";
+				Session["Alna_num"] = reader.GetValue(0);
+				Session["User"] = reader.GetValue(1);
+				Session["Full_time"] = reader.GetValue(1);
+				Session["loginStatus"] = "Signed in as " + Session["User"] + " (Sign out)";
 				redirectSafely("~/");
 			}
 			catch (ThreadAbortException ex) { }

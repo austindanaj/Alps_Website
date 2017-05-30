@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI;
 using Date = System.DateTime;
@@ -70,6 +71,34 @@ namespace CTBTeam {
 			Server.ClearError();
 			Response.Redirect(path, false);
 			Context.ApplicationInstance.CompleteRequest();
+		}
+
+		protected DataTable getDataTable(string command, object parameter, SqlConnection objConn) {
+			SqlDataAdapter objAdapter = new SqlDataAdapter();
+			DataSet objDataSet = new DataSet();
+			SqlCommand cmd = new SqlCommand(command, objConn);
+			if (null != parameter) {
+				cmd.Parameters.AddWithValue("@value1", parameter);
+			}
+			objAdapter.SelectCommand = cmd;
+			objAdapter.Fill(objDataSet);
+			return objDataSet.Tables[0];
+		}
+
+		protected DataTable getDataTable(string command, object[] parameters, SqlConnection objConn) {
+			if (parameters == null)
+				return getDataTable(command, (object)null, objConn);
+			SqlDataAdapter objAdapter = new SqlDataAdapter();
+			DataSet objDataSet = new DataSet();
+			SqlCommand cmd = new SqlCommand(command, objConn);
+			int i = 1;
+			foreach (object s in parameters) {
+				cmd.Parameters.AddWithValue("@value" + i, s);
+				i++;
+			}
+			objAdapter.SelectCommand = cmd;
+			objAdapter.Fill(objDataSet);
+			return objDataSet.Tables[0];
 		}
 	}
 }

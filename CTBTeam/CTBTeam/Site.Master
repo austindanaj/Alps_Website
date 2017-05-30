@@ -60,7 +60,7 @@
 
                     <ul class="nav navbar-nav  navbar-right">
                  
-                             <li id="admin" runat="server"><a runat="server" href="~/Admin">Admin</a></li>
+                             <li id="admin" runat="server" visible="false"><a runat="server" href="~/Admin">Admin</a></li>
                              <li><a runat="server" href="~/Login"><%:(string)Session["loginStatus"] %></a></li>
                             </ul>
                 </div>

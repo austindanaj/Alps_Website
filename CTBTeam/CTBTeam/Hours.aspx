@@ -9,127 +9,78 @@
 	</style>
 	<div class="row">
 		<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
-		<br />
+	</div>
+	<div class="row">
 		<div class="col-md-50">
-			<asp:Label ID="lblTitle" runat="server" Text="CTB Time Tracking" CssClass="lbl main-title"></asp:Label>
+			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: " CssClass="lbl time-title"></asp:Label>
 		</div>
 		<div class="col-md-50" style="text-align: left;">
-			<br />
-			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" AutoPostBack="true"></asp:DropDownList>
+			<asp:CheckBox ID="chkInactive" runat="server" style="color:white;" Text="Show me inactive projects, old employees, etc." />
+			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" AutoPostBack="true"/>
 			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" />
 		</div>
 	</div>
-	<div>
-		<br />
-		<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: " CssClass="lbl time-title"></asp:Label>
-		<asp:Panel ID="Panel1" runat="server" Height="48px" Width="1536px">
-			<br />
-		</asp:Panel>
-	</div>
-	<br />
-	<br />
 	<br />
 	<div class="row">
 		<div class="col-md-25" style="text-align: center;">
-			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent - Full time" />
+			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlFullTimeNames" CssClass="drp-home" runat="server" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true"></asp:DropDownList>
+			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlAllProjects" CssClass="drp-home" runat="server" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true"></asp:DropDownList>
+			<asp:DropDownList ID="ddlHours" CssClass="drp-home" runat="server" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlPercentage" CssClass="drp-home" runat="server"></asp:DropDownList>
-			<br />
-			<br />
-			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="buttonSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="btnSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+
 			<asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
+			<br />
+			<br />
+			<asp:Label ID="vehicleHoursTerns" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" Visible="false" />
+			<br />
+			<br />
+			<asp:DropDownList ID="ddlVehicles" CssClass="drp-home" runat="server" Visible="false" />
+			<br />
+			<br />
+			<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Rows="1" Visible="false" />
+			<br />
+			<br />
+			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="btnSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
 		</div>
 		<div class="col-md-50">
-			<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
-				BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
-				Width="700px" BorderlineColor="64, 0, 64">
-				<Titles>
-					<asp:Title ShadowOffset="10" Name="Project Percent" />
-				</Titles>
-				<Legends>
-					<asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
-						BackColor="Transparent" ForeColor="White" LegendStyle="Column" />
-				</Legends>
-				<Series>
-					<asp:Series Name="Default" />
-				</Series>
-				<ChartAreas>
-					<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
-				</ChartAreas>
-			</asp:Chart>
+			<div class="row">
+				<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
+					BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
+					Width="700px" BorderlineColor="64, 0, 64">
+					<Titles>
+						<asp:Title ShadowOffset="10" Name="Project Percent" />
+					</Titles>
+					<Legends>
+						<asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
+							BackColor="Transparent" ForeColor="White" LegendStyle="Column" />
+					</Legends>
+					<Series>
+						<asp:Series Name="Default" />
+					</Series>
+					<ChartAreas>
+						<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
+					</ChartAreas>
+				</asp:Chart>
+			</div>
+			<br />
+			<div class="row">
+				<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" AutoGenerateColumns="true" Style="width: 940px;" />
+				<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+				<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+			</div>
+			<br />
+			<div class="row">
+				<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" AutoGenerateColumns="true"  Style="width: 940px;" />
+				<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+				<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+			</div>
 		</div>
 	</div>
 	<br />
-	<br />
-	<br />
-	<div class="row">
-		<div class="col-md-25" style="text-align: center;">
-
-			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Project Hours - Terns" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlNamesProject" CssClass="drp-home" runat="server" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true"></asp:DropDownList>
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server"></asp:DropDownList>
-			<br />
-			<br />
-			<asp:TextBox ID="txtHoursProjects" runat="server" CssClass="txt-home" Rows="1" BorderStyle="Solid" placeholder="0"></asp:TextBox>
-			<br />
-			<br />
-			<asp:Button ID="btnSubmitProject" runat="server" OnClick="buttonSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
-
-		</div>
-		<div class="col-md-50">
-			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" AutoGenerateColumns="true" Style="width: 940px;" />
-			<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-			<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-		</div>
-	</div>
-	<br />
-	<br />
-	<br />
-	<div class="row">
-		<div class="col-md-25" style="text-align: center;">
-
-			<asp:Label ID="Label4" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours - Terns" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlNamesCar" CssClass="drp-home" runat="server" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true"></asp:DropDownList>
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlCars" CssClass="drp-home" runat="server"></asp:DropDownList>
-			<br />
-			<br />
-			<asp:TextBox ID="txtHoursCars" runat="server" CssClass="txt-home" Rows="1" BorderStyle="Solid" placeholder="0"></asp:TextBox>
-			<br />
-			<br />
-			<asp:Button ID="btnSubmitCar" runat="server" OnClick="buttonSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
-
-		</div>
-
-
-		<div class="col-md-50">
-
-			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" AutoGenerateColumns="true" OnPageIndexChanging="tableUpdate" Style="width: 940px;" />
-			<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-			<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-		</div>
-
-	</div>
-	<br />
-	<br />
-	<br />
-
-
-
-
-
 </asp:Content>

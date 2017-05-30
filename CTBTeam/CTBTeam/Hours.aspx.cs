@@ -10,10 +10,15 @@ using System.IO;
 
 namespace CTBTeam {
 	public partial class Hours : SuperPage {
-		SqlConnection objConn;
+		private SqlConnection objConn;
+		private Date date;
+		private int dateID;
+		private DataTable projectData;
+		private DataTable projectHoursData;
+		private DataTable partTimeEmployeeData = new DataTable();
+		private DataTable fullTimeEmployeeData = new DataTable();
+		private DataTable vehiclesData;
 
-		string userName;
-		Date date;
 		private enum DATA_TYPE { VEHICLE, PERCENT, PROJECT };
 
 		//===================================================
@@ -22,10 +27,21 @@ namespace CTBTeam {
 
 		//Loads the page with .NET specific stuff
 		protected void Page_Load(object sender, EventArgs e) {
+			objConn = openDBConnection();
+			objConn.Open();
 			if (!IsPostBack) {
+				//SCAFFOLD for testing purposes
+				if (Session["User"] == null) {
+					Session["User"] = 173017;
+					Session["Name"] = "Anthony Hewins";
+					Session["Full_time"] = false;
+				}
+
+				if (Session["User"] == null)
+					redirectSafely("~/Login");
 				getDate();
-				populatePastWeekDropDown();
-				populateNames();
+				getData();
+				ddlInit();
 				successDialog(successOrFail);
 				//In the event that PageLoad class doens't load, we init
 				//the session projectcol and vehiclecol cookies since they
@@ -35,148 +51,117 @@ namespace CTBTeam {
 				if (Session["VehicleCol"] == null)
 					Session["VehicleCol"] = 1;
 
-				populateDataCars((int)Session["ProjectCol"]);
-				populateDataProject((int)Session["VehicleCol"]);
-				populateDataPercentage();
-
-				if (Session["User"] != null) {
-					userName = (string)Session["User"];
-					btnSubmitCar.Visible = true;
-					btnSubmitProject.Visible = true;
-					btnSubmitPercent.Visible = true;
-				}
-				else {
-					btnSubmitCar.Visible = false;
-					btnSubmitProject.Visible = false;
-					btnSubmitPercent.Visible = false;
-				}
+				//populateDataCars((int)Session["ProjectCol"]);
+				//populateDataProject((int)Session["VehicleCol"]);
+				//populateDataPercentage();
+			} else {
+				getData();
 			}
+			objConn.Close();
+			populateTables();
 		}
 
-		//Gets the Monday of the current week from the Time-log.txt file.
 		private void getDate() {
-			objConn = openDBConnection();
-			objConn.Open();
-			SqlCommand cmd = new SqlCommand("SELECT MAX(Dates.[Dates]) FROM Dates", objConn);
-			SqlDataReader readerPNames = cmd.ExecuteReader();
-			readerPNames.Read();
-			date = (Date) readerPNames.GetValue(0);
-			if (Date.Today > date.AddDays(6))
-				datechange();
+			SqlDataReader reader;
+			reader = new SqlCommand("select ID, Dates.Dates from Dates order by ID DESC;", objConn).ExecuteReader();
+			reader.Read();
+			dateID = reader.GetInt32(0);
+			date = (Date) reader.GetValue(1);
+			ddlselectWeek.Items.Add(date.ToShortDateString());
+			while (reader.Read())
+				ddlselectWeek.Items.Add(((Date)reader.GetValue(1)).ToShortDateString());
+
+			if (Date.Today > date.AddDays(6)) {
+				date = date.AddDays(7);
+				while (Date.Today > date.AddDays(6))
+					date = date.AddDays(7);
+				executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", date, objConn);
+			
+				SqlCommand cmd = new SqlCommand("select Dates from Dates where ID=@value1", objConn);
+				cmd.Parameters.AddWithValue("@value1", (int)Session["Date"]);
+				reader = cmd.ExecuteReader();
+				reader.Read();
+				date = (Date)reader.GetValue(0);
+			}
+			reader.Close();
 			lblWeekOf.Text += date.Month + "/" + date.Day + "/" + date.Year;
-		}
-
-		//backs up the DB if we move into a new week
-		private void datechange() {
-			date = date.AddDays(7);
-
-			//if we go on vacation it'll screw up. Add another 7.
-			if (Date.Today > date.AddDays(6))
-				datechange();
-			executeVoidSQLQuery("insert into Dates (Dates.[Date]) values (@value1)", date, objConn);
 		}
 
 		//===================================================
 		//PART 2: EVENT LISTENERS
 		//===================================================
 
-		//On click listener for all the ddls
-		protected void ddlSelection(object sender, EventArgs e) {
-			if (sender.Equals(ddlFullTimeNames)) {
-				populateListProjectPercent();
-			}
-			else if (sender.Equals(ddlAllProjects)) {
-				ddlPercentage.Items.Clear();
-				ddlPercentage.Items.Add("--Select A Percent (Out of 40 hrs)--");
-				for (int i = 5; i <= 100; i += 5) {
-					ddlPercentage.Items.Add("" + i + "% -- " + (40 * ((float)i / 100)) + " hours");
-				}
-			}
-			else if (sender.Equals(ddlNamesProject)) {
-				populateListProjects();
-			}
-			else if (sender.Equals(ddlNamesCar)) {
-				try {
-					ddlCars.Items.Clear();
-					ddlCars.Items.Add("--Select A Car--");
+		private void getData() {
+			//Date
+			DataTable temp;
+			projectData = getDataTable("select ID, Projects.Name from Projects;", null, objConn);
+			temp = getDataTable("select Alna_num, Name, Full_time from Employees where Alna_num in (select Alna_num from ProjectHours where Date_ID=@value1);", dateID, objConn);
+			projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
+			vehiclesData = getDataTable("select Name from Vehicles;", null, objConn);
 
-					objConn = openDBConnection();
-					objConn.Open();
-					SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicles.[Name] FROM Vehicles ORDER BY Vehicles.[Name]", objConn);
-					SqlDataReader reader = objCmdSelect.ExecuteReader();
-					while (reader.Read()) {
-						ddlCars.Items.Add(new ListItem(reader.GetString(0)));
-					}
-					objConn.Close();
-				}
-				catch (Exception ex) {
-					writeStackTrace("Populate Vehicles", ex);
-				}
+			foreach (DataRow r in temp.Rows) {
+				if ((bool)r[2])
+					fullTimeEmployeeData.ImportRow(r);
+				else
+					partTimeEmployeeData.ImportRow(r);
 			}
-			else {
-				writeStackTrace("Dropdown list object not implemented in code", new NotImplementedException(sender.ToString()));
-			}
+			objConn.Close();
 		}
 
-		//On click listener for all submit buttons
-		protected void buttonSelection(object sender, EventArgs e) {
-			if (Session["User"] == null) {
-				throwJSAlert("Log in before submitting");
+		private void ddlInit() {
+			ddlHours.Items.Add("--Select A Percent (Out of 40 hrs)--");
+			
+			foreach (DataRow r in projectData.Rows)
+				ddlProjects.Items.Add(r[1].ToString());
+
+			foreach (DataRow r in vehiclesData.Rows)
+				ddlVehicles.Items.Add(r[0].ToString());
+
+			//Init the % hours ddl
+			if ((bool)Session["Full_time"]) {
+				for (int i = 5; i <= 100; i += 5)
+					ddlHours.Items.Add("" + i + "% -- " + (40 * ((float)i / 100)) + " hours");
 				return;
 			}
-			if (sender.Equals(btnSubmitProject)) {
-				if (ddlNamesProject.Text == "--Select A Name--") {
-					throwJSAlert("Please Select A Name");
-				}
-				else if (ddlProjects.Text == "--Select A Project--") {
-					throwJSAlert("Please Select A Project");
-				}
-				else {
-					submitProjects();
-				}
+
+			ddlHoursVehicles.Items.Add("--Select A Percent (Out of 40 hrs)--");
+			for (int i = 5; i <= 100; i += 5) {
+				string s = "" + i + "% -- " + (40 * ((float)i / 100)) + " hours";
+				ddlHours.Items.Add(s);
+				ddlHoursVehicles.Items.Add(s);
 			}
-			else if (sender.Equals(btnSubmitCar)) {
-				if (ddlNamesCar.Text == "--Select A Name--") {
-					throwJSAlert("Please Select A Name");
-				}
-				else if (ddlCars.Text == "--Select A Car--") {
-					throwJSAlert("Please Select A car");
-				}
-				else {
-					submitCars();
-				}
+
+			vehicleHoursTerns.Visible = true;
+			ddlVehicles.Visible = true;
+			ddlHoursVehicles.Visible = true;
+			btnSubmitVehicles.Visible = true;
+
+			/*cmd = new SqlCommand("select Name from Vehicles where Active=1", objConn);
+			reader = cmd.ExecuteReader();
+			while(reader.Read())
+				ddlVehicles.Items.Add(reader.GetString(0));*/
+
+			objConn.Close();
+		}
+
+		protected void ddlSelection(object sender, EventArgs e) {
+			if(sender.Equals(ddlProjects)) {
+				employeesHoursFor(ddlProjects.SelectedValue, DATA_TYPE.PROJECT);
+			} else if (sender.Equals(ddlVehicles)) {
+				employeesHoursFor(ddlVehicles.SelectedValue, DATA_TYPE.VEHICLE);
 			}
-			else if (sender.Equals(btnSubmitPercent)) {
-				if (ddlFullTimeNames.Text == "--Select A Name--") {
-					throwJSAlert("Please Select A Name");
-				}
-				else if (ddlAllProjects.Text == "--Select A Project--") {
-					throwJSAlert("Please Select A Project");
-				}
-				else if (ddlPercentage.Text == "--Select A Percent--") {
-					throwJSAlert("Please Select A Percent");
-				}
-				else {
-					submitPercent();
-				}
+			else {
+				throwJSAlert("DDL action not implemented");
+				return;
 			}
 		}
 
-		//Listener for table update events
-		protected void tableUpdate(object sender, GridViewPageEventArgs e) {
-			if (sender.Equals(dgvProject)) {
-				populateDataProject((int)Session["ProjectCol"]);
-				dgvProject.PageIndex = e.NewPageIndex;
-				dgvProject.DataBind();
-			}
-			else if (sender.Equals(dgvCars)) {
-				populateDataCars((int)Session["VehicleCol"]);
-				dgvCars.PageIndex = e.NewPageIndex;
-				dgvCars.DataBind();
-			}
-			else {
-				writeStackTrace("On index update button not implemented", new NotImplementedException(sender.ToString()));
-			}
+		private void employeesHoursFor(string selection, Hours.DATA_TYPE type) {
+			
+		}
+
+		protected void btnSelection(object sender, EventArgs e) {
+
 		}
 
 		//Listener for clicks on the arrow buttons below the tables
@@ -228,8 +213,6 @@ namespace CTBTeam {
 					Session[s] = 1;
 				}
 			}
-
-			populateData((int)Session[s], type);
 		}
 
 		//===================================================
@@ -238,7 +221,7 @@ namespace CTBTeam {
 
 		private void submitProjects() {
 			try {
-				
+
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
@@ -257,100 +240,16 @@ namespace CTBTeam {
 
 		private void submitCars() {
 			try {
-				
+
 			}
 			catch (Exception ex) {
 				writeStackTrace("Hours Submit", ex);
 			}
-
-			populateDataCars((int)Session["VehicleCol"]);
 		}
 
 		//===================================================
 		//PART 4: LIST/TABLE POPULATORS FOR THE HTML PAGE
 		//===================================================
-
-		private void populatePastWeekDropDown() {
-			ddlselectWeek.Items.Add("Not implemented yet, so this doesn't work.");
-		}
-
-		private void populateListProjectPercent() {
-			try {
-				ddlAllProjects.Items.Clear();
-				ddlAllProjects.Items.Add("--Select A Project--");
-
-				objConn = openDBConnection();
-				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Projects.[Name] FROM Projects ORDER BY Projects.[Name]", objConn);
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					ddlAllProjects.Items.Add(new ListItem(reader.GetString(0)));
-				}
-				objConn.Close();
-				chartPercent.EnableViewState = true;
-			}
-			catch (Exception ex) {
-				writeStackTrace("Populate Project Percent", ex);
-			}
-		}
-
-		private void populateNames() {
-			try {
-				ddlNamesProject.Items.Clear();
-				ddlNamesCar.Items.Clear();
-				ddlFullTimeNames.Items.Clear();
-
-				string temp = "--Select A Name--";
-
-				ddlNamesProject.Items.Add(temp);
-				ddlNamesCar.Items.Add(temp);
-				ddlFullTimeNames.Items.Add(temp);
-
-				objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Employees.[Name] FROM Employees WHERE Full_time=@bool ORDER BY Employees.[Name]", objConn);
-				objCmdSelect.Parameters.AddWithValue("@bool", false);
-
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					ddlNamesProject.Items.Add(new ListItem(reader.GetString(0)));
-					ddlNamesCar.Items.Add(new ListItem(reader.GetString(0)));
-				}
-				reader.Close();
-
-				objCmdSelect = new SqlCommand("SELECT Employees.[Name] FROM Employees WHERE Full_time=@bool ORDER BY Employees.[Name]", objConn);
-				objCmdSelect.Parameters.AddWithValue("@bool", true);
-				reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					ddlFullTimeNames.Items.Add(new ListItem(reader.GetString(0)));
-				}
-
-
-				objConn.Close();
-			}
-			catch (Exception ex) {
-				writeStackTrace("Populate Names", ex);
-			}
-		}
-
-		private void populateListProjects() {
-			try {
-				ddlProjects.Items.Clear();
-				ddlProjects.Items.Add("--Select A Project--");
-				objConn = openDBConnection();
-				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Projects.[Name] FROM Projects ORDER BY Projects.[Name]", objConn);
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					ddlProjects.Items.Add(new ListItem(reader.GetString(0)));
-				}
-				objConn.Close();
-			}
-			catch (Exception ex) {
-				writeStackTrace("Populate projects", ex);
-			}
-		}
 
 		private void populateDataPercentage() {
 			/*try {
@@ -440,89 +339,11 @@ namespace CTBTeam {
 			}*/
 		}
 
-		//Populates data in the tables.
-		//populateDataCars and populateDataProject call this function
-		//with different enums
-		private void populateData(int startIndex, Hours.DATA_TYPE type) {
-			objConn = openDBConnection();
-			objConn.Open();
-			SqlCommand cmd = new SqlCommand("select Employees.Name,TempProjectHours.Proj_ID, TempProjectHours.Hours_worked from Employees inner join TempProjectHours On TempProjectHours.Alna_num = Employees.Alna_num;", objConn);
-
-			SqlDataReader reader = cmd.ExecuteReader();
-			DataTable table = new DataTable();
-			while (reader.Read()) {
-				//table.Columns.Add(reader.GetValue());
-			}
-		}
-
-		private void populateDataCars(int startIndex) {
-			populateData(startIndex, DATA_TYPE.VEHICLE);
-		}
-
-		private void populateDataProject(int startIndex) {
-			populateData(startIndex, DATA_TYPE.PROJECT);
-		}
-
-		//===================================================
-		//PART 5: HELPER FUNCTIONS TO REDUCE REDUNDANT CODE
-		//===================================================
-
-		private object[] getList(CTBTeam.Hours.DATA_TYPE enumSwitch, SqlConnection objConn) {
-			string s;
-
-			switch (enumSwitch) {
-				case DATA_TYPE.PROJECT:
-					s = "SELECT Project From Projects ORDER BY ID";
-					break;
-				case DATA_TYPE.VEHICLE:
-					s = "SELECT Vehicle From Cars ORDER BY ID";
-					break;
-				case DATA_TYPE.PERCENT:
-					s = "SELECT Column_Name From PercentColumns order by ID";
-					break;
-				default:
-					return null;
-			}
-
-			object[] o = new object[2];
-			try {
-				SqlDataReader reader = new SqlCommand(s, objConn).ExecuteReader();
-
-				int counter = 0;
-				s = ""; //Reassign s to reuse the string pointer, micro optimization.
-
-				while (reader.Read()) {
-					counter++;      /** Increment counter by 1 **/
-					s += reader.GetValue(0).ToString() + ",";    //Add it to the list of things
-				}
-
-				o[0] = counter;
-				o[1] = s;
-			}
-			catch (Exception e) {
-				writeStackTrace("getList", e);
-			}
-			return o;
-		}
-
-		private void backUpToTxt(SqlDataReader reader, StreamWriter file, int count) {
-			/** Loop through each row **/
-			try {
-				string text;
-				while (reader.Read()) {
-					text = "";     /** Reset the line to empty **/
-
-					/** Loop through each row, starting at emp_name to end **/
-					for (int i = 1; i <= count; i++) {
-						text += reader.GetValue(i).ToString() + ",";      /** Get value from database and append to line **/
-					}
-					file.WriteLine(text);     /** write line to file **/
-				}
-				file.WriteLine();      /** write blank line to file **/
-			}
-			catch (Exception e) {
-				writeStackTrace("backUpToTxt", e);
-			}
+		private void populateTables() {
+			DataTable projectHours = new DataTable();
+			foreach (DataRow r in projectData.Rows)
+				projectHours.Columns.Add(r[0].ToString());
+			dgvProject.
 		}
 	}
 }
