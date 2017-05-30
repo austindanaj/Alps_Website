@@ -342,10 +342,14 @@ namespace CTBTeam {
 		private void populateTables() {
 			DataTable projectHours = new DataTable();
 			foreach (DataRow r in projectData.Rows)
-				projectHours.Columns.Add(r[0].ToString());
-			dgvProject.DataSource = projectHours.DefaultView;
+				projectHours.Columns.Add(r[1].ToString(), typeof(String));
+			foreach(DataRow r in projectHours.Rows)
+				projectHours.Rows.Add(r[1].ToString(), typeof(String));
+			//foreach (DataRow r in )
+			dgvProject.DataSource = projectHours;
 			dgvProject.DataBind();
-			
+			if (dgvProject.Columns.Count > 0)
+				return;
 		}
 	}
 }
