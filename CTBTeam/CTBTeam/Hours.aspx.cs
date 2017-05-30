@@ -343,7 +343,9 @@ namespace CTBTeam {
 			DataTable projectHours = new DataTable();
 			foreach (DataRow r in projectData.Rows)
 				projectHours.Columns.Add(r[0].ToString());
-			dgvProject.
+			dgvProject.DataSource = projectHours.DefaultView;
+			dgvProject.DataBind();
+			
 		}
 	}
 }
