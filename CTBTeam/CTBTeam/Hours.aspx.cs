@@ -7,6 +7,8 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Web.UI.DataVisualization.Charting;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CTBTeam {
 	public partial class Hours : SuperPage {
@@ -15,8 +17,9 @@ namespace CTBTeam {
 		private int dateID;
 		private DataTable projectData;
 		private DataTable projectHoursData;
-		private DataTable partTimeEmployeeData = new DataTable();
-		private DataTable fullTimeEmployeeData = new DataTable();
+		private DataTable vehicleHoursData;
+		private DataTable partTimeEmployeeData;
+		private DataTable fullTimeEmployeeData;
 		private DataTable vehiclesData;
 
 		private enum DATA_TYPE { VEHICLE, PERCENT, PROJECT };
@@ -54,7 +57,8 @@ namespace CTBTeam {
 				//populateDataCars((int)Session["ProjectCol"]);
 				//populateDataProject((int)Session["VehicleCol"]);
 				//populateDataPercentage();
-			} else {
+			}
+			else {
 				getData();
 			}
 			objConn.Close();
@@ -66,7 +70,7 @@ namespace CTBTeam {
 			reader = new SqlCommand("select ID, Dates.Dates from Dates order by ID DESC;", objConn).ExecuteReader();
 			reader.Read();
 			dateID = reader.GetInt32(0);
-			date = (Date) reader.GetValue(1);
+			date = (Date)reader.GetValue(1);
 			ddlselectWeek.Items.Add(date.ToShortDateString());
 			while (reader.Read())
 				ddlselectWeek.Items.Add(((Date)reader.GetValue(1)).ToShortDateString());
@@ -76,7 +80,7 @@ namespace CTBTeam {
 				while (Date.Today > date.AddDays(6))
 					date = date.AddDays(7);
 				executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", date, objConn);
-			
+
 				SqlCommand cmd = new SqlCommand("select Dates from Dates where ID=@value1", objConn);
 				cmd.Parameters.AddWithValue("@value1", (int)Session["Date"]);
 				reader = cmd.ExecuteReader();
@@ -92,25 +96,31 @@ namespace CTBTeam {
 		//===================================================
 
 		private void getData() {
-			//Date
-			DataTable temp;
-			projectData = getDataTable("select ID, Projects.Name from Projects;", null, objConn);
-			temp = getDataTable("select Alna_num, Name, Full_time from Employees where Alna_num in (select Alna_num from ProjectHours where Date_ID=@value1);", dateID, objConn);
-			projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
-			vehiclesData = getDataTable("select Name from Vehicles;", null, objConn);
 
-			foreach (DataRow r in temp.Rows) {
-				if ((bool)r[2])
-					fullTimeEmployeeData.ImportRow(r);
-				else
-					partTimeEmployeeData.ImportRow(r);
+			//Employees
+			//TODO: make it one sql query to speed up transaction time
+			if (chkInactive.Checked) {
+				object[] o = { true, false };
+				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
+				o[1] = true;
+				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
 			}
+			else {
+				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Full_time=@value1", false, objConn);
+				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Full_time=@value1", true, objConn);
+			}
+
+			//Everything else
+			projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
+			vehicleHoursData = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", dateID, objConn);
+			projectData = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
+			vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
 			objConn.Close();
 		}
 
 		private void ddlInit() {
 			ddlHours.Items.Add("--Select A Percent (Out of 40 hrs)--");
-			
+
 			foreach (DataRow r in projectData.Rows)
 				ddlProjects.Items.Add(r[1].ToString());
 
@@ -145,9 +155,10 @@ namespace CTBTeam {
 		}
 
 		protected void ddlSelection(object sender, EventArgs e) {
-			if(sender.Equals(ddlProjects)) {
+			if (sender.Equals(ddlProjects)) {
 				employeesHoursFor(ddlProjects.SelectedValue, DATA_TYPE.PROJECT);
-			} else if (sender.Equals(ddlVehicles)) {
+			}
+			else if (sender.Equals(ddlVehicles)) {
 				employeesHoursFor(ddlVehicles.SelectedValue, DATA_TYPE.VEHICLE);
 			}
 			else {
@@ -157,7 +168,7 @@ namespace CTBTeam {
 		}
 
 		private void employeesHoursFor(string selection, Hours.DATA_TYPE type) {
-			
+
 		}
 
 		protected void btnSelection(object sender, EventArgs e) {
@@ -340,16 +351,277 @@ namespace CTBTeam {
 		}
 
 		private void populateTables() {
-			DataTable projectHours = new DataTable();
-			foreach (DataRow r in projectData.Rows)
-				projectHours.Columns.Add(r[1].ToString(), typeof(String));
-			foreach(DataRow r in projectHours.Rows)
-				projectHours.Rows.Add(r[1].ToString(), typeof(String));
-			//foreach (DataRow r in )
+			/*
+			 * Need to put the partTimeEmployee/vehicle records into gridview.
+			 * Due to really annoying limitations of SQL and C#, this is
+			 * hard to do.
+			 * 
+			 * We need this:
+			 * +---------+---------+---------
+			 * |theName  |project1 |moreProj  ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * # of hours cells can be empty if the hours worked are 0, and using that fact we can do this
+			 * process best case in under quadratic time (worst case is quadratic, but this is 2D though)
+			 * 
+			 * 
+			 * Essentially we do this:
+			 * Step 1: take all the projects and put them in two things: hash table and the DataTable, as columns			 
+			 * +------+------+-----+
+			 * |just  |colum |ns   |	HashTable1(ProjID1 -> just, ProjID2 -> colum, ...)
+			 * +------+------+-----+				^comes from the database
+			 * 
+			 * Step 2: take all the employees and put them in two things: hash table and DataTable, as rows
+			 * +------+------+-----+
+			 * |name  | proj1|proj2|	HashTable1(ProjID1 -> just, ProjID2 -> colum, ...)
+			 * +------+------+-----+
+			 * |emp1  |empty |empty|	HashTable2(Alna_num1 -> emp1, Alna_num2 -> emp2, ...)
+			 * +------+------+-----+
+			 * |emp2  |empty |empty|
+			 * +------+------+-----+
+			 * 
+			 * Step 3: using the hashtable, fill the temporary datatable (this is the most complicated by far):
+			 * foreach DataRow in ProjectHours
+			 *	 row# = Hashtable1.getWhatRowThisAlnaNumberIs(alna_num_supplied_from_ProjectHoursTable)
+			 *	 col# = Hashtable2.getWhatColThisProjectIs(proj_ID_supplied_from_ProjectHoursTable)
+			 *	 tempDatatable[row#][col#] = hours_spent_on_project_supplied_from_ProjectHoursTable
+			 * 
+			 * Step 4: fill the datatable into the actual DataTable class (foreach loop over it)
+			 * Step 5: bind the data to the gridview at the very end
+			 */
+
+
+			DataTable projectHours = new DataTable();		//Data table to temporarily store the table before the gridview
+			int i;											//Scrap int to use throughout the method
+			Hashtable projectHashTable = new Hashtable();   //Hash table for projects
+			Hashtable employeeHashTable = new Hashtable();  //Hash table for employees (there doesn't need to be two but it's simpler this way)
+
+			//This variable holds how many columns the gridview will have. it can't be greater than the
+			//Amount of projects there are so the ternary checks to make sure that doesnt happen
+			int smallestThreshold = 6 > projectData.Rows.Count ? projectData.Rows.Count : 6;
+
+			projectHours.Columns.Add("Name", typeof(string));
+
+
+			string s; //Scrap var to hold project name
+			for (i = 0; i < smallestThreshold; i++) {
+				s = projectData.Rows[i][1].ToString();
+				projectHashTable.Add(projectData.Rows[i][0], projectData.Rows[i][1]);
+				projectHours.Columns.Add(projectData.Rows[i][1].ToString(), typeof(int));
+			}
+
+			i = 0;
+			DataRow temp;
+			DataRow[] tempTable = new DataRow[partTimeEmployeeData.Rows.Count];
+			foreach (DataRow d in partTimeEmployeeData.Rows) {
+				temp = projectHours.NewRow();
+				temp["Name"] = d[1];
+				employeeHashTable.Add(d[0], i);
+				tempTable[i] = temp;
+				i++;
+			}
+
+			foreach (DataRow d in projectHoursData.Rows) {
+				int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
+				string whatCol = (string)projectHashTable[d[1]]; //d[1] holds the Project ID
+				tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
+			}
+
+			foreach (DataRow d in tempTable)
+				projectHours.Rows.Add(d);
+
 			dgvProject.DataSource = projectHours;
 			dgvProject.DataBind();
-			if (dgvProject.Columns.Count > 0)
-				return;
+			abstractPopulateTables2(vehiclesData, vehicleHoursData);
+		}
+
+		private void abstractPopulateTables(DataTable t) {
+			/*
+			 * Need to put the partTimeEmployee/vehicle records into gridview.
+			 * Due to really annoying limitations of SQL and C#, this is
+			 * hard to do.
+			 * 
+			 * We need this:
+			 * +---------+---------+---------
+			 * |theName  |project1 |moreProj  ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * # of hours cells can be empty if the hours worked are 0, and using that fact we can do this
+			 * process best case in under quadratic time (worst case is quadratic, but this is 2D though)
+			 * 
+			 * 
+			 * Essentially we do this:
+			 * Step 1: take all the projects and put them in two things: hash table and the DataTable, as columns			 
+			 * +------+------+-----+
+			 * |just  |colum |ns   |	HashTable1(ProjID1 -> just, ProjID2 -> colum, ...)
+			 * +------+------+-----+				^comes from the database
+			 * 
+			 * Step 2: take all the employees and put them in two things: hash table and DataTable, as rows
+			 * +------+------+-----+
+			 * |name  | proj1|proj2|	HashTable1(ProjID1 -> just, ProjID2 -> colum, ...)
+			 * +------+------+-----+
+			 * |emp1  |empty |empty|	HashTable2(Alna_num1 -> emp1, Alna_num2 -> emp2, ...)
+			 * +------+------+-----+
+			 * |emp2  |empty |empty|
+			 * +------+------+-----+
+			 * 
+			 * Step 3: using the hashtable, fill the temporary datatable (this is the most complicated by far):
+			 * foreach DataRow in ProjectHours
+			 *	 row# = Hashtable1.getWhatRowThisAlnaNumberIs(alna_num_supplied_from_ProjectHoursTable)
+			 *	 col# = Hashtable2.getWhatColThisProjectIs(proj_ID_supplied_from_ProjectHoursTable)
+			 *	 tempDatatable[row#][col#] = hours_spent_on_project_supplied_from_ProjectHoursTable
+			 * 
+			 * Step 4: fill the datatable into the actual DataTable class (foreach loop over it)
+			 * Step 5: bind the data to the gridview at the very end
+			 */
+
+
+			DataTable p = new DataTable();				    //Data table to temporarily store the table before the gridview
+			int i;                                          //Scrap int to use throughout the method
+			Hashtable h = new Hashtable();					//Hash table for projects
+			Hashtable employeeHashTable = new Hashtable();  //Hash table for employees (there doesn't need to be two but it's simpler this way)
+
+			//This variable holds how many columns the gridview will have. it can't be greater than the
+			//Amount of projects there are so the ternary checks to make sure that doesnt happen
+			int smallestThreshold = 6 > t.Rows.Count ? t.Rows.Count : 6;
+
+			p.Columns.Add("Name", typeof(string));
+
+
+			string s; //Scrap var to hold project name
+			for (i = 0; i < smallestThreshold; i++) {
+				s = t.Rows[i][0].ToString();
+				h.Add(t.Rows[i][0], t.Rows[i][0]);
+				p.Columns.Add(t.Rows[i][0].ToString(), typeof(int));
+			}
+
+			i = 0;
+			DataRow temp;
+			DataRow[] tempTable = new DataRow[partTimeEmployeeData.Rows.Count];
+			foreach (DataRow d in partTimeEmployeeData.Rows) {
+				temp = p.NewRow();
+				temp["Name"] = d[1];
+				employeeHashTable.Add(d[0], i);
+				tempTable[i] = temp;
+				i++;
+			}
+
+			foreach (DataRow d in vehicleHoursData.Rows) {
+				int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
+				string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
+				tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
+			}
+
+			foreach (DataRow d in tempTable)
+				p.Rows.Add(d);
+
+			dgvCars.DataSource = p;
+			dgvCars.DataBind();
+		}
+
+		private void abstractPopulateTables2(DataTable model, DataTable modelHours) {
+			/*
+			 * Need to put the partTimeEmployee/vehicle records into gridview.
+			 * Due to really annoying limitations of SQL and C#, this is
+			 * hard to do.
+			 * 
+			 * We need this:
+			 * +---------+---------+---------
+			 * |theName  |project1 |moreProj  ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * # of hours cells can be empty if the hours worked are 0, and using that fact we can do this
+			 * process best case in under quadratic time (worst case is quadratic, but this is 2D though)
+			 * 
+			 * 
+			 * Essentially we do this:
+			 * Step 1: take all the projects and put them in two things: hash table and the DataTable, as columns			 
+			 * +------+------+-----+
+			 * |just  |colum |ns   |	HashTable1(ProjID1 -> just, ProjID2 -> colum, ...)
+			 * +------+------+-----+				^comes from the database
+			 * 
+			 * Step 2: take all the employees and put them in two things: hash table and DataTable, as rows
+			 * +------+------+-----+
+			 * |name  | proj1|proj2|	HashTable1(ProjID1 -> just, ProjID2 -> colum, ...)
+			 * +------+------+-----+
+			 * |emp1  |empty |empty|	HashTable2(Alna_num1 -> emp1, Alna_num2 -> emp2, ...)
+			 * +------+------+-----+
+			 * |emp2  |empty |empty|
+			 * +------+------+-----+
+			 * 
+			 * Step 3: using the hashtable, fill the temporary datatable (this is the most complicated by far):
+			 * foreach DataRow in ProjectHours
+			 *	 row# = Hashtable1.getWhatRowThisAlnaNumberIs(alna_num_supplied_from_ProjectHoursTable)
+			 *	 col# = Hashtable2.getWhatColThisProjectIs(proj_ID_supplied_from_ProjectHoursTable)
+			 *	 tempDatatable[row#][col#] = hours_spent_on_project_supplied_from_ProjectHoursTable
+			 * 
+			 * Step 4: fill the datatable into the actual DataTable class (foreach loop over it)
+			 * Step 5: bind the data to the gridview at the very end
+			 */
+
+
+			DataTable p = new DataTable();                  //Data table to temporarily store the table before the gridview
+			int i;                                          //Scrap int to use throughout the method
+			Hashtable h = new Hashtable();                  //Hash table for projects
+			Hashtable employeeHashTable = new Hashtable();  //Hash table for employees (there doesn't need to be two but it's simpler this way)
+
+			//This variable holds how many columns the gridview will have. it can't be greater than the
+			//Amount of projects there are so the ternary checks to make sure that doesnt happen
+			int smallestThreshold = 6 > model.Rows.Count ? model.Rows.Count : 6;
+
+			p.Columns.Add("Name", typeof(string));
+
+
+			string s; //Scrap var to hold project name
+			for (i = 0; i < smallestThreshold; i++) {
+				s = model.Rows[i][0].ToString();
+				h.Add(model.Rows[i][0], model.Rows[i][0]);
+				p.Columns.Add(model.Rows[i][0].ToString(), typeof(int));
+			}
+
+			i = 0;
+			DataRow temp;
+			DataRow[] tempTable = new DataRow[partTimeEmployeeData.Rows.Count];
+			foreach (DataRow d in partTimeEmployeeData.Rows) {
+				temp = p.NewRow();
+				temp["Name"] = d[1];
+				employeeHashTable.Add(d[0], i);
+				tempTable[i] = temp;
+				i++;
+			}
+
+			foreach (DataRow d in vehicleHoursData.Rows) {
+				int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
+				string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
+				tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
+			}
+
+			foreach (DataRow d in tempTable)
+				p.Rows.Add(d);
+
+			dgvCars.DataSource = p;
+			dgvCars.DataBind();
 		}
 	}
 }
