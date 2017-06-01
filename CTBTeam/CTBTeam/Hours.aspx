@@ -12,12 +12,12 @@
 	</div>
 	<div class="row">
 		<div class="col-md-50">
-			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: " CssClass="lbl time-title"></asp:Label>
+			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title"></asp:Label>
 		</div>
 		<div class="col-md-50" style="text-align: left;">
 			<asp:CheckBox ID="chkInactive" runat="server" style="color:white;" Text="Show me inactive projects, old employees, etc." />
-			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" AutoPostBack="true"/>
-			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" />
+			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server"/>
+			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="btnSelection"/>
 		</div>
 	</div>
 	<br />
@@ -47,6 +47,12 @@
 			<br />
 			<br />
 			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="btnSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
+			<br />
+			<br />
+			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Display this many col:" />
+			<br />
+			<br />
+			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" OnSelectedIndexChanged="ddlSelection"/>
 		</div>
 		<div class="col-md-50">
 			<div class="row">
