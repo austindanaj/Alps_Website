@@ -52,7 +52,7 @@
 			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Display this many col:" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" OnSelectedIndexChanged="ddlSelection"/>
+			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true"/>
 		</div>
 		<div class="col-md-50">
 			<div class="row">
@@ -77,14 +77,14 @@
 			<br />
 			<div class="row">
 				<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" Style="width: 940px;" />
-				<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-				<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+				<%--<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+				<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
 			</div>
 			<br />
 			<div class="row">
 				<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" Style="width: 940px;" />
-				<asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-				<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+				<%-- <asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+				<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
 			</div>
 		</div>
 	</div>
