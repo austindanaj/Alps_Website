@@ -26,7 +26,7 @@
 			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true" />
+			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server"/>
 			<br />
 			<br />
 			<asp:DropDownList ID="ddlHours" CssClass="drp-home" runat="server" />
@@ -43,16 +43,25 @@
 			<asp:DropDownList ID="ddlVehicles" CssClass="drp-home" runat="server" Visible="false" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Rows="1" Visible="false" />
+			<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Visible="false" />
 			<br />
 			<br />
 			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="btnSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
 			<br />
 			<br />
-			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Display this many col:" />
+			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Cols to display:" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" OnSelectedIndexChanged="ddlSelection" AutoPostBack="true"/>
+			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" AutoPostBack="true"/>
+			<br />
+			<br />
+			<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />
+			<br />
+			<br />
+			<asp:TextBox ID="txtDelete" runat="server" CssClass="txt-purchase" placeholder="Type YES to confirm." />
+			<br />
+			<br />
+			<asp:Button ID="btnDelete" runat="server" OnClick="btnSelection" Text="Delete" CssClass="btn-home" style="color:white;font:bold;background-color:#ff0000" Text-Align="Center" Visible="true" />
 		</div>
 		<div class="col-md-50">
 			<div class="row">

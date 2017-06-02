@@ -13,7 +13,6 @@ using System.Collections.Generic;
 namespace CTBTeam {
 	public partial class Hours : SuperPage {
 		private SqlConnection objConn;
-		private Date date;
 		private DataTable projectData, projectHoursData, vehicleHoursData, partTimeEmployeeData, fullTimeEmployeeData, vehiclesData;
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
@@ -23,42 +22,43 @@ namespace CTBTeam {
 
 		//Loads the page with .NET specific stuff
 		protected void Page_Load(object sender, EventArgs e) {
+			//SCAFFOLD for testing purposes
+			if (Session["Alna_num"] == null) {
+				Session["Alna_num"] = 173017;
+				Session["Name"] = "Anthony Hewins";
+				Session["Full_time"] = false;
+			}
+
+			if (Session["Alna_num"] == null)
+				redirectSafely("~/Login");
+
 			objConn = openDBConnection();
-			objConn.Open();
-			if (!IsPostBack) {
-				//SCAFFOLD for testing purposes
-				if (Session["User"] == null) {
-					Session["User"] = 173017;
-					Session["Name"] = "Anthony Hewins";
-					Session["Full_time"] = false;
-				}
 
-				if (Session["User"] == null)
-					redirectSafely("~/Login");
+			if (!IsPostBack || Session["Date"] == null || Session["Date_ID"] == null)
+				initDate();
+			else
 				getDate();
-				getData();
-				ddlInit();
-				successDialog(successOrFail);
-				//In the event that PageLoad class doens't load, we init
-				//the session projectcol and vehiclecol cookies since they
-				//are used right below.
-				if (Session["ProjectCol"] == null)
-					Session["ProjectCol"] = 1;
-				if (Session["VehicleCol"] == null)
-					Session["VehicleCol"] = 1;
+			
+			getData();
+			ddlInit();
+			
 
-				//populateDataCars((int)Session["ProjectCol"]);
-				//populateDataProject((int)Session["VehicleCol"]);
-				//populateDataPercentage();
-			}
-			else {
-				getData();
-			}
-			objConn.Close();
 			populateTables();
+			Date date = (Date)Date.Parse(ddlselectWeek.SelectedValue);
+			lblWeekOf.Text = "Week of " + date.Month + "/" + date.Day + "/" + date.Year;
 		}
 
 		private void getDate() {
+			if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
+				initDate();
+				return;
+			}
+
+
+		}
+
+		private void initDate() {
+			objConn.Open();
 			SqlDataReader reader;
 			reader = new SqlCommand("select ID, Dates.Dates from Dates order by ID DESC;", objConn).ExecuteReader();
 			reader.Read();
@@ -85,28 +85,23 @@ namespace CTBTeam {
 			reader.Close();
 			Session["Date"] = date;
 			Session["Date_ID"] = id;
+			objConn.Close();
 		}
 
-		//===================================================
-		//PART 2: EVENT LISTENERS
-		//===================================================
-
 		private void getData() {
-			lblWeekOf.Text = "Week Of: " + date.Month + "/" + date.Day + "/" + date.Year;
 			//Employees
 			//TODO: make it one sql query to speed up transaction time
 			if (!chkInactive.Checked) {
 				object[] o = { true, false };
 				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
-				o[1] = true;
-				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
+				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value1;", true, objConn);
 				projectData = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
 			}
 			else {
 				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Full_time=@value1", false, objConn);
 				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Full_time=@value1", true, objConn);
-				projectData = getDataTable("select ID, Name from Projects", true, objConn);
+				projectData = getDataTable("select ID, Name from Projects", null, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
 			}
 
@@ -128,7 +123,8 @@ namespace CTBTeam {
 
 			ddlColNum.SelectedIndex = 2;
 
-			if(hoursUpdate()) return;
+			hoursUpdate();
+			if ((bool) Session["Full_time"]) return;
 			
 			vehicleHoursTerns.Visible = true;
 			ddlVehicles.Visible = true;
@@ -143,55 +139,42 @@ namespace CTBTeam {
 			objConn.Close();
 		}
 
-		protected void ddlSelection(object sender, EventArgs e) {
-			if (sender.Equals(ddlProjects))
-				employeesHoursFor(ddlProjects.SelectedValue, DATA_TYPE.PROJECT);
-			else if (sender.Equals(ddlVehicles)) {
-				employeesHoursFor(ddlVehicles.SelectedValue, DATA_TYPE.VEHICLE);
-			}
-			else if (sender.Equals(ddlColNum)) {
-				if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
-					throwJSAlert("Something went wrong. try again.");
-					return;
-				}
-				date = selection;
-				lblWeekOf.Text = "Week Of: " + date.Month + "/" + date.Day + "/" + date.Year;
-			}
-			else {
-				throwJSAlert("DDL action not implemented");
-				return;
-			}
-		}
-
-		private void employeesHoursFor(string selection, Hours.DATA_TYPE type) {
-
-		}
-
 		protected void btnSelection(object sender, EventArgs e) {
 			if (sender.Equals(btnselectWeek)) {
 				if(!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
 					throwJSAlert("Something went wrong. try again.");
 					return;
 				}
-				date = selection;
+				Session["Date"] = selection;
 				objConn.Open();
 				SqlCommand cmd = new SqlCommand("select ID from Dates where Dates=@value1", objConn);
-				cmd.Parameters.AddWithValue("@value1", date);
+				cmd.Parameters.AddWithValue("@value1", selection);
 				SqlDataReader reader = cmd.ExecuteReader();
 				reader.Read();
 				Session["Date_ID"] = (int) reader.GetValue(0);
 				objConn.Close();
-				getData();
-				populateTables();
-			} else if (sender.Equals(btnSubmitPercent)) {
+				redirectSafely("~/Hours");
+			}
+			else if (sender.Equals(btnSubmitPercent)) {
 				insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedValue, DATA_TYPE.PROJECT);
-				populateTables();
+				redirectSafely("~/Hours");
 			} else if (sender.Equals(btnSubmitVehicles)) {
 				insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE);
-				populateTables();
+				redirectSafely("~/Hours");
+			} else if(sender.Equals(btnDelete)) {
+				if(!txtDelete.Text.Equals("YES")) {
+					throwJSAlert("You must exactly type YES to delete all your records for the week. No extra whitespace, all caps.");
+					return;
+				}
+				objConn.Open();
+				object[] o = { Session["Alna_num"], Session["Date_ID"] };
+				executeVoidSQLQuery("delete from ProjectHours where Alna_num=@value1 and Date_ID=@value2", o, objConn);
+				executeVoidSQLQuery("delete from VehicleHours where Alna_num=@value1 and Date_ID=@value2", o, objConn);
+				objConn.Close();
+				redirectSafely("~/Hours");
 			}
 			else {
-				writeStackTrace("Btn not implemented", new ArgumentException("The button that called this function wasn't implemented"));
+				writeStackTrace("Btn not implemented", new ArgumentException("The button that called this function had no onclick implementation implemented"));
 			}
 		}
 
@@ -245,10 +228,6 @@ namespace CTBTeam {
 			}
 		}*/
 
-		//===================================================
-		//PART 3: DB UPDATER FUNCTIONS (very straightforward)
-		//===================================================
-
 		private void insertRecord(string projectOrVehicle, string hoursSpent, DATA_TYPE type) {
 			hoursSpent = hoursSpent.Substring(0, 4).Trim().Replace("%", "").Replace("-", "");
 			if (!int.TryParse(hoursSpent, out int hours)) {
@@ -259,14 +238,17 @@ namespace CTBTeam {
 			hours = (int)(40 * ((float) hours / 100));
 
 			string table;
+			string column;
 			DataTable tableToUpdate;
 			switch (type) {
 				case DATA_TYPE.PROJECT:
 					table = "ProjectHours";
+					column = "Proj_ID";
 					tableToUpdate = projectData;
 					break;
 				case DATA_TYPE.VEHICLE:
 					table = "VehicleHours";
+					column = "Vehicle_ID";
 					tableToUpdate = vehiclesData;
 					break;
 				default:
@@ -275,12 +257,12 @@ namespace CTBTeam {
 			}
 
 			int projOrVehicleID = -1;
-			foreach (DataRow d in tableToUpdate.Rows) {
+			foreach (DataRow d in tableToUpdate.Rows)
 				if (d[1].Equals(projectOrVehicle)) {
 					projOrVehicleID = (int)d[0];
 					break;
 				}
-			}
+
 			if (projOrVehicleID == -1) {
 				throwJSAlert("Project does not exist");
 				return;
@@ -288,22 +270,24 @@ namespace CTBTeam {
 
 			try {
 				objConn.Open();
-				
-				SqlCommand cmd = new SqlCommand("select ID, Hours_worked from " + table + " where Alna_num=@value1 and Proj_ID=@value2", objConn);
-				cmd.Parameters.AddWithValue("@value1", Session["User"]);
+				                             
+				SqlCommand cmd = new SqlCommand("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2", objConn);
+				cmd.Parameters.AddWithValue("@value1", Session["Alna_num"]);
 				cmd.Parameters.AddWithValue("@value2", projOrVehicleID);
 				SqlDataReader reader = cmd.ExecuteReader();
 				
 				if(reader.HasRows) {
-					LinkedList<int> recordsOfWorkingOnSameProj = new LinkedList<int>();
-					int otherHoursWorked = 0;
-					while(reader.Read()) {
-						recordsOfWorkingOnSameProj.AddLast(reader.GetInt32(0));
-						otherHoursWorked += reader.GetInt32(1);
-					}
+					reader.Read();
+					int hoursWorked = 0, otherRecordID = -1;
+					otherRecordID = reader.GetInt32(0);
+					hoursWorked = reader.GetInt32(1);
+					reader.Close();
+					executeVoidSQLQuery("delete from ProjectHours where ID=@value1", otherRecordID, objConn);
+					hours += hoursWorked;
 				}
 
-				object[] o = { Session["User"], projOrVehicleID, hours, Session["Date_ID"] };
+				reader.Close();
+				object[] o = { Session["Alna_num"], projOrVehicleID, hours, Session["Date_ID"] };
 				executeVoidSQLQuery("insert into " + table + " values(@value1, @value2, @value3, @value4)", o, objConn);
 			}
 			catch (Exception ex) {
@@ -469,13 +453,13 @@ namespace CTBTeam {
 			 * Step 5: bind the data to the gridview at the very end
 			 * Step 6: repeat for vehicles
 			 */
-
-			//This variable holds how many columns the gridview will have. it can't be greater than the
-			//Amount of projects there are so the ternary checks to make sure that doesnt happen
+			
+			
 			if (!int.TryParse(ddlColNum.SelectedValue, out int requestedColNum)) {
 				throwJSAlert("Something was wrong with your column selection. Try again");
 				return;
 			}
+
 			int smallestThreshold = requestedColNum >= projectData.Rows.Count ? projectData.Rows.Count : requestedColNum;
 
 
@@ -487,11 +471,19 @@ namespace CTBTeam {
 
 			int i;    //Scrap int to use throughout the method: we have to reuse it a lot
 			string s;
-			for (i = 0; i < smallestThreshold; i++) {		//Forall rows in projectData: 
-				s = projectData.Rows[i][1].ToString();		//Get the name of the project
-				h.Add(projectData.Rows[i][0], s);			//Add it to the hash table with the Proj_Id as the key
-				tempDataTable.Columns.Add(s, typeof(int));	//Add it as a column to the temporary datatable. The column accepts integer values because we're talking about hours worked
-			}
+
+			Lambda addColumns = new Lambda(delegate(object o) {
+				if (!(o is DataTable))
+					return;
+				DataTable d = (DataTable)o;
+				for (i = 0; i < smallestThreshold; i++) {       //Forall rows in projectData: 
+					s = d.Rows[i][1].ToString();      //Get the name of the project
+					h.Add(projectData.Rows[i][0], s);           //Add it to the hash table with the Proj_Id as the key
+					tempDataTable.Columns.Add(s, typeof(int));  //Add it as a column to the temporary datatable. The column accepts integer values because we're talking about hours worked
+				}
+			});
+
+			addColumns(projectData);
 
 			i = 0;
 			DataRow temp;
@@ -508,11 +500,18 @@ namespace CTBTeam {
 				i++;
 			}
 
-			foreach (DataRow d in projectHoursData.Rows) {
-				int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
-				string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
-				tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
-			}
+			Lambda insertCells = new Lambda(delegate (object o) {
+				if (!(o is DataTable))
+					return;
+				DataTable table = (DataTable)o;
+				foreach (DataRow d in table.Rows) {
+					int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
+					string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
+					tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
+				}
+			});
+
+			insertCells(projectHoursData);
 
 			foreach (DataRow d in tempTable)
 				tempDataTable.Rows.Add(d);
@@ -528,11 +527,7 @@ namespace CTBTeam {
 			tempDataTable.Columns.Add("Name", typeof(string));
 			smallestThreshold = requestedColNum >= vehiclesData.Rows.Count ? vehiclesData.Rows.Count : requestedColNum;
 
-			for (i = 0; i < smallestThreshold; i++) {
-				s = vehiclesData.Rows[i][1].ToString();
-				h.Add(vehiclesData.Rows[i][0], s);
-				tempDataTable.Columns.Add(s, typeof(int));
-			}
+			addColumns(vehiclesData);
 
 			i = 0;
 			foreach (DataRow d in partTimeEmployeeData.Rows) {
@@ -542,11 +537,7 @@ namespace CTBTeam {
 				i++;
 			}
 
-			foreach (DataRow d in vehicleHoursData.Rows) {
-				int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
-				string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
-				tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
-			}
+			insertCells(vehicleHoursData);
 
 			foreach (DataRow d in tempTable)
 				tempDataTable.Rows.Add(d);
@@ -555,41 +546,43 @@ namespace CTBTeam {
 			dgvCars.DataBind();
 		}
 
-		private bool hoursUpdate() {
-			ddlHours.Items.Add("--Select A Percent (Out of 40 hrs)--");
-
+		private void hoursUpdate() {
 			int hoursWorked = 0;
-			foreach (DataRow d in projectHoursData.Rows) {
-				if ((int)d[0] == (int)Session["User"])
-					hoursWorked += (int)d[2];
-			}
 
-			int hoursSpent;
-			for (int i = 5; i <= 100; i += 5) {
-				hoursSpent = (int)(40 * ((float)i / 100));
-				if (hoursSpent + hoursWorked >= 40)
-					break;
-				ddlHours.Items.Add("" + i + "% -- " + hoursSpent + " hours");
-			}
+			Lambda howMuchHoursWorked = new Lambda(delegate (object o) {
+				if (!(o is DataTable))
+					return;
+				DataTable temp = (DataTable) o;
 
-			if ((bool)Session["Full_time"]) return true;
+				foreach (DataRow d in temp.Rows) {
+					if ((int)d[0] == (int)Session["Alna_num"])
+						hoursWorked += (int)d[2];
+				}
+			});
 
-			ddlHoursVehicles.Items.Add("--Select A Percent (Out of 40 hrs)--");
+			Lambda addDDLoptions = new Lambda(delegate(object o) {
+				if (!(o is DropDownList))
+					return;
+				DropDownList temp = (DropDownList) o;
+				float hoursSpent;
+				for (int i = 1; i <= 40; i++) {
+					if (i + hoursWorked > 40)
+						break;
+					hoursSpent = ((float)i / 40) * 100;
+					temp.Items.Add("" + hoursSpent + "% -- " + i + " hours");
+				}
+			});
+
+			ddlHours.Items.Add("--Select A Percent (Out of 40 hrs)--");
+			howMuchHoursWorked(projectHoursData);
+			addDDLoptions(ddlHours);
+
+			if ((bool)Session["Full_time"]) return;
 
 			hoursWorked = 0;
-			hoursSpent = 0;
-
-			foreach (DataRow d in vehicleHoursData.Rows)
-				if ((int)d[0] == (int)Session["User"])
-					hoursWorked += (int)d[2];
-
-			for (int i = 5; i <= 100; i += 5) {
-				hoursSpent = (int)(40 * ((float)i / 100));
-				if (hoursSpent + hoursWorked >= 40)
-					break;
-				ddlHoursVehicles.Items.Add("" + i + "% -- " + hoursSpent + " hours");
-			}
-			return false;
+			ddlHoursVehicles.Items.Add("--Select A Percent (Out of 40 hrs)--");
+			howMuchHoursWorked(vehicleHoursData);
+			addDDLoptions(ddlHoursVehicles);
 		}
 	}
 }

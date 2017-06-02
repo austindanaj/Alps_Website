@@ -8,8 +8,8 @@ namespace CTBTeam {
 
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
-				if (Session["User"] != null) {
-					Session["User"] = null;
+				if (Session["Alna_num"] != null) {
+					Session["Alna_num"] = null;
 					Session["loginStatus"] = "Sign in";
 					redirectSafely("~/");
 				}
@@ -52,9 +52,9 @@ namespace CTBTeam {
 				reader = objCmd.ExecuteReader();
 				reader.Read();
 				Session["Alna_num"] = reader.GetValue(0);
-				Session["User"] = reader.GetValue(1);
+				Session["Name"] = reader.GetValue(1);
 				Session["Full_time"] = reader.GetValue(1);
-				Session["loginStatus"] = "Signed in as " + Session["User"] + " (Sign out)";
+				Session["loginStatus"] = "Signed in as " + Session["Name"] + " (Sign out)";
 				redirectSafely("~/");
 			}
 			catch (ThreadAbortException ex) { }

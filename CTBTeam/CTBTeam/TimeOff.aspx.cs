@@ -9,7 +9,7 @@ namespace CTBTeam {
 		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
-			if (Session["user"] == null) {
+			if (Session["Alna_num"] == null) {
 				btnAddTimeOff.Visible = false;
 				btnRemoveTimeOff.Visible = false;
 			}
@@ -80,7 +80,7 @@ namespace CTBTeam {
 		}
 
 		protected void addTimeOff(object sender, EventArgs e) {
-			if (Session["User"] != null) {
+			if (Session["Alna_num"] != null) {
 				try {
 					Date start = cldTimeOffStart.SelectedDate;
 					Date end = cldTimeOffEnd.SelectedDate;
@@ -145,7 +145,7 @@ namespace CTBTeam {
 		}
 
 		protected void removeTimeOff(object sender, EventArgs e) {
-			if (Session["User"] != null) {
+			if (Session["Alna_num"] != null) {
 				try {
 					objConn = openDBConnection();
 					objConn.Open();

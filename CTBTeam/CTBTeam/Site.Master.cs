@@ -12,7 +12,7 @@ namespace CTBTeam {
 			if (Session["loginStatus"] == null)
 				Session["loginStatus"] = "Sign In";
 
-			if (Session["User"] == null)
+			if (Session["Alna_num"] == null)
 				Session["admin"] = false;
 
 			if (Session["admin"] != null)
