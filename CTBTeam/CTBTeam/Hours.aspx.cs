@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace CTBTeam {
 	public partial class Hours : SuperPage {
 		private SqlConnection objConn;
-		private DataTable projectData, projectHoursData, vehicleHoursData, partTimeEmployeeData, fullTimeEmployeeData, vehiclesData;
+		private DataTable projectData, projectHoursData, vehicleHoursData, partTimeEmployeeData, fullTimeEmployeeData, vehiclesData, datesData;
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
 		//===================================================
@@ -34,63 +34,52 @@ namespace CTBTeam {
 
 			objConn = openDBConnection();
 
-			if (!IsPostBack || Session["Date"] == null || Session["Date_ID"] == null)
+			if (Session["Date"] == null) {
 				initDate();
-			else
-				getDate();
-			
+			}
+			getDate();
 			getData();
 			ddlInit();
 			
-
 			populateTables();
-			Date date = (Date)Date.Parse(ddlselectWeek.SelectedValue);
-			lblWeekOf.Text = "Week of " + date.Month + "/" + date.Day + "/" + date.Year;
+			populateDataPercentage();
 		}
 
 		private void getDate() {
-			if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
-				initDate();
-				return;
-			}
-
-
+			Date date = (Date)Session["Date"];
+			lblWeekOf.Text = "Week of " + date.Month + "/" + date.Day + "/" + date.Year;
 		}
 
 		private void initDate() {
 			objConn.Open();
-			SqlDataReader reader;
-			reader = new SqlCommand("select ID, Dates.Dates from Dates order by ID DESC;", objConn).ExecuteReader();
+			SqlDataReader reader = new SqlCommand("select top 1 Dates, ID from Dates order by ID DESC;", objConn).ExecuteReader();
 			reader.Read();
-			int id = reader.GetInt32(0);
-			Date date = (Date)reader.GetValue(1);
-
+			Date date = (Date)reader.GetValue(0);
+			int id = (int)reader.GetValue(1);
+			reader.Close();
 			if (Date.Today > date.AddDays(6)) {
-				reader.Close();
 				date = date.AddDays(7);
 				while (Date.Today > date.AddDays(6))
 					date = date.AddDays(7);
-				executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", date, objConn);
 
-				reader = new SqlCommand("select ID, Dates from Dates order by ID desc", objConn).ExecuteReader();
+				string sqlDateString = date.Year + "-" + date.Month + "-" + date.Day;
+				executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", sqlDateString, objConn);
+				reader = getReader("select top 1 ID, Dates from Dates order by ID desc", null, objConn);
+
 				reader.Read();
-				id = (int) reader.GetValue(0);
-				date = (Date)reader.GetValue(1);
+				Session["Date_ID"] = (int) reader.GetValue(0);
+				Session["Date"] = (Date) reader.GetValue(1);
+				reader.Close();
+			} else {
+				Session["Date"] = date;
+				Session["Date_ID"] = id;
 			}
 
-			ddlselectWeek.Items.Add(date.ToShortDateString());
-			while (reader.Read())
-				ddlselectWeek.Items.Add(((Date)reader.GetValue(1)).ToShortDateString());
-
-			reader.Close();
-			Session["Date"] = date;
-			Session["Date_ID"] = id;
 			objConn.Close();
 		}
 
 		private void getData() {
-			//Employees
-			//TODO: make it one sql query to speed up transaction time
+			objConn.Open();
 			if (!chkInactive.Checked) {
 				object[] o = { true, false };
 				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
@@ -108,10 +97,14 @@ namespace CTBTeam {
 			//Everything else
 			projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
 			vehicleHoursData = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
+			datesData = getDataTable("select Dates from Dates order by ID desc", null, objConn);
 			objConn.Close();
 		}
 
 		private void ddlInit() {
+			foreach (DataRow d in datesData.Rows)
+				ddlselectWeek.Items.Add(((Date)d[0]).ToShortDateString());
+
 			foreach (DataRow r in projectData.Rows)
 				ddlProjects.Items.Add(r[1].ToString());
 
@@ -156,8 +149,8 @@ namespace CTBTeam {
 				redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitPercent)) {
-				insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedValue, DATA_TYPE.PROJECT);
-				redirectSafely("~/Hours");
+				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedValue, DATA_TYPE.PROJECT))
+					redirectSafely("~/Hours");
 			} else if (sender.Equals(btnSubmitVehicles)) {
 				insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE);
 				redirectSafely("~/Hours");
@@ -228,14 +221,14 @@ namespace CTBTeam {
 			}
 		}*/
 
-		private void insertRecord(string projectOrVehicle, string hoursSpent, DATA_TYPE type) {
+		private bool insertRecord(string projectOrVehicle, string hoursSpent, DATA_TYPE type) {
 			hoursSpent = hoursSpent.Substring(0, 4).Trim().Replace("%", "").Replace("-", "");
-			if (!int.TryParse(hoursSpent, out int hours)) {
+			if (!decimal.TryParse(hoursSpent, out decimal decHours)) {
 				throwJSAlert("Error in hours selection. try again");
-				return;
+				return false;
 			}
 
-			hours = (int)(40 * ((float) hours / 100));
+			int hours = (int) (40 * (decHours / 100));
 
 			string table;
 			string column;
@@ -253,7 +246,7 @@ namespace CTBTeam {
 					break;
 				default:
 					new NotImplementedException("Method has not been implemented");
-					return;
+					return false;
 			}
 
 			int projOrVehicleID = -1;
@@ -265,34 +258,34 @@ namespace CTBTeam {
 
 			if (projOrVehicleID == -1) {
 				throwJSAlert("Project does not exist");
-				return;
+				return false;
 			}
 
 			try {
 				objConn.Open();
-				                             
-				SqlCommand cmd = new SqlCommand("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2", objConn);
-				cmd.Parameters.AddWithValue("@value1", Session["Alna_num"]);
-				cmd.Parameters.AddWithValue("@value2", projOrVehicleID);
-				SqlDataReader reader = cmd.ExecuteReader();
+				object[] o = { Session["Alna_num"], projOrVehicleID, Session["Date_ID"] };
+				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2 and Date_ID=@value3", o,objConn);
 				
-				if(reader.HasRows) {
-					reader.Read();
-					int hoursWorked = 0, otherRecordID = -1;
-					otherRecordID = reader.GetInt32(0);
-					hoursWorked = reader.GetInt32(1);
+				if (reader.Read()) {
+					int hoursWorked = reader.GetInt32(1);
+					int otherRecordID = reader.GetInt32(0);
 					reader.Close();
 					executeVoidSQLQuery("delete from ProjectHours where ID=@value1", otherRecordID, objConn);
 					hours += hoursWorked;
+				} else {
+					reader.Close();
 				}
 
-				reader.Close();
-				object[] o = { Session["Alna_num"], projOrVehicleID, hours, Session["Date_ID"] };
-				executeVoidSQLQuery("insert into " + table + " values(@value1, @value2, @value3, @value4)", o, objConn);
+				object[] o2 = { o[0], projOrVehicleID, hours, o[2] };
+				executeVoidSQLQuery("insert into " + table + " values(@value1, @value2, @value3, @value4)", o2, objConn);
+				objConn.Close();
 			}
 			catch (Exception ex) {
+				throwJSAlert("Error connecting to database, check network connection");
 				writeStackTrace("Hours Submit", ex);
+				return false;
 			}
+			return true;
 		}
 
 		//===================================================
@@ -454,7 +447,6 @@ namespace CTBTeam {
 			 * Step 6: repeat for vehicles
 			 */
 			
-			
 			if (!int.TryParse(ddlColNum.SelectedValue, out int requestedColNum)) {
 				throwJSAlert("Something was wrong with your column selection. Try again");
 				return;
@@ -553,10 +545,10 @@ namespace CTBTeam {
 				if (!(o is DataTable))
 					return;
 				DataTable temp = (DataTable) o;
-
+				int session = (int)Session["Alna_num"];
 				foreach (DataRow d in temp.Rows) {
-					if ((int)d[0] == (int)Session["Alna_num"])
-						hoursWorked += (int)d[2];
+					if ((int)d[0] == session)
+						hoursWorked += (int) d[2];
 				}
 			});
 

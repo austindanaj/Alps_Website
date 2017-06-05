@@ -102,5 +102,33 @@ namespace CTBTeam {
 			objAdapter.Fill(objDataSet);
 			return objDataSet.Tables[0];
 		}
+
+		protected SqlDataReader getReader(string query, object parameters, SqlConnection objConn) {
+			try {
+				SqlCommand cmd = new SqlCommand(query, objConn);
+				if (parameters != null) {
+					cmd.Parameters.AddWithValue("@value1", parameters);
+				}
+				return cmd.ExecuteReader();
+			} catch (Exception ex) {
+				writeStackTrace("Error trying to get reader", ex);
+				return null;
+			}
+		}
+
+		protected SqlDataReader getReader(string query, object[] parameters, SqlConnection objConn) {
+			try {
+				SqlCommand cmd = new SqlCommand(query, objConn);
+				int i = 1;
+				foreach (object o in parameters) {
+					cmd.Parameters.AddWithValue("@value" + i, o);
+					i++;
+				}
+				return cmd.ExecuteReader();
+			} catch (Exception ex) {
+				writeStackTrace("Error trying to get reader", ex);
+				return null;
+			}
+		}
 	}
 }
