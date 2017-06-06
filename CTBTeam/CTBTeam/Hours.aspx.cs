@@ -22,6 +22,18 @@ namespace CTBTeam {
 
 		//Loads the page with .NET specific stuff
 		protected void Page_Load(object sender, EventArgs e) {
+			objConn = openDBConnection();
+			sessionInits();
+			
+			getDate();
+			getData();
+			ddlInit();
+			
+			populateTables((string) Session["Cols"]);
+			populateDataPercentage();
+		}
+
+		private void sessionInits() {
 			//SCAFFOLD for testing purposes
 			if (Session["Alna_num"] == null) {
 				Session["Alna_num"] = 173017;
@@ -32,17 +44,11 @@ namespace CTBTeam {
 			if (Session["Alna_num"] == null)
 				redirectSafely("~/Login");
 
-			objConn = openDBConnection();
-
+			Session["Cols"] = ddlColNum.SelectedValue == null ? "6" : ddlColNum.SelectedValue;
+				
 			if (Session["Date"] == null) {
 				initDate();
 			}
-			getDate();
-			getData();
-			ddlInit();
-			
-			populateTables();
-			populateDataPercentage();
 		}
 
 		private void getDate() {
@@ -84,7 +90,7 @@ namespace CTBTeam {
 				object[] o = { true, false };
 				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
 				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value1;", true, objConn);
-				projectData = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
+				projectData = getDataTable("select ID, Name, Category from Projects where Active=@value1", true, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
 			}
 			else {
@@ -102,6 +108,11 @@ namespace CTBTeam {
 		}
 
 		private void ddlInit() {
+			ddlselectWeek.Items.Clear();
+			ddlProjects.Items.Clear();
+			ddlVehicles.Items.Clear();
+			ddlColNum.Items.Clear();
+
 			foreach (DataRow d in datesData.Rows)
 				ddlselectWeek.Items.Add(((Date)d[0]).ToShortDateString());
 
@@ -132,7 +143,7 @@ namespace CTBTeam {
 			objConn.Close();
 		}
 
-		protected void btnSelection(object sender, EventArgs e) {
+		protected void htmlEvent(object sender, EventArgs e) {
 			if (sender.Equals(btnselectWeek)) {
 				if(!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
 					throwJSAlert("Something went wrong. try again.");
@@ -152,8 +163,8 @@ namespace CTBTeam {
 				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedValue, DATA_TYPE.PROJECT))
 					redirectSafely("~/Hours");
 			} else if (sender.Equals(btnSubmitVehicles)) {
-				insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE);
-				redirectSafely("~/Hours");
+				if(insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE))
+					redirectSafely("~/Hours");
 			} else if(sender.Equals(btnDelete)) {
 				if(!txtDelete.Text.Equals("YES")) {
 					throwJSAlert("You must exactly type YES to delete all your records for the week. No extra whitespace, all caps.");
@@ -257,7 +268,7 @@ namespace CTBTeam {
 				}
 
 			if (projOrVehicleID == -1) {
-				throwJSAlert("Project does not exist");
+				throwJSAlert("Project/vehicle does not exist");
 				return false;
 			}
 
@@ -266,11 +277,12 @@ namespace CTBTeam {
 				object[] o = { Session["Alna_num"], projOrVehicleID, Session["Date_ID"] };
 				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2 and Date_ID=@value3", o,objConn);
 				
-				if (reader.Read()) {
+				if (reader.HasRows) {
+					reader.Read();
 					int hoursWorked = reader.GetInt32(1);
 					int otherRecordID = reader.GetInt32(0);
 					reader.Close();
-					executeVoidSQLQuery("delete from ProjectHours where ID=@value1", otherRecordID, objConn);
+					executeVoidSQLQuery("delete from " + table + " where ID=@value1", otherRecordID, objConn);
 					hours += hoursWorked;
 				} else {
 					reader.Close();
@@ -293,8 +305,27 @@ namespace CTBTeam {
 		//===================================================
 
 		private void populateDataPercentage() {
+			/*int numEmployees = fullTimeEmployeeData.Rows.Count + partTimeEmployeeData.Rows.Count;
+			double[] projectHours = new double[4];
+			int totalHours = 0;
+
+			
+
+			Hashtable h = new Hashtable();
+			foreach (DataRow d in projectHoursData.Rows) {
+				totalHours += (int) d[2];
+				int valueIfInHashTable = (int) h[d[1]];
+				if (valueIfInHashTable != -1)
+
+				h.Add();
+				foreach (DataRow project in projectData.Rows) {
+					if (project[0] == d[1]) {
+						
+					}
+				}
+			}*/
+
 			/*try {
-				objConn = openDBConnection();
 				objConn.Open();
 				SqlCommand objCount = new SqlCommand("SELECT DISTINCT Emp_Name FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
 				SqlDataReader readerCount = objCount.ExecuteReader();
@@ -380,7 +411,7 @@ namespace CTBTeam {
 			}*/
 		}
 
-		private void populateTables() {
+		private void populateTables(string colNum) {
 			/*
 			 * Need to put the partTimeEmployee/vehicle records into gridview.
 			 * Due to really annoying limitations of SQL and C#, this is
@@ -447,13 +478,11 @@ namespace CTBTeam {
 			 * Step 6: repeat for vehicles
 			 */
 			
-			if (!int.TryParse(ddlColNum.SelectedValue, out int requestedColNum)) {
-				throwJSAlert("Something was wrong with your column selection. Try again");
-				return;
+			if (!int.TryParse(colNum, out int requestedColNum)) {
+				requestedColNum = 6;
 			}
 
 			int smallestThreshold = requestedColNum >= projectData.Rows.Count ? projectData.Rows.Count : requestedColNum;
-
 
 			DataTable tempDataTable = new DataTable();		//Data table to temporarily store the table before the gridview
 			Hashtable h= new Hashtable();					//Temp Hash table for projects and vehicles
@@ -469,7 +498,7 @@ namespace CTBTeam {
 					return;
 				DataTable d = (DataTable)o;
 				for (i = 0; i < smallestThreshold; i++) {       //Forall rows in projectData: 
-					s = d.Rows[i][1].ToString();      //Get the name of the project
+					s = d.Rows[i][1].ToString();				//Get the name of the project
 					h.Add(projectData.Rows[i][0], s);           //Add it to the hash table with the Proj_Id as the key
 					tempDataTable.Columns.Add(s, typeof(int));  //Add it as a column to the temporary datatable. The column accepts integer values because we're talking about hours worked
 				}

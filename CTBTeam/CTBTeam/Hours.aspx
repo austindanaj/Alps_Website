@@ -17,7 +17,7 @@
 		<div class="col-md-50" style="text-align: left;">
 			<asp:CheckBox ID="chkInactive" runat="server" style="color:white;" Text="Show me inactive projects, old employees, etc." />
 			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" AutoPostBack="false"/>
-			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="btnSelection"/>
+			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="htmlEvent"/>
 		</div>
 	</div>
 	<br />
@@ -32,7 +32,7 @@
 			<asp:DropDownList ID="ddlHours" CssClass="drp-home" runat="server" />
 			<br />
 			<br />
-			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="btnSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
 
 			<asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
 			<br />
@@ -46,7 +46,7 @@
 			<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Visible="false" />
 			<br />
 			<br />
-			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="btnSelection" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
+			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
 			<br />
 			<br />
 			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Cols to display:" />
@@ -61,7 +61,7 @@
 			<asp:TextBox ID="txtDelete" runat="server" CssClass="txt-purchase" placeholder="Type YES to confirm." />
 			<br />
 			<br />
-			<asp:Button ID="btnDelete" runat="server" OnClick="btnSelection" Text="Delete" CssClass="btn-home" style="color:white;font:bold;background-color:#ff0000" Text-Align="Center" Visible="true" />
+			<asp:Button ID="btnDelete" runat="server" OnClick="htmlEvent" Text="Delete" CssClass="btn-home" style="color:white;font:bold;background-color:#ff0000" Text-Align="Center" Visible="true" />
 		</div>
 		<div class="col-md-50">
 			<div class="row">
