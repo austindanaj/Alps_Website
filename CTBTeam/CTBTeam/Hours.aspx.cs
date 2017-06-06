@@ -96,7 +96,7 @@ namespace CTBTeam {
 			else {
 				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Full_time=@value1", false, objConn);
 				fullTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Full_time=@value1", true, objConn);
-				projectData = getDataTable("select ID, Name from Projects", null, objConn);
+				projectData = getDataTable("select ID, Name, Categories from Projects", null, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
 			}
 
@@ -122,7 +122,9 @@ namespace CTBTeam {
 			foreach (DataRow r in vehiclesData.Rows)
 				ddlVehicles.Items.Add(r[1].ToString());
 
-			for (int i = 4; i <= 20; i++)
+			int maxColValue = ddlProjects.Items.Count > ddlVehicles.Items.Count ? ddlProjects.Items.Count : ddlVehicles.Items.Count;
+
+			for (int i = 4; i <= maxColValue; i++)
 				ddlColNum.Items.Add(""+i);
 
 			ddlColNum.SelectedIndex = 2;
@@ -134,11 +136,6 @@ namespace CTBTeam {
 			ddlVehicles.Visible = true;
 			ddlHoursVehicles.Visible = true;
 			btnSubmitVehicles.Visible = true;
-
-			/*cmd = new SqlCommand("select Name from Vehicles where Active=1", objConn);
-			reader = cmd.ExecuteReader();
-			while(reader.Read())
-				ddlVehicles.Items.Add(reader.GetString(0));*/
 
 			objConn.Close();
 		}
@@ -305,25 +302,72 @@ namespace CTBTeam {
 		//===================================================
 
 		private void populateDataPercentage() {
-			/*int numEmployees = fullTimeEmployeeData.Rows.Count + partTimeEmployeeData.Rows.Count;
+			int numEmployees = fullTimeEmployeeData.Rows.Count + partTimeEmployeeData.Rows.Count;
 			double[] projectHours = new double[4];
 			int totalHours = 0;
 
-			
-
-			Hashtable h = new Hashtable();
-			foreach (DataRow d in projectHoursData.Rows) {
-				totalHours += (int) d[2];
-				int valueIfInHashTable = (int) h[d[1]];
-				if (valueIfInHashTable != -1)
-
-				h.Add();
-				foreach (DataRow project in projectData.Rows) {
-					if (project[0] == d[1]) {
-						
-					}
+			Dictionary<int, int> h = new Dictionary<int, int>();
+			foreach (DataRow d in projectData.Rows) {
+				switch (d[2]) {
+					case "A":
+						h.Add((int)d[0], 0);
+						break;
+					case "C":
+						h.Add((int)d[0], 2);
+						break;
+					case "D":
+						h.Add((int)d[0], 3);
+						break;
+					default:
+						h.Add((int)d[0], 1);
+						break;
 				}
-			}*/
+			}
+
+			foreach(DataRow d in projectHoursData.Rows) {
+				totalHours += (int)d[2];
+				projectHours[h[(int) d[1]]] += (int) d[2];
+			}
+
+			string[] category = { "A", "B", "C", "D" };
+			DataTable table = new DataTable();
+
+			for (int i=0;i<category.Length;i++) {
+				table.Columns.Add(category[i], typeof(double));
+				projectHours[i] /= totalHours;
+			}
+
+			chartPercent.Series[0].Points.DataBindXY(category, projectHours);
+			chartPercent.Series[0].BorderWidth = 10;
+			chartPercent.Series[0].ChartType = SeriesChartType.Pie;
+
+			string text = "";
+			foreach (Series charts in chartPercent.Series) {
+				foreach (DataPoint point in charts.Points) {
+					switch (point.AxisLabel) {
+						case "A":
+							point.Color = System.Drawing.Color.Aqua;
+							text = "Advance Dev";
+							break;
+						case "B":
+							point.Color = System.Drawing.Color.SpringGreen;
+							text = "Time Off";
+							break;
+						case "C":
+							point.Color = System.Drawing.Color.Salmon;
+							text = "Production Dev (Auto)";
+							break;
+						case "D":
+							point.Color = System.Drawing.Color.Violet;
+							text = "Design in Market (Non-Auto)";
+							break;
+					}
+					point.Label = string.Format("{0:P} - {1}", point.YValues[0], point.AxisLabel);
+					point.LegendText = string.Format("{1} - " + text + "", point.YValues[0], point.AxisLabel);
+				}
+			}
+
+			lblTotalHours.Text = "Hours: " + totalHours + " / " + (40 * numEmployees);
 
 			/*try {
 				objConn.Open();
@@ -528,6 +572,8 @@ namespace CTBTeam {
 				foreach (DataRow d in table.Rows) {
 					int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
 					string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
+					if (whatCol == null)
+						continue;
 					tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
 				}
 			});
