@@ -53,7 +53,7 @@ namespace CTBTeam {
 				reader.Read();
 				Session["Alna_num"] = reader.GetValue(0);
 				Session["Name"] = reader.GetValue(1);
-				Session["Full_time"] = reader.GetValue(1);
+				Session["Full_time"] = reader.GetValue(2);
 				Session["loginStatus"] = "Signed in as " + Session["Name"] + " (Sign out)";
 				redirectSafely("~/");
 			}

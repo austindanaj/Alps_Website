@@ -6,7 +6,6 @@ using System;
 using System.Web.UI.WebControls;
 using System.Data;
 using System.Web.UI.DataVisualization.Charting;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,18 +15,19 @@ namespace CTBTeam {
 		private DataTable projectData, projectHoursData, vehicleHoursData, partTimeEmployeeData, fullTimeEmployeeData, vehiclesData, datesData;
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
-		//===================================================
-		//PART 1: PAGE INITS
-		//===================================================
-
-		//Loads the page with .NET specific stuff
 		protected void Page_Load(object sender, EventArgs e) {
 			objConn = openDBConnection();
-			sessionInits();
-			
+
+			if (!IsPostBack) {
+				sessionInits();
+			}
+
 			getDate();
 			getData();
-			ddlInit();
+
+			if (!IsPostBack) {
+				ddlInit();
+			}
 			
 			populateTables((string) Session["Cols"]);
 			populateDataPercentage();
@@ -44,7 +44,7 @@ namespace CTBTeam {
 			if (Session["Alna_num"] == null)
 				redirectSafely("~/Login");
 
-			Session["Cols"] = ddlColNum.SelectedValue == null ? "6" : ddlColNum.SelectedValue;
+			Session["Cols"] = ddlColNum.SelectedValue == null ? "25" : ddlColNum.SelectedValue;
 				
 			if (Session["Date"] == null) {
 				initDate();
@@ -86,6 +86,8 @@ namespace CTBTeam {
 
 		private void getData() {
 			objConn.Open();
+
+			//TODO: make the employees queries only one query and seperate them by Full_time
 			if (!chkInactive.Checked) {
 				object[] o = { true, false };
 				partTimeEmployeeData = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2;", o, objConn);
@@ -297,11 +299,9 @@ namespace CTBTeam {
 			return true;
 		}
 
-		//===================================================
-		//PART 4: LIST/TABLE POPULATORS FOR THE HTML PAGE
-		//===================================================
-
 		private void populateDataPercentage() {
+			if (projectHoursData.Rows.Count == 0)
+				return;
 			int numEmployees = fullTimeEmployeeData.Rows.Count + partTimeEmployeeData.Rows.Count;
 			double[] projectHours = new double[4];
 			int totalHours = 0;
@@ -570,6 +570,8 @@ namespace CTBTeam {
 					return;
 				DataTable table = (DataTable)o;
 				foreach (DataRow d in table.Rows) {
+					if (!employeeHashTable.ContainsKey(d[0]))	//If they're a full time employee skip them
+						continue;
 					int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
 					string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
 					if (whatCol == null)

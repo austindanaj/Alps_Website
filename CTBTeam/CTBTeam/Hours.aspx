@@ -16,7 +16,7 @@
 		</div>
 		<div class="col-md-50" style="text-align: left;">
 			<asp:CheckBox ID="chkInactive" runat="server" style="color:white;" Text="Show me inactive projects, old employees, etc." />
-			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" AutoPostBack="false"/>
+			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" />
 			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="htmlEvent"/>
 		</div>
 	</div>
@@ -52,7 +52,7 @@
 			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Cols to display:" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" AutoPostBack="true"/>
+			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" OnSelectedIndexChanged="htmlEvent" />
 			<br />
 			<br />
 			<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />

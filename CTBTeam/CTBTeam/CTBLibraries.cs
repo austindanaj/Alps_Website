@@ -117,6 +117,8 @@ namespace CTBTeam {
 		}
 
 		protected SqlDataReader getReader(string query, object[] parameters, SqlConnection objConn) {
+			if (parameters == null)
+				return getReader(query, (object) parameters, objConn);
 			try {
 				SqlCommand cmd = new SqlCommand(query, objConn);
 				int i = 1;

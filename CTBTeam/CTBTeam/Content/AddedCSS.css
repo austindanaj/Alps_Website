@@ -17,8 +17,6 @@
 }
 
 .modalBackground {
-    background-
-        : Black;
     filter: alpha(opacity=90);
     opacity: 0.8;
 }
@@ -39,15 +37,8 @@
     height: 140px;
 }
 
-.dropdown-content {
-   
-}
-
 .dropdown:hover .dropdown-content {
     display: block;
-}
-.lbl{
-
 }
 .txt_right{
     float: right;
@@ -150,7 +141,7 @@
 .txt-purchase-mult {
 	display: inline-block;
 	resize: none;
-	width: 173px;
+	width: 50px;
 	border-radius: 5px;
 	border: 2px solid #555;
 	font-size: 16px;
@@ -164,13 +155,6 @@
     color: white;
 }.image_main {
     float: right;
-} 
-.jumbotron {
-    padding-top: 30px;
-    padding-bottom: 30px;
-    margin-bottom: 30px;
-    color: inherit;
-    background-color: transparent;
 }
 
 .Grid {background-color: #333; margin: 5px 0 10px 0; border: solid 1px #525252; border-collapse:collapse; font-family:Calibri; color: #474747;}
@@ -228,8 +212,7 @@
     font-size: 22px;
     display: block;
     text-align: right;
-    width: 500px;
-    padding-right: 20px;
+    width: auto;
 	border-color: #ccc;
 	color: #fff;
 }
