@@ -3,34 +3,6 @@ using System.Data.SqlClient;
 
 namespace CTBTeam {
 	public class Seed : SuperPage {
-		private object[] o;
-
-		public bool seed() {
-			/*
-			 * ===========================================================
-			 * THIS CLASS SHOULD ONLY BE USED ONCE. ONLY ONE TIME, THEN 
-			 * IMMEDIATELY HIDDEN. IT CAN BE BROUGHT BACK ONLY, ONLY IF
-			 * THE DB IS DESTROYED FOR SOME REASON.
-			 * YOU WILL SCREW UP THE ENTIRE DB OTHERWISE
-			 * ALSO DONT SCREW UP THE ORDERING OF ANY ARRAY
-			 * ===========================================================
-			 */
-			try {
-				SqlConnection conn = openDBConnection();
-				conn.Open();
-				//seedEmployees(conn);
-				//seedProjects(conn);
-				seedPhones(conn);
-				//seedVehicles(conn);
-				conn.Close();
-				return true;
-			}
-			catch (Exception e) {
-				writeStackTrace("Trouble seeding:", e);
-				return false;
-			}
-		}
-
 		private void seedEmployees(SqlConnection conn) {
 
 			//We use the Alna_num as a primary key. Since it's a primary key, in order to seed the DB,
