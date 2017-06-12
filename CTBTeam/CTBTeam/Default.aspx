@@ -25,31 +25,9 @@
 
 	<div class="row">
 		<div class="col-md-25">
-			<h2>Current Hours</h2>
-			<p>
-				<%--><asp:Button runat="server" OnClick="download_database" Text="Download" CssClass="btn btn-default" />--%>
-			</p>
-		</div>
-		<div class="col-md-25">
-			<h2>Time Log</h2>
-			<p>
-				<%--<asp:Button runat="server" OnClick="download_timelog" Text="Download" CssClass="btn btn-default" />--%>
-			</p>
-		</div>
-		<div class="col-md-25">
-			<h2>Hex Generator</h2>
-			<p>
-				<asp:Button runat="server" OnClick="download_file_hexGenerator"
-					Text="Download" CssClass="btn btn-default" />
-			</p>
-		</div>
-		<div class="col-md-25">
 			<h2>Phone Log</h2>
 			<p>
-			</p>
-			<p>
-				<asp:Button runat="server" OnClick="download_Phones_file"
-					Text="Download" CssClass="btn btn-default" />
+				<asp:Button runat="server" OnClick="download" Text="Download" CssClass="btn btn-default" />
 			</p>
 		</div>
 	</div>

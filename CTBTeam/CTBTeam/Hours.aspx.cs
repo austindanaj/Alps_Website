@@ -16,12 +16,18 @@ namespace CTBTeam {
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
 		protected void Page_Load(object sender, EventArgs e) {
+			if (Session["Alna_num"] == null) {
+				redirectSafely("~/Login");
+				return;
+			}
+
 			objConn = openDBConnection();
 
 			if (!IsPostBack) {
-				sessionInits();
+				Session["Cols"] = ddlColNum.SelectedValue == null ? "25" : ddlColNum.SelectedValue;
+				if (Session["Date"] == null)
+					initDate(objConn);
 			}
-
 			getDate();
 			getData();
 
@@ -33,55 +39,9 @@ namespace CTBTeam {
 			populateDataPercentage();
 		}
 
-		private void sessionInits() {
-			//SCAFFOLD for testing purposes
-			if (Session["Alna_num"] == null) {
-				Session["Alna_num"] = 173017;
-				Session["Name"] = "Anthony Hewins";
-				Session["Full_time"] = false;
-			}
-
-			if (Session["Alna_num"] == null)
-				redirectSafely("~/Login");
-
-			Session["Cols"] = ddlColNum.SelectedValue == null ? "25" : ddlColNum.SelectedValue;
-				
-			if (Session["Date"] == null) {
-				initDate();
-			}
-		}
-
 		private void getDate() {
 			Date date = (Date)Session["Date"];
 			lblWeekOf.Text = "Week of " + date.Month + "/" + date.Day + "/" + date.Year;
-		}
-
-		private void initDate() {
-			objConn.Open();
-			SqlDataReader reader = new SqlCommand("select top 1 Dates, ID from Dates order by ID DESC;", objConn).ExecuteReader();
-			reader.Read();
-			Date date = (Date)reader.GetValue(0);
-			int id = (int)reader.GetValue(1);
-			reader.Close();
-			if (Date.Today > date.AddDays(6)) {
-				date = date.AddDays(7);
-				while (Date.Today > date.AddDays(6))
-					date = date.AddDays(7);
-
-				string sqlDateString = date.Year + "-" + date.Month + "-" + date.Day;
-				executeVoidSQLQuery("insert into Dates (Dates.[Dates]) values (@value1)", sqlDateString, objConn);
-				reader = getReader("select top 1 ID, Dates from Dates order by ID desc", null, objConn);
-
-				reader.Read();
-				Session["Date_ID"] = (int) reader.GetValue(0);
-				Session["Date"] = (Date) reader.GetValue(1);
-				reader.Close();
-			} else {
-				Session["Date"] = date;
-				Session["Date_ID"] = id;
-			}
-
-			objConn.Close();
 		}
 
 		private void getData() {
@@ -368,91 +328,6 @@ namespace CTBTeam {
 			}
 
 			lblTotalHours.Text = "Hours: " + totalHours + " / " + (40 * numEmployees);
-
-			/*try {
-				objConn.Open();
-				SqlCommand objCount = new SqlCommand("SELECT DISTINCT Emp_Name FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
-				SqlDataReader readerCount = objCount.ExecuteReader();
-				int empCount = 0;
-				while (readerCount.Read()) {
-					empCount++;
-				}
-				SqlCommand objCmdSelect = new SqlCommand("SELECT * FROM PercentageLog WHERE Log_Date=@date ORDER BY Emp_Name", objConn);
-				SqlDataAdapter objAdapter = new SqlDataAdapter();
-				objAdapter.SelectCommand = objCmdSelect;
-				DataSet objDataSet = new DataSet();
-				objAdapter.Fill(objDataSet);
-				objDataSet.Tables[0].Columns.RemoveAt(0);
-
-				DataTable chartData = objDataSet.Tables[0];
-				string[] XPointMember = { "A", "B", "C", "D" };
-				double[] YPointMember = { 0, 0, 0, 0 };
-				int[] numberPeople = { 0, 0, 0, 0 };
-				double value = 0;
-				double runningSum = 0;
-				for (int i = 0; i < chartData.Rows.Count; i++) {
-					value = (Convert.ToDouble(chartData.Rows[i]["Percentage"])) / 100;
-					value *= 40;
-					runningSum += value;
-					switch (chartData.Rows[i]["Category"].ToString()) {
-						case "A":
-							YPointMember[0] += value;
-							break;
-						case "B":
-							YPointMember[1] += value;
-							break;
-						case "C":
-							YPointMember[2] += value;
-							break;
-						case "D":
-							YPointMember[3] += value;
-							break;
-					}
-				}
-				YPointMember[0] = (YPointMember[0] / runningSum);
-				YPointMember[1] = (YPointMember[1] / runningSum);
-				YPointMember[2] = (YPointMember[2] / runningSum);
-				YPointMember[3] = (YPointMember[3] / runningSum);
-
-				chartPercent.Series[0].Points.DataBindXY(XPointMember, YPointMember);
-				chartPercent.Series[0].BorderWidth = 10;
-				chartPercent.Series[0].ChartType = SeriesChartType.Pie;
-				string text = "";
-				foreach (Series charts in chartPercent.Series) {
-					foreach (DataPoint point in charts.Points) {
-						switch (point.AxisLabel) {
-							case "A":
-								point.Color = System.Drawing.Color.Aqua;
-								text = "Advance Dev";
-								break;
-							case "B":
-								point.Color = System.Drawing.Color.SpringGreen;
-								text = "Time Off";
-								break;
-							case "C":
-								point.Color = System.Drawing.Color.Salmon;
-								text = "Production Dev (Auto)";
-								break;
-							case "D":
-								point.Color = System.Drawing.Color.Violet;
-								text = "Design in Market (Non-Auto)";
-								break;
-						}
-						point.Label = string.Format("{0:P} - {1}", point.YValues[0], point.AxisLabel);
-						point.LegendText = string.Format("{1} - " + text + "", point.YValues[0], point.AxisLabel);
-
-
-
-					}
-				}
-				lblTotalHours.Text = "Hours: " + runningSum + " / " + (20 * 40);
-				objConn.Close();
-
-				// dgvCars.HeaderRow.Cells[0].Visible = false;
-			}
-			catch (Exception ex) {
-				writeStackTrace("Populate Percent", ex);
-			}*/
 		}
 
 		private void populateTables(string colNum) {

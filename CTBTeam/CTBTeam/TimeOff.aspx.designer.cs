@@ -31,15 +31,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.BulletedList bulletList;
         
         /// <summary>
-        /// ddlNames control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlNames;
-        
-        /// <summary>
         /// ddlTimeTakenOff control.
         /// </summary>
         /// <remarks>
@@ -47,15 +38,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlTimeTakenOff;
-        
-        /// <summary>
-        /// btnAddTimeOff control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddTimeOff;
         
         /// <summary>
         /// btnRemoveTimeOff control.
@@ -85,21 +67,30 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Calendar cldTimeOffEnd;
         
         /// <summary>
-        /// bltList control.
+        /// chkBusinessTrip control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.BulletedList bltList;
+        protected global::System.Web.UI.WebControls.CheckBox chkBusinessTrip;
         
         /// <summary>
-        /// Image1 control.
+        /// btnAddTimeOff control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
+        protected global::System.Web.UI.WebControls.Button btnAddTimeOff;
+        
+        /// <summary>
+        /// gv control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gv;
     }
 }

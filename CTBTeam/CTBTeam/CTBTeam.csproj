@@ -125,6 +125,7 @@
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="2017Schedule.PNG" />
@@ -142,11 +143,8 @@
     <Content Include="Globe.png" />
     <Content Include="Gradient.jpg" />
     <Content Include="HexGenerator.exe" />
-    <Content Include="Logs\CurrentHours\Current-Hours_2-27-2017.txt" />
-    <Content Include="Logs\PhoneLog\Phone-report.txt" />
     <Content Include="PhoneCheckOut.aspx" />
     <Content Include="List.aspx" />
-    <Content Include="Logs\TimeLog\Time-log.txt" />
     <Content Include="Admin.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Hours.aspx" />

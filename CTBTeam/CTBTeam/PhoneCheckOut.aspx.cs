@@ -10,459 +10,96 @@ namespace CTBTeam {
 		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
+			if (Session["Alna_num"] == null) {
+				redirectSafely("~/Login");
+				return;
+			}
+
+			objConn = openDBConnection();
+
 			if (!IsPostBack) {
-				populateDataPhones(); // Populates table with Phone Data on start up
+				populateDropdowns(); // Populates table with Phone Data on start up
 				populateTable(); // Populates table with other information 
-				Period(30); // Populates date of which phones will be checked out (30 days from current day)
 			}
 		}
 
-		protected void populateDataPerson() {
-			//Method for the intial population of person 
+		private void populateDropdowns() {
+			objConn.Open();
+			SqlDataReader reader = getReader("select Name from Phones where Active=1 and ID not in (select Phone_ID from PhoneCheckout) order by Name", null, objConn);
 
-			drpPerson.Items.Clear(); // Clears drop down list
-			drpPerson.Items.Add(new ListItem("--Select A Person--")); //Initializes the drpPerson drop down list
+			while (reader.Read())
+				ddlPhones.Items.Add(reader.GetString(0));
 
-			// gets information form database
-			try {
-				objConn = openDBConnection();
-				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT DISTINCT Emp_Name FROM Users ORDER BY Emp_Name", objConn);
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					drpPerson.Items.Add(new ListItem(reader.GetString(0))); ;  //adds items to the drop down list
-				}
+			reader.Close();
 
-				objConn.Close();
-			}
-			catch (Exception e) {
-				writeStackTrace("Populate Phones", e);
-			}
+			reader = getReader("select Name from Vehicles where Active=1 order by Name", null, objConn);
+
+			while (reader.Read())
+				ddlVehicles.Items.Add(reader.GetString(0));
+			reader.Close();
+
+			Date d = Date.Today;
+			for (int i = 0; i < 30; i++)
+				ddlEnd.Items.Add(d.AddDays(i).ToShortDateString());
+
+			reader = getReader("select ID from PhoneCheckout", null, objConn);
+			while (reader.Read())
+				ddlCheckIn.Items.Add(""+reader.GetInt32(0));
+			reader.Close();
+
+			objConn.Close();
 		}
 
-		protected void populateDataPhones() {
-			//Method for the Intial population of phones
-
-			drpOs.Items.Clear(); // Clears drop down list 
-			drpOs.Items.Add(new ListItem("--Select An OS--")); // Preset
-			drpCheckIn.Items.Clear();  // Clears drop down list 
-			drpCheckIn.Items.Add(new ListItem("--Select An OS--"));// Preset
-
-			// gets information form database
-			try {
-				objConn = openDBConnection();
-				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT DISTINCT os FROM PhoneCheckout", objConn);
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					drpOs.Items.Add(new ListItem(reader.GetString(0))); ;
-				}
-
-				objConn.Close();
+		protected void checkIn(object sender, EventArgs e) {
+			if(!int.TryParse(ddlCheckIn.SelectedValue, out int id)) {
+				throwJSAlert("Valid ID not selected");
+				return;
 			}
-			catch (Exception e) {
-				writeStackTrace("Populate Phones", e);
-			}
+			objConn.Open();
+			executeVoidSQLQuery("update PhoneCheckout set Active=0 where ID=@value1", id, objConn);
+			objConn.Close();
+			redirectSafely("~/PhoneCheckOut");
 		}
 
-
-		public void pop2() {
-
-			// Gets all phones that are checked in 
-			// Populates phones after Updating the database
-
-			try {
-				drpPhone.Items.Clear();
-				drpPhone.Items.Add(new ListItem("--Select A Phone--"));
-
-
-				objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-				objCmdSelect.Parameters.AddWithValue("@bool", true);
-
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
-				}
-
-				objConn.Close();
-			}
-			catch (Exception e) {
-				writeStackTrace("Populate Phones", e);
+		protected void insert(object sender, EventArgs e) {
+			if (!Date.TryParse(ddlEnd.SelectedValue, out Date selection)) {
+				throwJSAlert("Date selection invalid, try again");
+				return;
 			}
 
+			string selectedReasonsForCheckingOut = "";
+			if (string.IsNullOrEmpty(chkPurpose.SelectedValue))
+				selectedReasonsForCheckingOut = "Other";
+			else
+				foreach (ListItem item in chkPurpose.Items)
+					if (item.Selected) selectedReasonsForCheckingOut += item.Value + " ";
 
-			try {
-				drpCheckIn.Items.Clear();
-				drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-
-
-
-				objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-				objCmdSelect.Parameters.AddWithValue("@bool", false);
-
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
-				}
-
-				objConn.Close();
-			}
-			catch (Exception ef) {
-				writeStackTrace("Populate Phones", ef);
-			}
-
+			objConn.Open();
+			object[] o = { ddlPhones.SelectedValue, ddlVehicles.SelectedValue, Session["Alna_num"], selection, selectedReasonsForCheckingOut };
+			executeVoidSQLQuery("insert into PhoneCheckout (Phone_ID, Vehicle_ID, Alna_num, PhoneCheckout.[End], Purpose) values" +
+								"((select ID from Phones where Name=@value1), (select ID from Vehicles where Name=@value2), @value3, @value4, @value5);", o, objConn);
+			objConn.Close();
+			redirectSafely("~/PhoneCheckOut");
 		}
-
-
-
-		public void popV() {
-			try {
-				Vehicle.Items.Clear();
-				Vehicle.Items.Add(new ListItem("--Select A Vehicle--"));
-
-
-
-				objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Vehicle FROM Cars ORDER BY Vehicle;", objConn);
-
-
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					Vehicle.Items.Add(new ListItem(reader.GetString(0))); ;
-				}
-
-				objConn.Close();
-			}
-			catch (Exception e) {
-				writeStackTrace("Populate Phones", e);
-			}
-
-		}
-
-		protected void onSelec(object sender, EventArgs e) {
-			/*
-             * Button Listener to populate phone drop down list
-             * 
-             */
-
-			pop2();
-
-		}
-
-
-		protected void onSelectPhone(object sender, EventArgs e) {
-			/*
-            * Button Listener to populate person's drop down list upon selecting a phone
-            * 
-            */
-			populateDataPerson();
-		}
-
-		protected void onSelectPerson(object sender, EventArgs e) {
-			/*
-       * Button Listener to populate vehicle's drop down list upon selecting a person
-       * 
-       */
-			popV();
-		}
-
-
 
 		public void populateTable() {
-			/*
-             * Initialzes the grid view table(gvTable) with all the current information in the database
-             * 
-             * */
-			try {
-				objConn = openDBConnection();
-				objConn.Open();
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Model, Available, Car, Person, Purpose, Period FROM PhoneCheckout ORDER BY Model", objConn);
-				SqlDataAdapter objAdapter = new SqlDataAdapter();
-				objAdapter.SelectCommand = objCmdSelect;
-				DataSet objDataSet = new DataSet();
-				objAdapter.Fill(objDataSet);
-				gvTable.DataSource = objDataSet.Tables[0].DefaultView;
+			objConn.Open();
+			SqlDataAdapter objAdapter = new SqlDataAdapter();
+			objAdapter.SelectCommand = new SqlCommand("select PhoneCheckout.ID, Phones.Name as Phone, Vehicles.Name as Vehicle, Employees.Name, PhoneCheckout.Start, PhoneCheckout.[End], PhoneCheckout.Purpose from PhoneCheckout," +
+													 "Vehicles, Phones, Employees where PhoneCheckout.Phone_ID = Phones.ID and PhoneCheckout.Vehicle_ID = Vehicles.ID and " +
+													 "Employees.Alna_num = PhoneCheckout.Alna_num and PhoneCheckout.Active = 1; ", objConn);
+			DataSet objDataSet = new DataSet();
+			objAdapter.Fill(objDataSet);
+			gvTable.DataSource = objDataSet.Tables[0].DefaultView;
 
 
-				gvTable.DataBind();
-				objConn.Close();
-			}
-			catch (Exception ex) {
-				writeStackTrace("Populate Phones", ex);
-			}
+			gvTable.DataBind();
+			objConn.Close();
 		}
 
 
 		public void clickCheckout(object sender, EventArgs e) {
-			/*
-             * Button listener for cheking out a phone
-             * temp is used to get the selected value of the check list boxes
-             * 
-             * */
 
-			String temp = "";
-
-			if (cbl.Items[0].Selected) {
-				temp += "Leakage,\n";
-			}
-			if (cbl.Items[1].Selected) {
-				temp += "Range,\n";
-			}
-			if (cbl.Items[2].Selected) {
-				temp += "Passive,\n";
-
-			}
-			if (cbl.Items[3].Selected) {
-				temp += "Coverage,\n";
-			}
-			if (cbl.Items[4].Selected) {
-				temp += "8-Blocks,\n";
-			}
-			if (cbl.Items[5].Selected) {
-				temp += "Calibration,\n";
-			}
-			if (cbl.Items[6].Selected) {
-				temp += "Other";
-			}
-
-			if (drpPerson.Text == "--Select A Person--") {
-				throwJSAlert("Please Select A Name");
-			}
-			else if (Vehicle.Text == "--Select A Vehicle--") {
-				throwJSAlert("Please Select A Vehicle");
-			}
-			/* Commands to update the PhoneCheckout accdb tab
-             * Populates gridview 
-             */
-			else {
-				try {
-					objConn = openDBConnection();
-					objConn.Open();
-					object[] o = { drpPerson.Text, Vehicle.Text, false, temp, drpFrom.Text + " - " + drpTo.Text, drpPhone.SelectedItem.Text };
-
-					executeVoidSQLQuery("UPDATE PhoneCheckout SET Person=@value1, Car=@value2, Available=@value3, Purpose= @value4, Period = @value5  WHERE Model=@value6", o, objConn);
-					objConn.Close();
-
-					saveOut();
-				}
-				catch (Exception ex) {
-					Response.Write(ex.ToString());
-				}
-
-				//Populates gridview 
-				populateTable();
-
-				// Updates the drop down phone list 
-				try {
-					drpPhone.Items.Clear();
-					drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-
-
-					objConn = openDBConnection();
-					objConn.Open();
-
-					SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-					objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-					objCmdSelect.Parameters.AddWithValue("@bool", true);
-
-					SqlDataReader reader = objCmdSelect.ExecuteReader();
-					while (reader.Read()) {
-						drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
-					}
-
-					objConn.Close();
-				}
-				catch (Exception eg) {
-					if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
-
-					}
-					using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt"))) {
-						file.WriteLine(Date.Today.ToString() + "--Populate Phones--" + eg.ToString());
-						file.Close();
-					}
-				}
-
-
-				//Updates the drop down list for the phone that can be checked out
-				try {
-					drpCheckIn.Items.Clear();
-					drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-
-
-
-					objConn = openDBConnection();
-					objConn.Open();
-
-					SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-					objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-					objCmdSelect.Parameters.AddWithValue("@bool", false);
-
-					SqlDataReader reader = objCmdSelect.ExecuteReader();
-					while (reader.Read()) {
-						drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
-					}
-
-					objConn.Close();
-				}
-				catch (Exception ef) {
-					writeStackTrace("Populate Phones", ef);
-				}
-			}
-
-		}
-
-
-		public void clickCheckin(object sender, EventArgs e) {
-
-			/* Button listener for the checked in 
-             * 
-             * 
-             * 
-             * */
-			String temp = "";
-
-
-			try {
-				objConn = openDBConnection();
-				objConn.Open();
-				object[] o = { temp, temp, true, temp, temp, drpCheckIn.SelectedItem.Text };
-				executeVoidSQLQuery("UPDATE PhoneCheckout SET Person=@value1, Car=@value2, Available=@value3, Purpose= @value4, Period = @value5 WHERE Model=@value6", o, objConn);
-				objConn.Close();
-				saveIn();
-			}
-			catch (Exception ex) {
-				/*
-                if (!System.IO.File.Exists(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                {
-                    
-                }
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Debug/StackTrace.txt")))
-                {
-                    file.WriteLine(Date.Today.ToString() + "--Populate List--" + ex.ToString());
-                    file.Close();
-                }
-                */
-				Response.Write(ex.ToString());
-			}
-
-
-			populateTable(); // Updates table
-
-			// Updates phone and check in phone drop down list's 
-			try {
-				drpPhone.Items.Clear();
-				drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-
-				objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-				objCmdSelect.Parameters.AddWithValue("@bool", true);
-
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					drpPhone.Items.Add(new ListItem(reader.GetString(0))); ;
-				}
-
-				objConn.Close();
-			}
-			catch (Exception eg) {
-				writeStackTrace("Populate Phones", eg);
-			}
-
-
-			// Updates phone and check in phone drop down list's 
-			try {
-				drpCheckIn.Items.Clear();
-				drpCheckIn.Items.Add(new ListItem("--Select A Phone--"));
-
-
-
-				objConn = openDBConnection();
-				objConn.Open();
-
-				SqlCommand objCmdSelect = new SqlCommand("SELECT Model FROM PhoneCheckout WHERE OS=@str AND Available=@bool ORDER BY Model;", objConn);
-				objCmdSelect.Parameters.AddWithValue("@str", drpOs.SelectedItem.Text);
-				objCmdSelect.Parameters.AddWithValue("@bool", false);
-
-				SqlDataReader reader = objCmdSelect.ExecuteReader();
-				while (reader.Read()) {
-					drpCheckIn.Items.Add(new ListItem(reader.GetString(0))); ;
-				}
-
-				objConn.Close();
-			}
-			catch (Exception ef) {
-				writeStackTrace("Populate phones", ef);
-			}
-
-		}
-
-		public void saveOut() {
-			/*
-             * Saves information when CheckOut button is clicked
-             * 
-             * */
-
-			try {
-				/** Now append to file **/
-				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true)) {
-
-					file.WriteLine("Checked Out," + DateTime.Now.ToShortDateString() + " " + "," + "By: " + drpPerson.Text + "," + "Vehicle: " + Vehicle.Text + "," + drpPhone.Text);
-
-					file.Close();
-				}
-			}
-			catch (Exception ef) {
-				writeStackTrace("Populate phones", ef);
-			}
-
-		}
-
-		public void saveIn() {
-			try {
-				/** Now append to file **/
-				using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + Server.MapPath("~/Logs/PhoneLog/Phone-report.txt"), true)) {
-
-					file.WriteLine("Checked In," + DateTime.Now.ToShortDateString() + " " + "," + drpCheckIn.Text);
-
-					file.Close();
-				}
-			}
-			catch (Exception ef) {
-				writeStackTrace("Populate phones", ef);
-			}
-
-
-		}
-
-		// adds 30 days in advance to the current day for selecting a check out date
-		public void Period(int num) {
-			drpFrom.Items.Clear();
-			drpTo.Items.Clear();
-
-			for (DateTime d = DateTime.Now; d <= DateTime.Now.AddDays(num); d = d.AddDays(1)) {
-				drpFrom.Items.Add(new ListItem(d.ToShortDateString()));
-				drpTo.Items.Add(new ListItem(d.ToShortDateString()));
-			}
-		}
-
-		//once limit on table is met (30 List Items) it add a new page
-		protected void OnPageIndexChanging2(object sender, GridViewPageEventArgs e) {
-			populateTable();
-			gvTable.PageIndex = e.NewPageIndex;
-			gvTable.DataBind();
 		}
 	}
 }

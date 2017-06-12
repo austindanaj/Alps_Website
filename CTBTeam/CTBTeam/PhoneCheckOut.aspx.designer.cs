@@ -22,24 +22,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label lblTitle;
         
         /// <summary>
-        /// OS control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label OS;
-        
-        /// <summary>
-        /// drpOs control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpOs;
-        
-        /// <summary>
         /// Model control.
         /// </summary>
         /// <remarks>
@@ -49,31 +31,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label Model;
         
         /// <summary>
-        /// drpPhone control.
+        /// ddlPhones control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpPhone;
-        
-        /// <summary>
-        /// Person control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Person;
-        
-        /// <summary>
-        /// drpPerson control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpPerson;
+        protected global::System.Web.UI.WebControls.DropDownList ddlPhones;
         
         /// <summary>
         /// Cars control.
@@ -85,13 +49,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label Cars;
         
         /// <summary>
-        /// Vehicle control.
+        /// ddlVehicles control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList Vehicle;
+        protected global::System.Web.UI.WebControls.DropDownList ddlVehicles;
         
         /// <summary>
         /// Test control.
@@ -103,31 +67,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label Test;
         
         /// <summary>
-        /// cbl control.
+        /// chkPurpose control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBoxList cbl;
-        
-        /// <summary>
-        /// From control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label From;
-        
-        /// <summary>
-        /// drpFrom control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpFrom;
+        protected global::System.Web.UI.WebControls.CheckBoxList chkPurpose;
         
         /// <summary>
         /// To control.
@@ -139,13 +85,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label To;
         
         /// <summary>
-        /// drpTo control.
+        /// ddlEnd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpTo;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEnd;
         
         /// <summary>
         /// CheckOut control.
@@ -166,13 +112,13 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Label CheckIn;
         
         /// <summary>
-        /// drpCheckIn control.
+        /// ddlCheckIn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpCheckIn;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCheckIn;
         
         /// <summary>
         /// Button1 control.
