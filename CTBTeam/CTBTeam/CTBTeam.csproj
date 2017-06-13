@@ -220,9 +220,6 @@
   <ItemGroup>
     <Compile Include="AccessConnection.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="Seed.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="ttc823jdnajs3.aspx.cs">
       <DependentUpon>ttc823jdnajs3.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

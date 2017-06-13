@@ -23,19 +23,17 @@ namespace CTBTeam {
 
 			objConn = openDBConnection();
 
-			if (!IsPostBack) {
-				Session["Cols"] = ddlColNum.SelectedValue == null ? "25" : ddlColNum.SelectedValue;
-				if (Session["Date"] == null)
-					initDate(objConn);
-			}
+			if (Session["Date"] == null)
+				initDate(objConn);
+
 			getDate();
 			getData();
 
 			if (!IsPostBack) {
 				ddlInit();
 			}
-			
-			populateTables((string) Session["Cols"]);
+
+			populateTables();
 			populateDataPercentage();
 		}
 
@@ -63,8 +61,8 @@ namespace CTBTeam {
 			}
 
 			//Everything else
-			projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
-			vehicleHoursData = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
+			projectHoursData = getDataTable("select ID, Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
+			vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
 			datesData = getDataTable("select Dates from Dates order by ID desc", null, objConn);
 			objConn.Close();
 		}
@@ -73,27 +71,44 @@ namespace CTBTeam {
 			ddlselectWeek.Items.Clear();
 			ddlProjects.Items.Clear();
 			ddlVehicles.Items.Clear();
-			ddlColNum.Items.Clear();
 
 			foreach (DataRow d in datesData.Rows)
 				ddlselectWeek.Items.Add(((Date)d[0]).ToShortDateString());
 
-			foreach (DataRow r in projectData.Rows)
-				ddlProjects.Items.Add(r[1].ToString());
+			Hashtable h = new Hashtable();
 
-			foreach (DataRow r in vehiclesData.Rows)
-				ddlVehicles.Items.Add(r[1].ToString());
+			int id; string name;
+			foreach (DataRow r in projectData.Rows) {
+				id = (int)r[0];
+				name = r[1].ToString();
+				ddlProjects.Items.Add(name);
+				h.Add(id, name);
+			}
 
-			int maxColValue = ddlProjects.Items.Count > ddlVehicles.Items.Count ? ddlProjects.Items.Count : ddlVehicles.Items.Count;
-
-			for (int i = 4; i <= maxColValue; i++)
-				ddlColNum.Items.Add(""+i);
-
-			ddlColNum.SelectedIndex = 2;
+			int alna = (int)Session["Alna_num"];
+			foreach (DataRow d in projectHoursData.Rows) {
+				if (alna == (int)d[1]) {
+					ddlWorkedHours.Items.Add("P_ID#" + d[0].ToString() + ": worked " + d[3] + " hours on " + h[d[2]]);
+				}
+			}
 
 			hoursUpdate();
-			if ((bool) Session["Full_time"]) return;
-			
+			if ((bool)Session["Full_time"]) return;
+
+			h = new Hashtable();
+			foreach (DataRow r in vehiclesData.Rows) {
+				id = (int)r[0];
+				name = r[1].ToString();
+				ddlVehicles.Items.Add(name);
+				h.Add(id, name);
+			}
+
+			foreach (DataRow d in vehicleHoursData.Rows) {
+				if (alna == (int)d[1]) {
+					ddlWorkedHours.Items.Add("V_ID#" + d[0].ToString() + ": " + d[3] + " hrs on " + h[d[2]]);
+				}
+			}
+
 			vehicleHoursTerns.Visible = true;
 			ddlVehicles.Visible = true;
 			ddlHoursVehicles.Visible = true;
@@ -104,7 +119,7 @@ namespace CTBTeam {
 
 		protected void htmlEvent(object sender, EventArgs e) {
 			if (sender.Equals(btnselectWeek)) {
-				if(!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
+				if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date selection)) {
 					throwJSAlert("Something went wrong. try again.");
 					return;
 				}
@@ -114,25 +129,42 @@ namespace CTBTeam {
 				cmd.Parameters.AddWithValue("@value1", selection);
 				SqlDataReader reader = cmd.ExecuteReader();
 				reader.Read();
-				Session["Date_ID"] = (int) reader.GetValue(0);
+				Session["Date_ID"] = (int)reader.GetValue(0);
 				objConn.Close();
 				redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitPercent)) {
 				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedValue, DATA_TYPE.PROJECT))
 					redirectSafely("~/Hours");
-			} else if (sender.Equals(btnSubmitVehicles)) {
-				if(insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE))
+			}
+			else if (sender.Equals(btnSubmitVehicles)) {
+				if (insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE))
 					redirectSafely("~/Hours");
-			} else if(sender.Equals(btnDelete)) {
-				if(!txtDelete.Text.Equals("YES")) {
+			}
+			else if (sender.Equals(btnDelete)) {
+				if (!txtDelete.Text.Equals("YES")) {
 					throwJSAlert("You must exactly type YES to delete all your records for the week. No extra whitespace, all caps.");
 					return;
 				}
+
+				string selection = ddlWorkedHours.SelectedValue;
+				if (string.IsNullOrEmpty(selection)) {
+					throwJSAlert("Don't try and hack the system! What are you doing?");
+					return;
+				}
+
+				string table = selection.Substring(0, 1).Equals("V") && !(bool)Session["Full_time"] ? "VehicleHours" : "ProjectHours";
+
+				int startIndex = selection.IndexOf("#") + 1, endIndex = selection.IndexOf(":");
+				selection = selection.Substring(startIndex, endIndex - startIndex);
+				if (!int.TryParse(selection, out int id)) {
+					throwJSAlert("Don't try and hack the system! What are you doing?");
+					return;
+				}
+
 				objConn.Open();
-				object[] o = { Session["Alna_num"], Session["Date_ID"] };
-				executeVoidSQLQuery("delete from ProjectHours where Alna_num=@value1 and Date_ID=@value2", o, objConn);
-				executeVoidSQLQuery("delete from VehicleHours where Alna_num=@value1 and Date_ID=@value2", o, objConn);
+				object[] o = { Session["Alna_num"], id};
+				executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o, objConn);
 				objConn.Close();
 				redirectSafely("~/Hours");
 			}
@@ -198,7 +230,7 @@ namespace CTBTeam {
 				return false;
 			}
 
-			int hours = (int) (40 * (decHours / 100));
+			int hours = (int)(40 * (decHours / 100));
 
 			string table;
 			string column;
@@ -234,8 +266,8 @@ namespace CTBTeam {
 			try {
 				objConn.Open();
 				object[] o = { Session["Alna_num"], projOrVehicleID, Session["Date_ID"] };
-				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2 and Date_ID=@value3", o,objConn);
-				
+				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2 and Date_ID=@value3", o, objConn);
+
 				if (reader.HasRows) {
 					reader.Read();
 					int hoursWorked = reader.GetInt32(1);
@@ -243,7 +275,8 @@ namespace CTBTeam {
 					reader.Close();
 					executeVoidSQLQuery("delete from " + table + " where ID=@value1", otherRecordID, objConn);
 					hours += hoursWorked;
-				} else {
+				}
+				else {
 					reader.Close();
 				}
 
@@ -284,15 +317,15 @@ namespace CTBTeam {
 				}
 			}
 
-			foreach(DataRow d in projectHoursData.Rows) {
-				totalHours += (int)d[2];
-				projectHours[h[(int) d[1]]] += (int) d[2];
+			foreach (DataRow d in projectHoursData.Rows) {
+				totalHours += (int)d[3];
+				projectHours[h[(int)d[2]]] += (int)d[3];
 			}
 
 			string[] category = { "A", "B", "C", "D" };
 			DataTable table = new DataTable();
 
-			for (int i=0;i<category.Length;i++) {
+			for (int i = 0; i < category.Length; i++) {
 				table.Columns.Add(category[i], typeof(double));
 				projectHours[i] /= totalHours;
 			}
@@ -330,7 +363,7 @@ namespace CTBTeam {
 			lblTotalHours.Text = "Hours: " + totalHours + " / " + (40 * numEmployees);
 		}
 
-		private void populateTables(string colNum) {
+		private void populateTables() {
 			/*
 			 * Need to put the partTimeEmployee/vehicle records into gridview.
 			 * Due to really annoying limitations of SQL and C#, this is
@@ -396,15 +429,11 @@ namespace CTBTeam {
 			 * Step 5: bind the data to the gridview at the very end
 			 * Step 6: repeat for vehicles
 			 */
-			
-			if (!int.TryParse(colNum, out int requestedColNum)) {
-				requestedColNum = 6;
-			}
 
-			int smallestThreshold = requestedColNum >= projectData.Rows.Count ? projectData.Rows.Count : requestedColNum;
+			int rowsCount = projectData.Rows.Count;
 
-			DataTable tempDataTable = new DataTable();		//Data table to temporarily store the table before the gridview
-			Hashtable h= new Hashtable();					//Temp Hash table for projects and vehicles
+			DataTable tempDataTable = new DataTable();      //Data table to temporarily store the table before the gridview
+			Hashtable h = new Hashtable();                  //Temp Hash table for projects and vehicles
 			Hashtable employeeHashTable = new Hashtable();  //Hash table for employees (there doesn't need to be 3 but it's simpler this way)
 
 			tempDataTable.Columns.Add("Name", typeof(string));
@@ -412,12 +441,12 @@ namespace CTBTeam {
 			int i;    //Scrap int to use throughout the method: we have to reuse it a lot
 			string s;
 
-			Lambda addColumns = new Lambda(delegate(object o) {
+			Lambda addColumns = new Lambda(delegate (object o) {
 				if (!(o is DataTable))
 					return;
 				DataTable d = (DataTable)o;
-				for (i = 0; i < smallestThreshold; i++) {       //Forall rows in projectData: 
-					s = d.Rows[i][1].ToString();				//Get the name of the project
+				for (i = 0; i < rowsCount; i++) {       //Forall rows in projectData: 
+					s = d.Rows[i][1].ToString();                //Get the name of the project
 					h.Add(projectData.Rows[i][0], s);           //Add it to the hash table with the Proj_Id as the key
 					tempDataTable.Columns.Add(s, typeof(int));  //Add it as a column to the temporary datatable. The column accepts integer values because we're talking about hours worked
 				}
@@ -431,12 +460,12 @@ namespace CTBTeam {
 			//Why do we need this? Because C# wont let you edit rows after they're added.
 			//So we have to put everything into an array first so we can add all the hours
 			//then we insert into the datatable.
-			DataRow[] tempTable = new DataRow[partTimeEmployeeData.Rows.Count]; 
+			DataRow[] tempTable = new DataRow[partTimeEmployeeData.Rows.Count];
 			foreach (DataRow d in partTimeEmployeeData.Rows) {
-				temp = tempDataTable.NewRow();	//Make a new row
-				temp["Name"] = d[1];			//The name of the employee is stored in [1]
-				employeeHashTable.Add(d[0], i);	//Add the employee's ID to the hashtable to quickly get what row its in later
-				tempTable[i] = temp;			//Assign the new row to tempTable
+				temp = tempDataTable.NewRow();  //Make a new row
+				temp["Name"] = d[1];            //The name of the employee is stored in [1]
+				employeeHashTable.Add(d[0], i); //Add the employee's ID to the hashtable to quickly get what row its in later
+				tempTable[i] = temp;            //Assign the new row to tempTable
 				i++;
 			}
 
@@ -445,13 +474,13 @@ namespace CTBTeam {
 					return;
 				DataTable table = (DataTable)o;
 				foreach (DataRow d in table.Rows) {
-					if (!employeeHashTable.ContainsKey(d[0]))	//If they're a full time employee skip them
+					if (!employeeHashTable.ContainsKey(d[1]))   //If they're a full time employee skip them
 						continue;
-					int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
-					string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
+					int whatRow = (int)employeeHashTable[d[1]]; //d[0] holds the alna number
+					string whatCol = (string)h[d[2]]; //d[1] holds the Project ID
 					if (whatCol == null)
 						continue;
-					tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
+					tempTable[whatRow][whatCol] = d[3]; //d[2] holds the hours worked on the project
 				}
 			});
 
@@ -469,7 +498,7 @@ namespace CTBTeam {
 			h = new Hashtable();
 
 			tempDataTable.Columns.Add("Name", typeof(string));
-			smallestThreshold = requestedColNum >= vehiclesData.Rows.Count ? vehiclesData.Rows.Count : requestedColNum;
+			rowsCount = vehiclesData.Rows.Count;
 
 			addColumns(vehiclesData);
 
@@ -496,18 +525,18 @@ namespace CTBTeam {
 			Lambda howMuchHoursWorked = new Lambda(delegate (object o) {
 				if (!(o is DataTable))
 					return;
-				DataTable temp = (DataTable) o;
+				DataTable temp = (DataTable)o;
 				int session = (int)Session["Alna_num"];
 				foreach (DataRow d in temp.Rows) {
-					if ((int)d[0] == session)
-						hoursWorked += (int) d[2];
+					if ((int)d[1] == session)
+						hoursWorked += (int)d[3];
 				}
 			});
 
-			Lambda addDDLoptions = new Lambda(delegate(object o) {
+			Lambda addDDLoptions = new Lambda(delegate (object o) {
 				if (!(o is DropDownList))
 					return;
-				DropDownList temp = (DropDownList) o;
+				DropDownList temp = (DropDownList)o;
 				float hoursSpent;
 				for (int i = 1; i <= 40; i++) {
 					if (i + hoursWorked > 40)

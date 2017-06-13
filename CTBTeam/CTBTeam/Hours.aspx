@@ -15,18 +15,30 @@
 			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title"></asp:Label>
 		</div>
 		<div class="col-md-50" style="text-align: left;">
-			<asp:CheckBox ID="chkInactive" runat="server" style="color:white;" Text="Show me inactive projects, old employees, etc." />
-			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" />
-			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="htmlEvent"/>
+			<asp:CheckBox ID="chkInactive" runat="server" Style="color: white;" Text="Show me inactive projects, old employees, etc." />
+			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" OnSelectedIndexChanged="htmlEvent" />
+			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="htmlEvent" />
 		</div>
 	</div>
 	<br />
 	<div class="row">
 		<div class="col-md-25" style="text-align: center;">
+			<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />
+			<br />
+			<br />
+			<asp:DropDownList ID="ddlWorkedHours" CssClass="drp-home" runat="server" />
+			<br />
+			<br />
+			<asp:TextBox ID="txtDelete" runat="server" CssClass="txt-purchase" placeholder="Type YES to confirm." />
+			<br />
+			<br />
+			<asp:Button ID="btnDelete" runat="server" OnClick="htmlEvent" Text="Delete" CssClass="btn-home" Style="color: white; font: bold; background-color: #ff0000" Text-Align="Center" Visible="true" />
+			<br />
+			<br />
 			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
 			<br />
 			<br />
-			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server"/>
+			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server" />
 			<br />
 			<br />
 			<asp:DropDownList ID="ddlHours" CssClass="drp-home" runat="server" />
@@ -47,21 +59,6 @@
 			<br />
 			<br />
 			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
-			<br />
-			<br />
-			<asp:Label ID="Label1" runat="server" CssClass="lbl-home-title" Text="Cols to display:" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlColNum" runat="server" CssClass="drp-home" OnSelectedIndexChanged="htmlEvent" />
-			<br />
-			<br />
-			<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />
-			<br />
-			<br />
-			<asp:TextBox ID="txtDelete" runat="server" CssClass="txt-purchase" placeholder="Type YES to confirm." />
-			<br />
-			<br />
-			<asp:Button ID="btnDelete" runat="server" OnClick="htmlEvent" Text="Delete" CssClass="btn-home" style="color:white;font:bold;background-color:#ff0000" Text-Align="Center" Visible="true" />
 		</div>
 		<div class="col-md-50">
 			<div class="row">
