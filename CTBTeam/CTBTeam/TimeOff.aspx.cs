@@ -27,6 +27,7 @@ namespace CTBTeam {
 		private void init() {
 			objConn.Open();
 			SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"], objConn);
+			if (reader == null) return;
 			while (reader.Read())
 				ddlTimeTakenOff.Items.Add("ID#" + reader.GetInt32(0) + ":" + ((Date) reader.GetValue(1)).ToShortDateString() + " - " + ((Date) reader.GetValue(2)).ToShortDateString());
 			reader.Close();
@@ -93,6 +94,7 @@ namespace CTBTeam {
 
 		private bool doesntConflict(SqlConnection o, Date start, Date end) {
 			SqlDataReader reader = getReader("Select TimeOff.[Start], TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"], objConn);
+			if (reader == null) return false;
 			if (!reader.HasRows) {
 				reader.Close();
 				return true;

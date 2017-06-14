@@ -6,9 +6,6 @@
 	<style type="text/css">
 		body {
 			background: url('Gradient.jpg') no-repeat center center fixed;
-			
-			
-			
 			background-size: cover;
 		}
 	</style>
@@ -17,9 +14,21 @@
 			<asp:Image ID="toeTruck" runat="server" ImageUrl="~/ToeTruck.png" CssClass="image_main" />
 		</div>
 		<div class="col-md-50">
-			<h2>Get a copy</h2>
+			<h2>Before you continue, answer these questions:</h2>
 			<br />
-			<asp:Button ID="download" runat="server" OnClick="downloadToeTruck" CssClass="btn btn-default" Text="Download" />
+			<h4>(foldl + 2 '(8 6 4 4))</h4>
+			<asp:TextBox ID="q1" runat="server" />
+			<br />
+			<h4>1 + 2 + 3 + 4 + ... (type your answer in lowercase)</h4>
+			<asp:TextBox ID="q2" runat="server" />
+			<br />
+			<h4>TMs are not closed under</h4>
+			<asp:TextBox ID="q3" runat="server" />
+			<br />
+			<h5>The best possible sort time for an algorithm is</h5>
+			<asp:TextBox ID="q4" runat="server" />
+			<br />
+			<asp:Button ID="download" runat="server" OnClick="downloadToeTruck" CssClass="btn btn-default" Text="Continue" />
 		</div>
 	</div>
 </asp:Content>

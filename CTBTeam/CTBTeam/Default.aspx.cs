@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Data;
-using Date = System.DateTime;
 using System.Collections;
 using System.IO;
 
 namespace CTBTeam {
 	public partial class _Default : SuperPage {
-		private static readonly string FILENAME = "DBLog.csv";
-
 		protected void Page_Load(object sender, EventArgs e) {
 
 		}
 
-		protected void View_More_onClick(object sender, EventArgs e) {
-			redirectSafely("Hours.aspx");
+		protected void toetruck(object sender, EventArgs e) {
+			redirectSafely("~/ToeTruck");
 		}
 
 		protected void download(object sender, EventArgs e) {
 			SqlConnection objConn = openDBConnection();
 			objConn.Open();
 
-			SqlDataReader reader = getReader("select ID, Dates from Dates order by ID desc", null, objConn);
+			SqlDataReader reader = getReader("select top 1 ID, Dates from Dates order by ID desc", null, objConn);
+			if (reader == null) return;
 			reader.Read();
 			Session["Date_ID"] = reader.GetInt32(0);
 			Session["Date"] = reader.GetDateTime(1);
@@ -30,11 +28,16 @@ namespace CTBTeam {
 			DataTable allEmployees = getDataTable("select Alna_num, Name from Employees where Active=@value1", true, objConn);
 			object[] parameters = { true, false };
 			DataTable partTimeEmployees = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2", parameters, objConn);
-			DataTable projects = getDataTable("select ID, Name from Projects", null, objConn);
+			DataTable projects = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
 			DataTable vehicles = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
 			DataTable projectHours = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
 			DataTable vehicleHours = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
 			objConn.Close();
+
+			if (null == allEmployees || null == partTimeEmployees || null == projects || null == vehicles || null == projectHours || null == vehicleHours) {
+				throwJSAlert("Failed to get data");
+				return;
+			}
 
 			DataTable projectDataTable = new DataTable();      //Data table to temporarily store the table before the gridview
 			DataTable vehicleDataTable = new DataTable();
@@ -68,9 +71,6 @@ namespace CTBTeam {
 			i = 0;
 			DataRow temp;
 
-			//Why do we need this? Because C# wont let you edit rows after they're added.
-			//So we have to put everything into an array first so we can add all the hours
-			//then we insert into the datatable.
 			DataRow[] tempTable = new DataRow[allEmployees.Rows.Count];
 			foreach (DataRow d in allEmployees.Rows) {
 				temp = projectDataTable.NewRow();  //Make a new row
@@ -83,8 +83,6 @@ namespace CTBTeam {
 			Lambda insertCells = new Lambda(delegate (object o) {
 				DataTable table = (DataTable)o;
 				foreach (DataRow d in table.Rows) {
-					if (!employeeHashTable.ContainsKey(d[0]))   //If they're a full time employee skip them
-						continue;
 					int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
 					string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
 					if (whatCol == null)
@@ -120,41 +118,49 @@ namespace CTBTeam {
 			foreach (DataRow d in tempTable)
 				vehicleDataTable.Rows.Add(d);
 
-			File.Create(@"" + Server.MapPath("~/Logs/" + FILENAME)).Dispose();
-			StreamWriter file = new StreamWriter(@"" + Server.MapPath("~/Logs/" + FILENAME));
+			//Begin doing the file write
+			try {
+				string fileName = @"" + Server.MapPath("~/Logs/DBLog.csv");
+				File.Create(fileName).Dispose();
+				StreamWriter file = new StreamWriter(fileName);
 
-			addColumns = new Lambda(delegate (object o) {
-				DataTable tmp = (DataTable)o;
-				s = "";
-				foreach (DataColumn d in tmp.Columns)
-					s += d.ToString() + ",";
-				file.Write(s);
-				file.WriteLine();
-			});
-
-			Lambda insertRows = new Lambda(delegate (object o) {
-				DataTable tmp = (DataTable)o;
-				foreach (DataRow d in tmp.Rows) {
+				addColumns = new Lambda(delegate (object o) {
+					DataTable tmp = (DataTable)o;
 					s = "";
-					foreach (object obj in d.ItemArray)
-						s += obj.ToString() + ",";
+					foreach (DataColumn d in tmp.Columns)
+						s += d.ToString() + ",";
 					file.Write(s);
 					file.WriteLine();
-				}
-			});
-			
-			addColumns(projectDataTable);
-			insertRows(projectDataTable);
-			file.WriteLine();
-			addColumns(vehicleDataTable);
-			insertRows(vehicleDataTable);
+				});
 
-			file.Close();
+				Lambda insertRows = new Lambda(delegate (object o) {
+					DataTable tmp = (DataTable)o;
+					foreach (DataRow d in tmp.Rows) {
+						s = "";
+						foreach (object obj in d.ItemArray)
+							s += obj.ToString() + ",";
+						file.Write(s);
+						file.WriteLine();
+					}
+				});
 
-			Response.ContentType = "Application/txt";
-			Response.AppendHeader("Content-Disposition", "attachment; filename="+FILENAME);
-			Response.TransmitFile(Server.MapPath("~/Logs/"+FILENAME));
-			Response.End();
+				addColumns(projectDataTable);
+				insertRows(projectDataTable);
+				file.WriteLine();
+				addColumns(vehicleDataTable);
+				insertRows(vehicleDataTable);
+
+				file.Close();
+
+				Response.ContentType = "Application/txt";
+				Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
+				Response.TransmitFile(fileName);
+				Response.End();
+			}
+			catch (Exception ex) {
+				writeStackTrace("Something wrong in file writing", ex);
+				throwJSAlert("Something wrong with the directory structure; contact an admin");
+			}
 		}
 	}
 }

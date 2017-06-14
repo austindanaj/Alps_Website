@@ -26,6 +26,7 @@ namespace CTBTeam {
 		private void populateDropdowns() {
 			objConn.Open();
 			SqlDataReader reader = getReader("select Name from Phones where Active=1 and ID not in (select Phone_ID from PhoneCheckout) order by Name", null, objConn);
+			if (reader == null) return;
 
 			while (reader.Read())
 				ddlPhones.Items.Add(reader.GetString(0));
@@ -33,7 +34,7 @@ namespace CTBTeam {
 			reader.Close();
 
 			reader = getReader("select Name from Vehicles where Active=1 order by Name", null, objConn);
-
+			if (reader == null) return;
 			while (reader.Read())
 				ddlVehicles.Items.Add(reader.GetString(0));
 			reader.Close();
@@ -43,6 +44,7 @@ namespace CTBTeam {
 				ddlEnd.Items.Add(d.AddDays(i).ToShortDateString());
 
 			reader = getReader("select ID from PhoneCheckout", null, objConn);
+			if (reader == null) return;
 			while (reader.Read())
 				ddlCheckIn.Items.Add(""+reader.GetInt32(0));
 			reader.Close();

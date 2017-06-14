@@ -267,6 +267,7 @@ namespace CTBTeam {
 				objConn.Open();
 				object[] o = { Session["Alna_num"], projOrVehicleID, Session["Date_ID"] };
 				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2 and Date_ID=@value3", o, objConn);
+				if (reader == null) return false;
 
 				if (reader.HasRows) {
 					reader.Read();
@@ -556,6 +557,8 @@ namespace CTBTeam {
 			ddlHoursVehicles.Items.Add("--Select A Percent (Out of 40 hrs)--");
 			howMuchHoursWorked(vehicleHoursData);
 			addDDLoptions(ddlHoursVehicles);
+
+			lblUserHours.Text = "Logged " + hoursWorked + "/40";
 		}
 	}
 }

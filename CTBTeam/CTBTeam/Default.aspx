@@ -13,7 +13,7 @@
 		<div class="col-md-50">
 			<h1 style="font-weight: 700; font-size: 70px;">Project Hours</h1>
 			<p>
-				<asp:Button runat="server" OnClick=" View_More_onClick" Text="Click Here" CssClass="btn btn-primary btn-lg" />
+				<asp:Button runat="server" OnClick="download" Text="Download" CssClass="btn btn-default" />
 			</p>
 		</div>
 		<div class="col-md-50">
@@ -22,12 +22,10 @@
 	</div>
 	<br />
 	<asp:Image ID="Image2" runat="server" ImageUrl="~/CTBProjects.png" Width="100%" Height="650" />
-
-	<div class="col-md-100" style="text-align:center">
-		<h2>Download Hours</h2>
-		<p>
-			<asp:Button runat="server" OnClick="download" Text="Download" CssClass="btn btn-default" />
-		</p>
+	<br />
+	<div class="col-md-50">
+		<asp:Button runat="server" ID="toe" OnClick="toetruck" />
 	</div>
+	<br />
 </asp:Content>
 
