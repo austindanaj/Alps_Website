@@ -3,11 +3,24 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Collections;
 using System.IO;
+using Date = System.DateTime;
+
 
 namespace CTBTeam {
 	public partial class _Default : SuperPage {
 		protected void Page_Load(object sender, EventArgs e) {
-
+			if (!IsPostBack) {
+				SqlConnection objConn = openDBConnection();
+				objConn.Open();
+				SqlDataReader reader = getReader("select Dates from Dates order by Dates desc", null, objConn);
+				if (reader == null) {
+					throwJSAlert("Can't connect to DB; contact admin");
+					return;
+				}
+				while (reader.Read())
+					ddlselectWeek.Items.Add(reader.GetDateTime(0).ToShortDateString());
+			}
+				
 		}
 
 		protected void toetruck(object sender, EventArgs e) {
@@ -18,20 +31,31 @@ namespace CTBTeam {
 			SqlConnection objConn = openDBConnection();
 			objConn.Open();
 
-			SqlDataReader reader = getReader("select top 1 ID, Dates from Dates order by ID desc", null, objConn);
-			if (reader == null) return;
+			if(!Date.TryParse(ddlselectWeek.SelectedValue, out Date date)) {
+				throwJSAlert("Not a valid date");
+				return;
+			}
+
+			SqlDataReader reader = getReader("Select ID from Dates where Dates=@value1", date, objConn);
+
+			if (reader == null) {
+				throwJSAlert("Can't connect to DB; contact admin");
+				return;
+			} else if (!reader.HasRows) {
+				throwJSAlert("Date isn't in DB");
+				return;
+			}
+
 			reader.Read();
-			Session["Date_ID"] = reader.GetInt32(0);
-			Session["Date"] = reader.GetDateTime(1);
-			reader.Close();
+			int dateID = reader.GetInt32(0);
 
 			DataTable allEmployees = getDataTable("select Alna_num, Name from Employees where Active=@value1", true, objConn);
 			object[] parameters = { true, false };
 			DataTable partTimeEmployees = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2", parameters, objConn);
 			DataTable projects = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
 			DataTable vehicles = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
-			DataTable projectHours = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
-			DataTable vehicleHours = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
+			DataTable projectHours = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
+			DataTable vehicleHours = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", dateID, objConn);
 			objConn.Close();
 
 			if (null == allEmployees || null == partTimeEmployees || null == projects || null == vehicles || null == projectHours || null == vehicleHours) {
@@ -53,11 +77,7 @@ namespace CTBTeam {
 				if (!(o is DataTable))
 					return;
 				DataTable d = (DataTable)o;
-				DataTable whatDataSet;
-				if (o.Equals(projects))
-					whatDataSet = projectDataTable;
-				else
-					whatDataSet = vehicleDataTable;
+				DataTable whatDataSet = o.Equals(projects) ? projectDataTable : vehicleDataTable;
 
 				for (i = 0; i < d.Rows.Count; i++) {       //Forall rows in projectData: 
 					s = d.Rows[i][1].ToString();                //Get the name of the project
