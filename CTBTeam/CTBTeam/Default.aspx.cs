@@ -73,13 +73,13 @@ namespace CTBTeam {
 
 			int colAndRowTracker = 0;
 			foreach (DataRow d in projectData.Rows) {
-				projHashTable.Add((int)d[0], colAndRowTracker);
+				projHashTable.Add((int)d[0], colAndRowTracker+1);	//Add one because column 0 is name
 				projectDataTable.Columns.Add((string)d[1]);
 				colAndRowTracker++;
 			}
 			colAndRowTracker = 0;
 			foreach (DataRow d in vehiclesData.Rows) {
-				vehicleHashTable.Add((int)d[0], colAndRowTracker);
+				vehicleHashTable.Add((int)d[0], colAndRowTracker+1);    //Add one because column 0 is name
 				vehicleDataTable.Columns.Add((string)d[1]);
 				colAndRowTracker++;
 			}

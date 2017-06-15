@@ -441,32 +441,32 @@ namespace CTBTeam {
 			tempProject.Columns.Add("Name");
 			tempVehicle.Columns.Add("Name");
 
-			int i = 0;
+			int colAndRowTracker = 0;
 			foreach (DataRow d in projectData.Rows) {			
-				projHashTable.Add((int)d[0], i);
+				projHashTable.Add((int)d[0], colAndRowTracker+1);
 				tempProject.Columns.Add((string)d[1]);
-				i++;
+				colAndRowTracker++;
 			}
-			i = 0;
+			colAndRowTracker = 0;
 			foreach (DataRow d in vehiclesData.Rows) {
-				vehicleHashTable.Add((int)d[0], i);
+				vehicleHashTable.Add((int)d[0], colAndRowTracker+1);
 				tempVehicle.Columns.Add((string)d[1]);
-				i++;
+				colAndRowTracker++;
 			}
-			i = 0;
+			colAndRowTracker = 0;
 			List<DataRow> projMatrix = new List<DataRow>();
 			List<DataRow> vehicleMatrix = new List<DataRow>();
 			foreach (DataRow d in employeesData.Rows) {
 				if ((bool)d[2])                                 //<- Since we only include interns, we stop on full timers. We can do this because i used ORDER BY fulltime, so all the
 					break;										//   part timers are first. Micro optimization for this part of code
-				employeeHashTable.Add((int)d[0], i);
+				employeeHashTable.Add((int)d[0], colAndRowTracker);
 				temp = tempProject.NewRow();
 				temp["Name"] = d[1];
 				projMatrix.Add(temp);
 				temp = tempVehicle.NewRow();
 				temp["Name"] = d[1];
 				vehicleMatrix.Add(temp);
-				i++;
+				colAndRowTracker++;
 			}
 			int whatCol, whatRow;
 
