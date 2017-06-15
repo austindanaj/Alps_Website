@@ -4,7 +4,8 @@ using System.Data;
 using System.Collections;
 using System.IO;
 using Date = System.DateTime;
-
+using System.Collections.Generic;
+using System.Web;
 
 namespace CTBTeam {
 	public partial class _Default : SuperPage {
@@ -28,14 +29,13 @@ namespace CTBTeam {
 		}
 
 		protected void download(object sender, EventArgs e) {
-			SqlConnection objConn = openDBConnection();
-			objConn.Open();
-
 			if(!Date.TryParse(ddlselectWeek.SelectedValue, out Date date)) {
 				throwJSAlert("Not a valid date");
 				return;
 			}
 
+			SqlConnection objConn = openDBConnection();
+			objConn.Open();
 			SqlDataReader reader = getReader("Select ID from Dates where Dates=@value1", date, objConn);
 
 			if (reader == null) {
@@ -48,103 +48,85 @@ namespace CTBTeam {
 
 			reader.Read();
 			int dateID = reader.GetInt32(0);
+			reader.Close();
 
-			DataTable allEmployees = getDataTable("select Alna_num, Name from Employees where Active=@value1", true, objConn);
-			object[] parameters = { true, false };
-			DataTable partTimeEmployees = getDataTable("select Alna_num, Name from Employees where Active=@value1 and Full_time=@value2", parameters, objConn);
-			DataTable projects = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
-			DataTable vehicles = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
-			DataTable projectHours = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
-			DataTable vehicleHours = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", dateID, objConn);
+			DataTable employeesData	   = getDataTable("select Alna_num, Name from Employees where Active=@value1", true, objConn);
+			DataTable projectData	   = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
+			DataTable vehiclesData	   = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
+			DataTable projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
+			DataTable vehicleHoursData = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", dateID, objConn);
 			objConn.Close();
 
-			if (null == allEmployees || null == partTimeEmployees || null == projects || null == vehicles || null == projectHours || null == vehicleHours) {
+			if (null == employeesData || null == projectData || null == vehiclesData || null == projectHoursData || null == vehicleHoursData) {
 				throwJSAlert("Failed to get data");
 				return;
 			}
 
-			DataTable projectDataTable = new DataTable();      //Data table to temporarily store the table before the gridview
-			DataTable vehicleDataTable = new DataTable();
-			Hashtable h = new Hashtable();                  //Temp Hash table for projects and vehicles
-			Hashtable employeeHashTable = new Hashtable();
-
-			projectDataTable.Columns.Add("Name", typeof(string));
-
-			int i;    //Scrap int to use throughout the method: we have to reuse it a lot
-			string s;
-
-			Lambda addColumns = new Lambda(delegate (object o) {
-				if (!(o is DataTable))
-					return;
-				DataTable d = (DataTable)o;
-				DataTable whatDataSet = o.Equals(projects) ? projectDataTable : vehicleDataTable;
-
-				for (i = 0; i < d.Rows.Count; i++) {       //Forall rows in projectData: 
-					s = d.Rows[i][1].ToString();                //Get the name of the project
-					h.Add(projects.Rows[i][0], s);           //Add it to the hash table with the Proj_Id as the key
-					whatDataSet.Columns.Add(s, typeof(int));  //Add it as a column to the temporary datatable. The column accepts integer values because we're talking about hours worked
-				}
-			});
-
-			addColumns(projects);
-
-			i = 0;
 			DataRow temp;
+			DataTable projectDataTable = new DataTable();
+			DataTable vehicleDataTable = new DataTable();
+			Dictionary<int, int> employeeHashTable = new Dictionary<int, int>();
+			Dictionary<int, int> projHashTable	   = new Dictionary<int, int>();        //I had to make 3 separate hash tables because there might be collisions
+			Dictionary<int, int> vehicleHashTable  = new Dictionary<int, int>();		//with primary keys (all the PKs are autoincrements except alnas)
 
-			DataRow[] tempTable = new DataRow[allEmployees.Rows.Count];
-			foreach (DataRow d in allEmployees.Rows) {
-				temp = projectDataTable.NewRow();  //Make a new row
-				temp["Name"] = d[1];            //The name of the employee is stored in [1]
-				employeeHashTable.Add(d[0], i); //Add the employee's ID to the hashtable to quickly get what row its in later
-				tempTable[i] = temp;            //Assign the new row to tempTable
-				i++;
+			projectDataTable.Columns.Add("Name");
+			vehicleDataTable.Columns.Add("Name");
+
+			int colAndRowTracker = 0;
+			foreach (DataRow d in projectData.Rows) {
+				projHashTable.Add((int)d[0], colAndRowTracker);
+				projectDataTable.Columns.Add((string)d[1]);
+				colAndRowTracker++;
 			}
-
-			Lambda insertCells = new Lambda(delegate (object o) {
-				DataTable table = (DataTable)o;
-				foreach (DataRow d in table.Rows) {
-					int whatRow = (int)employeeHashTable[d[0]]; //d[0] holds the alna number
-					string whatCol = (string)h[d[1]]; //d[1] holds the Project ID
-					if (whatCol == null)
-						continue;
-					tempTable[whatRow][whatCol] = d[2]; //d[2] holds the hours worked on the project
-				}
-			});
-
-			insertCells(projectHours);
-
-			foreach (DataRow d in tempTable)
-				projectDataTable.Rows.Add(d);
-
-			//Done with projects, time to move onto the vehicles
-
-			h = new Hashtable();
-
-			vehicleDataTable.Columns.Add("Name", typeof(string));
-
-			addColumns(vehicles);
-
-			i = 0;
-			tempTable = new DataRow[partTimeEmployees.Rows.Count];
-			foreach (DataRow d in partTimeEmployees.Rows) {
+			colAndRowTracker = 0;
+			foreach (DataRow d in vehiclesData.Rows) {
+				vehicleHashTable.Add((int)d[0], colAndRowTracker);
+				vehicleDataTable.Columns.Add((string)d[1]);
+				colAndRowTracker++;
+			}
+			colAndRowTracker = 0;
+			List<DataRow> projMatrix = new List<DataRow>();
+			List<DataRow> vehicleMatrix = new List<DataRow>();
+			foreach (DataRow d in employeesData.Rows) {                                  														
+				employeeHashTable.Add((int)d[0], colAndRowTracker);
+				temp = projectDataTable.NewRow();
+				temp["Name"] = d[1];
+				projMatrix.Add(temp);
 				temp = vehicleDataTable.NewRow();
 				temp["Name"] = d[1];
-				tempTable[i] = temp;
-				i++;
+				vehicleMatrix.Add(temp);
+				colAndRowTracker++;
 			}
 
-			insertCells(vehicleHours);
+			int whatCol, whatRow;
+			foreach (DataRow d in projectHoursData.Rows) {
+				int alna = (int)d[1];
+				if (!employeeHashTable.ContainsKey(alna))   //We skip full time employees since they will not appear in the Hashtable
+					continue;
+				whatCol = projHashTable[(int)d[2]];
+				whatRow = employeeHashTable[alna];
+				projMatrix[whatRow][whatCol] = d[3];
+			}
 
-			foreach (DataRow d in tempTable)
+			foreach (DataRow d in vehicleHoursData.Rows) {
+				whatCol = vehicleHashTable[(int)d[2]];
+				whatRow = employeeHashTable[(int)d[1]];
+				vehicleMatrix[whatRow][whatCol] = d[3];
+			}
+
+			foreach (DataRow d in projMatrix)
+				projectDataTable.Rows.Add(d);
+
+			foreach (DataRow d in vehicleMatrix)
 				vehicleDataTable.Rows.Add(d);
 
 			//Begin doing the file write
 			try {
-				string fileName = @"" + Server.MapPath("~/Logs/DBLog.csv");
+				string s, fileName = @"" + Server.MapPath("~/Logs/DBLog.csv");
 				File.Create(fileName).Dispose();
 				StreamWriter file = new StreamWriter(fileName);
 
-				addColumns = new Lambda(delegate (object o) {
+				Lambda addColumns = new Lambda(delegate (object o) {
 					DataTable tmp = (DataTable)o;
 					s = "";
 					foreach (DataColumn d in tmp.Columns)
@@ -175,11 +157,15 @@ namespace CTBTeam {
 				Response.ContentType = "Application/txt";
 				Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
 				Response.TransmitFile(fileName);
-				Response.End();
+
+				HttpResponse response = HttpContext.Current.Response; //These 4 lines kill the response without any exceptions
+				response.Flush();
+				response.SuppressContent = true;
+				HttpContext.Current.ApplicationInstance.CompleteRequest();
 			}
 			catch (Exception ex) {
 				writeStackTrace("Something wrong in file writing", ex);
-				throwJSAlert("Something wrong with the directory structure; contact an admin");
+				throwJSAlert("Something wrong with the directory structure/file IO; contact an admin");
 			}
 		}
 	}

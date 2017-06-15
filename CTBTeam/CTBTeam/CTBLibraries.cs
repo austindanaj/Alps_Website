@@ -171,7 +171,7 @@ namespace CTBTeam {
 			if (state)
 				objConn.Close();
 
-			return objDataSet.Tables[0];
+			return objDataSet == null ? null : objDataSet.Tables[0];
 		}
 
 		protected DataTable getDataTable(string command, object[] parameters, SqlConnection objConn) {
@@ -197,7 +197,7 @@ namespace CTBTeam {
 			if (state)
 				objConn.Close();
 
-			return objDataSet.Tables[0];
+			return objDataSet == null ? null : objDataSet.Tables[0];
 		}
 
 		protected SqlDataReader getReader(string query, object parameters, SqlConnection objConn) {
