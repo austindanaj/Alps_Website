@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Data;
-using System.Collections;
 using System.IO;
 using Date = System.DateTime;
 using System.Collections.Generic;
@@ -100,18 +99,18 @@ namespace CTBTeam {
 
 			int whatCol, whatRow;
 			foreach (DataRow d in projectHoursData.Rows) {
-				int alna = (int)d[1];
+				int alna = (int)d[0];
 				if (!employeeHashTable.ContainsKey(alna))   //We skip full time employees since they will not appear in the Hashtable
 					continue;
-				whatCol = projHashTable[(int)d[2]];
+				whatCol = projHashTable[(int)d[1]];
 				whatRow = employeeHashTable[alna];
-				projMatrix[whatRow][whatCol] = d[3];
+				projMatrix[whatRow][whatCol] = d[2];
 			}
 
 			foreach (DataRow d in vehicleHoursData.Rows) {
-				whatCol = vehicleHashTable[(int)d[2]];
-				whatRow = employeeHashTable[(int)d[1]];
-				vehicleMatrix[whatRow][whatCol] = d[3];
+				whatCol = vehicleHashTable[(int)d[1]];
+				whatRow = employeeHashTable[(int)d[0]];
+				vehicleMatrix[whatRow][whatCol] = d[2];
 			}
 
 			foreach (DataRow d in projMatrix)

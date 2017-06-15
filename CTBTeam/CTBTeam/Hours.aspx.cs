@@ -16,10 +16,6 @@ namespace CTBTeam {
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
 		protected void Page_Load(object sender, EventArgs e) {
-			Session["Alna_num"] = 173017;
-			Session["Name"] = "Anthony Hewins";
-			Session["Full_time"] = false;
-
 			if (Session["Alna_num"] == null) {
 				redirectSafely("~/Login");
 				return;
@@ -505,8 +501,6 @@ namespace CTBTeam {
 			int hoursWorked = 0;
 
 			Lambda howMuchHoursWorked = new Lambda(delegate (object o) {
-				if (!(o is DataTable))
-					return;
 				DataTable temp = (DataTable)o;
 				int session = (int)Session["Alna_num"];
 				foreach (DataRow d in temp.Rows) {
@@ -516,8 +510,6 @@ namespace CTBTeam {
 			});
 
 			Lambda addDDLoptions = new Lambda(delegate (object o) {
-				if (!(o is DropDownList))
-					return;
 				DropDownList temp = (DropDownList)o;
 				float hoursSpent;
 				for (int i = 1; i <= 40; i++) {
