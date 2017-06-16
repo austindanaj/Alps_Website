@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Web;
 
 namespace CTBTeam {
-	public partial class _Default : SuperPage {
+	public partial class _Default : HoursPage {
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
 				SqlConnection objConn = openDBConnection();
@@ -33,91 +33,8 @@ namespace CTBTeam {
 				return;
 			}
 
-			SqlConnection objConn = openDBConnection();
-			objConn.Open();
-			SqlDataReader reader = getReader("Select ID from Dates where Dates=@value1", date, objConn);
-
-			if (reader == null) {
-				throwJSAlert("Can't connect to DB; contact admin");
-				return;
-			} else if (!reader.HasRows) {
-				throwJSAlert("Date isn't in DB");
-				return;
-			}
-
-			reader.Read();
-			int dateID = reader.GetInt32(0);
-			reader.Close();
-
-			DataTable employeesData	   = getDataTable("select Alna_num, Name from Employees where Active=@value1", true, objConn);
-			DataTable projectData	   = getDataTable("select ID, Name from Projects where Active=@value1", true, objConn);
-			DataTable vehiclesData	   = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
-			DataTable projectHoursData = getDataTable("select Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", dateID, objConn);
-			DataTable vehicleHoursData = getDataTable("select Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", dateID, objConn);
-			objConn.Close();
-
-			if (null == employeesData || null == projectData || null == vehiclesData || null == projectHoursData || null == vehicleHoursData) {
-				throwJSAlert("Failed to get data");
-				return;
-			}
-
-			DataRow temp;
-			DataTable projectDataTable = new DataTable();
-			DataTable vehicleDataTable = new DataTable();
-			Dictionary<int, int> employeeHashTable = new Dictionary<int, int>();
-			Dictionary<int, int> projHashTable	   = new Dictionary<int, int>();        //I had to make 3 separate hash tables because there might be collisions
-			Dictionary<int, int> vehicleHashTable  = new Dictionary<int, int>();		//with primary keys (all the PKs are autoincrements except alnas)
-
-			projectDataTable.Columns.Add("Name");
-			vehicleDataTable.Columns.Add("Name");
-
-			int colAndRowTracker = 0;
-			foreach (DataRow d in projectData.Rows) {
-				projHashTable.Add((int)d[0], colAndRowTracker+1);	//Add one because column 0 is name
-				projectDataTable.Columns.Add((string)d[1]);
-				colAndRowTracker++;
-			}
-			colAndRowTracker = 0;
-			foreach (DataRow d in vehiclesData.Rows) {
-				vehicleHashTable.Add((int)d[0], colAndRowTracker+1);    //Add one because column 0 is name
-				vehicleDataTable.Columns.Add((string)d[1]);
-				colAndRowTracker++;
-			}
-			colAndRowTracker = 0;
-			List<DataRow> projMatrix = new List<DataRow>();
-			List<DataRow> vehicleMatrix = new List<DataRow>();
-			foreach (DataRow d in employeesData.Rows) {                                  														
-				employeeHashTable.Add((int)d[0], colAndRowTracker);
-				temp = projectDataTable.NewRow();
-				temp["Name"] = d[1];
-				projMatrix.Add(temp);
-				temp = vehicleDataTable.NewRow();
-				temp["Name"] = d[1];
-				vehicleMatrix.Add(temp);
-				colAndRowTracker++;
-			}
-
-			int whatCol, whatRow;
-			foreach (DataRow d in projectHoursData.Rows) {
-				int alna = (int)d[0];
-				if (!employeeHashTable.ContainsKey(alna))   //We skip full time employees since they will not appear in the Hashtable
-					continue;
-				whatCol = projHashTable[(int)d[1]];
-				whatRow = employeeHashTable[alna];
-				projMatrix[whatRow][whatCol] = d[2];
-			}
-
-			foreach (DataRow d in vehicleHoursData.Rows) {
-				whatCol = vehicleHashTable[(int)d[1]];
-				whatRow = employeeHashTable[(int)d[0]];
-				vehicleMatrix[whatRow][whatCol] = d[2];
-			}
-
-			foreach (DataRow d in projMatrix)
-				projectDataTable.Rows.Add(d);
-
-			foreach (DataRow d in vehicleMatrix)
-				vehicleDataTable.Rows.Add(d);
+			DataTable projectDataTable = getProjectHours(date, true);
+			DataTable vehicleDataTable = getVehicleHours(date);
 
 			//Begin doing the file write
 			try {

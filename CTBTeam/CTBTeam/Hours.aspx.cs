@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace CTBTeam {
-	public partial class Hours : SuperPage {
+	public partial class Hours : HoursPage {
 		private SqlConnection objConn;
 		private DataTable projectData, projectHoursData, vehicleHoursData, employeesData, vehiclesData, datesData;
 		private enum DATA_TYPE { VEHICLE, PROJECT };
@@ -362,138 +362,9 @@ namespace CTBTeam {
 		}
 
 		private void populateTables() {
-			/*
-			 * Need to put the partTimeEmployee/vehicle records into gridview.
-			 * Due to really annoying limitations of SQL and C#, this is
-			 * hard to do. Performance is also something I wanted to keep in mind because
-			 * network latency and many SQL queries is an issue with this page more than any other.
-			 * 
-			 * We need this:
-			 * +---------+---------+---------
-			 * |theName  |project1 |moreProj  ...
-			 * +---------+---------+---------
-			 * |employee1|# of hrs | # of hrs ...
-			 * +---------+---------+---------
-			 * |employee2|# of hrs | # of hrs ...
-			 * +---------+---------+---------
-			 * |employee3|# of hrs | # of hrs ...
-			 * +---------+---------+---------
-			 * |employee4|# of hrs | # of hrs ...
-			 * +---------+---------+---------
-			 * You might think "We could do this in SQL with complicated joins", but you can't because it requires using rows in the Projects tables as the columns.
-			 * Sql doesn't allow that, so we do it in C#, but it's a pain and potentially slow; BUT since the # of hours cells can be empty if the hours worked are 0,
-			 * we can pull off ~Omega(2*#ofEmployees + #ofProjects + #ofVehicles), which is pretty damn good (still O(n^2), but this is 2D though, what can you expect)
-			 * 
-			 * 
-			 * 
-			 * Here's how it works:
-			 * Step 1: take all the projects and put them in two things: hash table and the DataTable, as columns			 
-			 * +------+------+-----+
-			 * |name  |proj1 |proj2|	HashTable1(ProjID1 -> proj1'sIndexInTable (which is 1), ProjID2 -> proj2'sIndexInTable (which is 2), ...)
-			 * +------+------+-----+
-			 * 
-			 * Step 2: This was the annoying part thanks to C#. The next intuitive step would be to start populating rows, but if we do that,
-			 * then we cant edit them. So what I did instead was make a List<DataRow> so they can be edited. While I put them in there, I also put them in their own Hashtable.
-			 * 
-			 * The Datatable
-			 * +------+------+-----+
-			 * |name  | proj1|proj2|	HashTable1(ProjID1 -> proj1'sIndexInTable (which is 1), ProjID2 -> proj2'sIndexInTable (which is 2), ...)
-			 * +------+------+-----+	HashTable2(
-			 * 
-			 * The List<DataRow>
-			 * 
-			 * List[0] = DataRow(Name: "Anthony Hewins", proj1: null, proj2: null, ...)
-			 * List[1] = DataRow(Name: "Austin Danaj", proj1: null, proj2: null, ...)
-			 * etc.
-			 * 
-			 * Step 3: using the hashtable, finally fill the DataTable:
-			 * 
-			 * Pretend Austin worked 3 hours for proj2. It would go like this
-			 * 
-			 * foreach DataRow in ProjectHours
-			 *	 row# = Hashtable1.getWhatRowThisAlnaNumberIs(alna_num_supplied_from_ProjectHoursTable) //Remember: hash table takes the employee Alna and returns what row they are in the List
-			 *	 col# = Hashtable2.getWhatColThisProjectIs(proj_ID_supplied_from_ProjectHoursTable)
-			 *	 tempDatatable[row#][col#] = hours_spent_on_project_supplied_from_ProjectHoursTable
-			 * 
-			 *																  col#
-			 *																	|
-			 *																	V
-			 * 
-			 *			List[0] = DataRow(Name: "Anthony Hewins", proj1: null, proj2: null, ...)
-			 *	row#->	List[1] = DataRow(Name: "Austin Danaj", proj1: null, proj2: 3, ...)
-			 *	
-			 *	
-			 *	When done, the whole thing is filled.
-			 *
-			 *
-			 * Step 4: Now the easy part, forall datarows in the List, add them to the DataTable
-			 * Step 5: bind the data to the gridview at the very end
-			 * Step 6: repeat for vehicles
-			 */
-
-			DataRow temp;
-			DataTable tempProject = new DataTable();
-			DataTable tempVehicle = new DataTable();
-			Dictionary<int, int> employeeHashTable = new Dictionary<int, int>();
-			Dictionary<int, int> projHashTable	   = new Dictionary<int, int>();		//I had to make 3 separate hash tables because there might be collisions
-			Dictionary<int, int> vehicleHashTable  = new Dictionary<int, int>();		//with primary keys (all the PKs are autoincrements except alnas)
-
-			tempProject.Columns.Add("Name");
-			tempVehicle.Columns.Add("Name");
-
-			int colAndRowTracker = 0;
-			foreach (DataRow d in projectData.Rows) {			
-				projHashTable.Add((int)d[0], colAndRowTracker+1);
-				tempProject.Columns.Add((string)d[1]);
-				colAndRowTracker++;
-			}
-			colAndRowTracker = 0;
-			foreach (DataRow d in vehiclesData.Rows) {
-				vehicleHashTable.Add((int)d[0], colAndRowTracker+1);
-				tempVehicle.Columns.Add((string)d[1]);
-				colAndRowTracker++;
-			}
-			colAndRowTracker = 0;
-			List<DataRow> projMatrix = new List<DataRow>();
-			List<DataRow> vehicleMatrix = new List<DataRow>();
-			foreach (DataRow d in employeesData.Rows) {
-				if ((bool)d[2])                                 //<- Since we only include interns, we stop on full timers. We can do this because i used ORDER BY fulltime, so all the
-					break;										//   part timers are first. Micro optimization for this part of code
-				employeeHashTable.Add((int)d[0], colAndRowTracker);
-				temp = tempProject.NewRow();
-				temp["Name"] = d[1];
-				projMatrix.Add(temp);
-				temp = tempVehicle.NewRow();
-				temp["Name"] = d[1];
-				vehicleMatrix.Add(temp);
-				colAndRowTracker++;
-			}
-			int whatCol, whatRow;
-
-			foreach(DataRow d in projectHoursData.Rows) {
-				int alna = (int) d[1];
-				if (!employeeHashTable.ContainsKey(alna))	//We skip full time employees since they will not appear in the Hashtable
-					continue;
-				whatCol = projHashTable[(int)d[2]];
-				whatRow = employeeHashTable[alna];
-				projMatrix[whatRow][whatCol] = d[3];
-			}
-
-			foreach (DataRow d in vehicleHoursData.Rows) {
-				whatCol = vehicleHashTable[(int)d[2]];
-				whatRow = employeeHashTable[(int)d[1]];
-				vehicleMatrix[whatRow][whatCol] = d[3];
-			}
-
-			foreach (DataRow d in projMatrix)
-				tempProject.Rows.Add(d);
-
-			foreach (DataRow d in vehicleMatrix)
-				tempVehicle.Rows.Add(d);
-
-			dgvProject.DataSource = tempProject;
+			dgvProject.DataSource = getProjectHours(Session["Date_ID"], false);
 			dgvProject.DataBind();
-			dgvCars.DataSource = tempVehicle;
+			dgvCars.DataSource = getVehicleHours(Session["Date_ID"]) ;
 			dgvCars.DataBind();
 		}
 

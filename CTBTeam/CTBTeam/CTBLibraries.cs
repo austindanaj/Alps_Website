@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -275,6 +276,167 @@ namespace CTBTeam {
 
 			if (state)
 				objConn.Close();
+		}
+	}
+
+	public class HoursPage : SuperPage {
+		SqlConnection objConn;
+
+		protected DataTable getProjectHours(object date, bool includeFullTimers) {
+			return getFormattedDataTable(date, includeFullTimers, true);
+		}
+
+		protected DataTable getVehicleHours(object date) {
+			return getFormattedDataTable(date, false, false);
+		}
+
+		//Can be date or dateID
+		private DataTable getFormattedDataTable(object date, bool includeFullTimers, bool isProjectHours) {
+			/*
+			 * Need to put the partTimeEmployee/vehicle records into gridview.
+			 * Due to really annoying limitations of SQL and C#, this is
+			 * hard to do. Performance is also something I wanted to keep in mind because
+			 * network latency and many SQL queries is an issue with this page more than any other.
+			 * 
+			 * We need this:
+			 * +---------+---------+---------
+			 * |theName  |project1 |moreProj  ...
+			 * +---------+---------+---------
+			 * |employee1|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee2|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee3|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * |employee4|# of hrs | # of hrs ...
+			 * +---------+---------+---------
+			 * You might think "We could do this in SQL with complicated joins", but you can't because it requires using rows in the Projects tables as the columns.
+			 * Sql doesn't allow that, so we do it in C#, but it's a pain and potentially slow; BUT since the # of hours cells can be empty if the hours worked are 0,
+			 * we can pull off ~Omega(2*#ofEmployees + #ofProjects + #ofVehicles), which is pretty damn good (still O(n^2), but this is 2D though, what can you expect)
+			 * 
+			 * 
+			 * 
+			 * Here's how it works:
+			 * Step 1: take all the projects and put them in two things: hash table and the DataTable, as columns			 
+			 * +------+------+-----+
+			 * |name  |proj1 |proj2|	HashTable1(ProjID1 -> proj1'sIndexInTable (which is 1), ProjID2 -> proj2'sIndexInTable (which is 2), ...)
+			 * +------+------+-----+
+			 * 
+			 * Step 2: This was the annoying part thanks to C#. The next intuitive step would be to start populating rows, but if we do that,
+			 * then we cant edit them. So what I did instead was make a List<DataRow> so they can be edited. While I put them in there, I also put them in their own Hashtable.
+			 * 
+			 * The Datatable
+			 * +------+------+-----+
+			 * |name  | proj1|proj2|	HashTable1(ProjID1 -> proj1'sIndexInTable (which is 1), ProjID2 -> proj2'sIndexInTable (which is 2), ...)
+			 * +------+------+-----+	HashTable2(
+			 * 
+			 * The List<DataRow>
+			 * 
+			 * List[0] = DataRow(Name: "Anthony Hewins", proj1: null, proj2: null, ...)
+			 * List[1] = DataRow(Name: "Austin Danaj", proj1: null, proj2: null, ...)
+			 * etc.
+			 * 
+			 * Step 3: using the hashtable, finally fill the DataTable:
+			 * 
+			 * Pretend Austin worked 3 hours for proj2. It would go like this
+			 * 
+			 * foreach DataRow in ProjectHours
+			 *	 row# = Hashtable1.getWhatRowThisAlnaNumberIs(alna_num_supplied_from_ProjectHoursTable) //Remember: hash table takes the employee Alna and returns what row they are in the List
+			 *	 col# = Hashtable2.getWhatColThisProjectIs(proj_ID_supplied_from_ProjectHoursTable)
+			 *	 tempDatatable[row#][col#] = hours_spent_on_project_supplied_from_ProjectHoursTable
+			 * 
+			 *																  col#
+			 *																	|
+			 *																	V
+			 * 
+			 *			List[0] = DataRow(Name: "Anthony Hewins", proj1: null, proj2: null, ...)
+			 *	row#->	List[1] = DataRow(Name: "Austin Danaj", proj1: null, proj2: 3, ...)
+			 *	
+			 *	
+			 *	When done, the whole thing is filled.
+			 *
+			 *
+			 * Step 4: Now the easy part, forall datarows in the List, add them to the DataTable
+			 * Step 5: bind the data to the gridview at the very end
+			 * Step 6: repeat for vehicles
+			 */
+
+			string constraint;
+			if (date is Date) {
+				date = (Date)date;
+				constraint = "(select ID from Dates where Dates=@value1)";
+			}
+			else if (date is int) {
+				date = (int)date;
+				constraint = "@value1";
+			}
+			else
+				return null;
+
+			string modelTable, hoursTable, innerID;
+			if (isProjectHours) {
+				modelTable = "Projects";
+				hoursTable = "ProjectHours";
+				innerID = "Proj_ID";
+			} else {
+				modelTable = "Vehicles";
+				hoursTable = "VehicleHours";
+				innerID = "Vehicle_ID"; 
+			}
+
+
+			objConn = objConn == null ? openDBConnection() : objConn;
+			bool state = objConn.State == ConnectionState.Closed;
+			if (state) objConn.Open();
+			DataTable employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
+			DataTable modelData = getDataTable("select ID, Name from " + modelTable + "  where Active=@value1", true, objConn);
+			DataTable hoursData = getDataTable("select Alna_num, " + innerID+ ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
+			if (state) objConn.Close();
+
+			if (null == employeesData || null == modelData || null == hoursData)
+				return null;
+
+			int colAndRowTracker = 0;
+			Dictionary<int, int> employeeHashTable = new Dictionary<int, int>();
+			Dictionary<int, int> modelHashTable = new Dictionary<int, int>();        //I had to make 3 separate hash tables because there might be collisions
+
+			DataTable modelDataTable = new DataTable();
+			modelDataTable.Columns.Add("Name");
+
+			foreach (DataRow d in modelData.Rows) {
+				modelHashTable.Add((int)d[0], colAndRowTracker + 1); //Add one because column 0 is name
+				modelDataTable.Columns.Add((string)d[1]);
+				colAndRowTracker++;
+			}
+
+			colAndRowTracker = 0;
+
+			DataRow temp;
+			List<DataRow> tempMatrix = new List<DataRow>();
+			foreach (DataRow d in employeesData.Rows) {
+				if ((bool)d[2] & !includeFullTimers)
+					continue;
+				employeeHashTable.Add((int)d[0], colAndRowTracker);
+				temp = modelDataTable.NewRow();
+				temp["Name"] = d[1];
+				tempMatrix.Add(temp);
+				colAndRowTracker++;
+			}
+
+			int whatCol, whatRow;
+			foreach (DataRow d in hoursData.Rows) {
+				int alna = (int)d[0];
+				if (!employeeHashTable.ContainsKey(alna))   //We skip full time employees since they will not appear in the Hashtable
+					continue;
+				whatCol = modelHashTable[(int)d[1]];
+				whatRow = employeeHashTable[alna];
+				tempMatrix[whatRow][whatCol] = d[2];
+			}
+
+			foreach (DataRow d in tempMatrix)
+				modelDataTable.Rows.Add(d);
+
+			return modelDataTable;
 		}
 	}
 }
