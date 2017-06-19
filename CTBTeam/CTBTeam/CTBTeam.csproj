@@ -128,20 +128,20 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="2017Schedule.PNG" />
+    <Content Include="Images\2017Schedule.PNG" />
     <Content Include="Content\AddedCSS.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="CRC.exe" />
-    <Content Include="CTBProjects.png" />
+    <Content Include="Images\CTBProjects.png" />
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
     <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Globe.png" />
-    <Content Include="Gradient.jpg" />
+    <Content Include="Images\Globe.png" />
+    <Content Include="Images\Gradient.jpg" />
     <Content Include="HexGenerator.exe" />
     <Content Include="PhoneCheckOut.aspx" />
     <Content Include="List.aspx" />
@@ -218,7 +218,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessConnection.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="ttc823jdnajs3.aspx.cs">
       <DependentUpon>ttc823jdnajs3.aspx</DependentUpon>
@@ -237,7 +236,6 @@
     <Compile Include="CTBLibraries.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Log.cs" />
     <Compile Include="PhoneCheckOut.aspx.cs">
       <DependentUpon>PhoneCheckOut.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

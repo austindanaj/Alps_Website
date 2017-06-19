@@ -5,7 +5,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<style type="text/css">
 		body {
-			background: url('Gradient.jpg') no-repeat center center fixed;
+			background: url('Images/Gradient.jpg') no-repeat center center fixed;
 			background-size: cover;
 		}
 	</style>
@@ -18,11 +18,11 @@
 			</p>
 		</div>
 		<div class="col-md-50">
-			<asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Globe.png" CssClass="image_main" />
+			<asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Images/Globe.png" CssClass="image_main" />
 		</div>
 	</div>
 	<br />
-	<asp:Image ID="Image2" runat="server" ImageUrl="~/CTBProjects.png" Width="100%" Height="650" />
+	<asp:Image ID="Image2" runat="server" ImageUrl="~/Images/CTBProjects.png" Width="100%" Height="650" />
 	<br />
 	<div class="col-md-50">
 		<asp:Button runat="server" ID="toe" OnClick="toetruck" />

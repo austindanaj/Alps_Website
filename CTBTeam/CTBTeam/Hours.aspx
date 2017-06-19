@@ -3,7 +3,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<style type="text/css">
 		body {
-			background: url('Gradient.jpg') no-repeat center center fixed;
+			background: url('Images/Gradient.jpg') no-repeat center center fixed;
 			background-size: cover;
 		}
 	</style>

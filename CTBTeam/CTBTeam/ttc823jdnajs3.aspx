@@ -5,13 +5,13 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<style type="text/css">
 		body {
-			background: url('Gradient.jpg') no-repeat center center fixed;
+			background: url('Images/Gradient.jpg') no-repeat center center fixed;
 			background-size: cover;
 		}
 	</style>
 	<div class="row">
 		<div class="col-md-50">
-			<asp:Image ID="toeTruck" runat="server" ImageUrl="~/ToeTruck.png" CssClass="image_main" />
+			<asp:Image ID="toeTruck" runat="server" ImageUrl="~/Images/ToeTruck.png" CssClass="image_main" />
 		</div>
 		<div class="col-md-50">
 			<h2>Before you continue, answer these questions:</h2>
