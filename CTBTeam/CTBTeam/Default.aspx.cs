@@ -8,9 +8,11 @@ using System.Web;
 
 namespace CTBTeam {
 	public partial class _Default : HoursPage {
+		private SqlConnection objConn;
+
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
-				SqlConnection objConn = openDBConnection();
+				objConn = openDBConnection();
 				objConn.Open();
 				SqlDataReader reader = getReader("select Dates from Dates order by Dates desc", null, objConn);
 				if (reader == null) {
@@ -19,6 +21,8 @@ namespace CTBTeam {
 				}
 				while (reader.Read())
 					ddlselectWeek.Items.Add(reader.GetDateTime(0).ToShortDateString());
+				reader.Close();
+				objConn.Close();
 			}
 				
 		}
@@ -36,7 +40,12 @@ namespace CTBTeam {
 			DataTable projectDataTable = getProjectHours(date, true);
 			DataTable vehicleDataTable = getVehicleHours(date);
 
-			//Begin doing the file write
+			if (projectDataTable == null | vehicleDataTable == null) {
+				throwJSAlert("Data could not be downloaded; some sort of error");
+				return;
+			}
+
+			//Write file then transmit it
 			try {
 				string s, fileName = @"" + Server.MapPath("~/Logs/DBLog.csv");
 				File.Create(fileName).Dispose();

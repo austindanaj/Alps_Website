@@ -113,14 +113,9 @@ namespace CTBTeam {
 				return;
 			}
 
-			try {
-				executeVoidSQLQuery(command, id, objConn);
-				Session["success?"] = true;
-				redirectSafely("~/Admin");
-			}
-			catch (Exception ex) {
-				writeStackTrace("Remove Vehicle", ex);
-			}
+			executeVoidSQLQuery(command, id, objConn);
+			Session["success?"] = true;
+			redirectSafely("~/Admin");
 		}
 
 		private void populateTables() {
@@ -151,8 +146,13 @@ namespace CTBTeam {
 				parameters[1] = dgvProjects;
 				populate(parameters);
 				objConn.Close();
-			} catch (Exception e) {
+			} catch (SqlException e) {
+				writeStackTrace("Sql issue in populating tables", e);
+				throwJSAlert("Database failure: SqlException");
+			}
+			catch (Exception e) {
 				writeStackTrace("Error in populating tables", e);
+				throwJSAlert("Failure populating tables");
 			}
 		}
 	}
