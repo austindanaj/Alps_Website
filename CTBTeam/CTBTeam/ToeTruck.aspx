@@ -12,7 +12,7 @@
 	<div class="row">
 		<h2>Welcome to the secret page</h2>
 		<br />
-		<!--from the right top: down to row 6, and 5th to the rightmost in that row-->
+		<asp:Button ID="button6969" runat="server" OnClick="foundIt" Height="1" Width="1" />
 		<asp:Button ID="Button1" runat="server" Height="1" OnClick="falsepage" Width="1" />
 		<asp:Button ID="Button28" runat="server" Height="1" OnClick="falsepage" Width="1" />
 		<asp:Button ID="Button27" runat="server" Height="1" OnClick="falsepage" Width="1" />
@@ -284,7 +284,6 @@
 		<asp:Button ID="Button173" runat="server" Height="1" OnClick="falsepage" Width="1" />
 		<asp:Button ID="Button174" runat="server" Height="1" OnClick="falsepage" Width="1" />
 		<asp:Button ID="Button175" runat="server" Height="1" OnClick="falsepage" Width="1" />
-		<asp:Button ID="easterEgg" runat="server" OnClick="foundIt" Height="1" Width="1" />
 		<asp:Button ID="Button177" runat="server" Height="1" OnClick="falsepage" Width="1" />
 		<asp:Button ID="Button178" runat="server" Height="1" OnClick="falsepage" Width="1" />
 		<asp:Button ID="Button179" runat="server" Height="1" OnClick="falsepage" Width="1" />

@@ -13,6 +13,15 @@ namespace CTBTeam {
     public partial class ToeTruck {
         
         /// <summary>
+        /// button6969 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button button6969;
+        
+        /// <summary>
         /// Button1 control.
         /// </summary>
         /// <remarks>
@@ -2450,15 +2459,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button Button175;
-        
-        /// <summary>
-        /// easterEgg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button easterEgg;
         
         /// <summary>
         /// Button177 control.
