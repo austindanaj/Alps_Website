@@ -14,7 +14,16 @@
 			<asp:Image ID="toeTruck" runat="server" ImageUrl="~/Images/ToeTruck.png" CssClass="image_main" />
 		</div>
 		<div class="col-md-50">
-			<asp:Button ID="download" runat="server" OnClick="downloadToeTruck" CssClass="btn btn-default" Text="Download" />
+			<asp:Button ID="btnToeTruck" runat="server" OnClick="download" CssClass="btn btn-default" Text="Download" />
+		</div>
+	</div>
+	<br />
+	<div class="row">
+		<div class="col-md-50">
+			<asp:Image ID="cadi" runat="server" ImageUrl="~/Images/FrankCadi.png" CssClass="image_main" />
+		</div>
+		<div class="col-md-50">
+			<asp:Button ID="btnFrankCadi" runat="server" OnClick="download" CssClass="btn btn-default" Text="Download" />
 		</div>
 	</div>
 </asp:Content>

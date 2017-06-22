@@ -22,12 +22,30 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Image toeTruck;
         
         /// <summary>
-        /// download control.
+        /// btnToeTruck control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button download;
+        protected global::System.Web.UI.WebControls.Button btnToeTruck;
+        
+        /// <summary>
+        /// cadi control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image cadi;
+        
+        /// <summary>
+        /// btnFrankCadi control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnFrankCadi;
     }
 }

@@ -8,10 +8,11 @@ namespace CTBTeam {
 				redirectSafely("~/ToeTruck");
 		}
 
-		protected void downloadToeTruck(object sender, EventArgs e) {
+		protected void download(object sender, EventArgs e) {
+			string filename = sender.Equals(btnToeTruck) ? "ToeTruck.png" : "FrankCadi.png" ;
 			Response.ContentType = "Application/png";
-			Response.AppendHeader("Content-Disposition", "attachment; filename=ToeTruck.png");
-			Response.TransmitFile(Server.MapPath("~/Images/FrankCadi.png"));
+			Response.AppendHeader("Content-Disposition", "attachment; filename=" + filename);
+			Response.TransmitFile(Server.MapPath("~/Images/" + filename));
 			Response.End();
 		}
 	}
