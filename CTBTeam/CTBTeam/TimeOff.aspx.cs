@@ -27,7 +27,11 @@ namespace CTBTeam {
 		private void init() {
 			objConn.Open();
 			SqlDataReader reader = getReader("select ID, Start, TimeOff.[End] from TimeOff where Alna_num=@value1", Session["Alna_num"], objConn);
-			if (reader == null) return;
+			if (reader == null) {
+				throwJSAlert("Failed to grab data: SQL error");
+				return;
+			}
+
 			while (reader.Read())
 				ddlTimeTakenOff.Items.Add("ID#" + reader.GetInt32(0) + ":" + ((Date) reader.GetValue(1)).ToShortDateString() + " - " + ((Date) reader.GetValue(2)).ToShortDateString());
 			reader.Close();
@@ -43,26 +47,30 @@ namespace CTBTeam {
 			initDate(objConn);
 
 			int i;
-			Date monday = (Date)Session["Date"];
+			Date mondayOfCurrentWeek = (Date)Session["Date"];
 			Date[] weekdays = new Date[5];
 			for (i = 0; i <= 4; i++)
-				weekdays[i] = monday.AddDays(i);
+				weekdays[i] = mondayOfCurrentWeek.AddDays(i);
 
 			DataTable employees = getDataTable("select Alna_num, Name from Employees order by Alna_num", null, objConn);
 			DataTable timeOff = getDataTable("select Alna_num, Start, TimeOff.[End], Business from TimeOff order by Alna_num", null, objConn);
 
+			if (employees ==null | timeOff == null) {
+				throwJSAlert("Failed to grab data: SQL error");
+				return;
+			}
+
 			i = 0;
 			int maxIndex = timeOff.Rows.Count;
 			Date start, end;
-			DataRow newRow, currentRecord;
+			DataRow newRow = gridview.NewRow(), currentRecord = maxIndex > i ? timeOff.Rows[i] : null;
 			foreach(DataRow employee in employees.Rows) {
 				newRow = gridview.NewRow();
 				newRow["Name"] = employee[1];
-				if (i == maxIndex) {
+				if (i == maxIndex | currentRecord ==null) {
 					gridview.Rows.Add(newRow);
 					continue;
 				}
-				currentRecord = timeOff.Rows[i];
 				while ((int)currentRecord[0] == (int)employee[0]) {
 					start = (Date) currentRecord[1];
 					end = (Date) currentRecord[2];
@@ -71,6 +79,7 @@ namespace CTBTeam {
 							newRow[day.DayOfWeek.ToString()] = (bool) currentRecord[3] ? "Business" : "Vacation";
 					i++;
 					if (i == maxIndex) break;
+					currentRecord = timeOff.Rows[i];
 				}
 				gridview.Rows.Add(newRow);
 			}
