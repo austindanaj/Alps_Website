@@ -137,6 +137,7 @@
     <Content Include="Images\CTBProjects.png" />
     <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
+    <Content Include="Images\FrankCadi.png" />
     <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
