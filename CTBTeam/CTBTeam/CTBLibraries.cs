@@ -10,7 +10,7 @@ namespace CTBTeam {
 	public delegate void Lambda(object o);
 	public class SuperPage : Page {
 		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
-		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Data Source = (LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
+		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
 		private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
 		protected void writeStackTrace(string s, Exception ex) {

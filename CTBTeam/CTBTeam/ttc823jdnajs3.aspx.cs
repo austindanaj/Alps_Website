@@ -11,7 +11,7 @@ namespace CTBTeam {
 		protected void downloadToeTruck(object sender, EventArgs e) {
 			Response.ContentType = "Application/png";
 			Response.AppendHeader("Content-Disposition", "attachment; filename=ToeTruck.png");
-			Response.TransmitFile(Server.MapPath("~/Images/ToeTruck.png"));
+			Response.TransmitFile(Server.MapPath("~/Images/FrankCadi.png"));
 			Response.End();
 		}
 	}
