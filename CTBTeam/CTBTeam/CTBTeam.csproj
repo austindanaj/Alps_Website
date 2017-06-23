@@ -135,7 +135,6 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="CRC.exe" />
     <Content Include="Images\CTBProjects.png" />
-    <Content Include="CTBWebsiteData.accdb" />
     <Content Include="Debug\StackTrace.txt" />
     <Content Include="Images\FrankCadi.png" />
     <Content Include="ttc823jdnajs3.aspx" />
