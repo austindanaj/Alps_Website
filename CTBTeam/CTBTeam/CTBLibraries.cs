@@ -24,7 +24,7 @@ namespace CTBTeam {
 		}
 
 		protected SqlConnection openDBConnection() {
-			return new SqlConnection(LOCALHOST_CONNECTION_STRING);
+			return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
 			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
 		}
 
@@ -84,21 +84,12 @@ namespace CTBTeam {
 					}
 				}
 
-				if (failure)
-					throwJSAlert("Program crashed because of hardware of software failure not related to our code. Try again, it may work");
-				else if (codeError)
-					throwJSAlert("Program crashed either because your input was bad or the code may have screwed up. Try again, it may work");
-				else
-					throwJSAlert("There was some sort of failure with SQL. Make sure your input is good. Try again, it may work");
-
 				writeStackTrace("sql exception in executeVoidQuery", e);
 			}
 			catch (IOException e) {
-				throwJSAlert("There was a hard crash. This is probably hardware related. Contact Austin or Anthony");
 				writeStackTrace("io in executeVoidQuery", e);
 			}
 			catch (Exception e) {
-				throwJSAlert("There was some arbitrary failure. try again, it may work.");
 				writeStackTrace("executeVoidSQLQuery", e);
 			}
 			return null;
