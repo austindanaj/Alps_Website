@@ -52,7 +52,7 @@ namespace CTBTeam {
 				vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
 			}
 			else {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees order by Full_time", true, objConn);
+				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees order by Full_time", null, objConn);
 				projectData = getDataTable("select ID, Name, Categories from Projects", null, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
 			}
@@ -62,6 +62,11 @@ namespace CTBTeam {
 			vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
 			datesData = getDataTable("select Dates from Dates order by ID desc", null, objConn);
 			objConn.Close();
+
+			if (employeesData == null || projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null) {
+				throwJSAlert("Problem accessing data; contact Anthony or Austin");
+				return;
+			}
 		}
 
 		private void ddlInit() {
