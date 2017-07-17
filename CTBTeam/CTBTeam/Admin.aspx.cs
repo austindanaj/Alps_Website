@@ -92,15 +92,15 @@ namespace CTBTeam {
 			string text;
 
 			if (sender.Equals(btnRemoveVehicle)) {
-				command = "Update Vehicles set Active=0 WHERE ID=@value1;";
+				command = "Update Vehicles set Active=@value1 WHERE ID=@value2;";
 				text = txtRemoveVehicle.Text;
 			}
 			else if (sender.Equals(btnRemoveUser)) {
-				command = "Update Employees set Active=0 where Alna_num=@value1";
+				command = "Update Employees set Active=@value1 where Alna_num=@value2";
 				text = txtRemoveUser.Text;
 			}
 			else if (sender.Equals(btnRemoveProject)) {
-				command = "Update Projects set Active=0 WHERE ID=@value1;";
+				command = "Update Projects set Active=@value1 WHERE ID=@value2;";
 				text = txtRemoveProject.Text;
 			}
 			else {
@@ -112,8 +112,8 @@ namespace CTBTeam {
 				throwJSAlert("Not an integer!");
 				return;
 			}
-
-			executeVoidSQLQuery(command, id, objConn);
+			object[] args = {false, id};
+			executeVoidSQLQuery(command, args, objConn);
 			Session["success?"] = true;
 			redirectSafely("~/Admin");
 		}
