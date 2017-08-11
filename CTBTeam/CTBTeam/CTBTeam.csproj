@@ -137,6 +137,7 @@
     <Content Include="Images\CTBProjects.png" />
     <Content Include="Debug\StackTrace.txt" />
     <Content Include="Images\FrankCadi.png" />
+    <Content Include="IssueList.aspx" />
     <Content Include="seed.sql" />
     <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
@@ -220,6 +221,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="IssueList.aspx.cs">
+      <DependentUpon>IssueList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IssueList.aspx.designer.cs">
+      <DependentUpon>IssueList.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ttc823jdnajs3.aspx.cs">
       <DependentUpon>ttc823jdnajs3.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
