@@ -7,179 +7,137 @@ using System.Collections.Generic;
 using System.Net.Mail;
 
 namespace CTBTeam {
-    public partial class IssueList : SuperPage
-    {
-        SqlConnection objConn;
-        //	LinkedList<Button> dynamicButtonList = new LinkedList<Button>();
+	public partial class IssueList : SuperPage {
+		SqlConnection objConn;
+		//	LinkedList<Button> dynamicButtonList = new LinkedList<Button>();
 
-        public static string[] CATEGORIES =
-        {
-            "1: Inquiry/Request",
-            "2: Change Request",
-            "3: Problem",
-            "4: Memo"
-        };
+		private static readonly string[] CATEGORIES =
+		{
+			"1: Inquiry/Request",
+			"2: Change Request",
+			"3: Problem",
+			"4: Memo"
+		};
 
-        public static string[] SEVERITY =
-        {
-            "Minor",
-            "Major"
-        };
+		private static readonly string[] SEVERITY =
+		{
+			"Minor",
+			"Major"
+		};
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (Session["Alna_num"] == null)
-            {
-                redirectSafely("~/Login");
-                return;
-            }
+		protected void Page_Load(object sender, EventArgs e) {
+			//TEST SCAFFOLD:
+			Session["Alna_num"] = 1730317;
+			Session["Name"] = "Anthony Hewins";
+			Session["Full_time"] = false;
+			Session["loginStatus"] = "Signed in as " + Session["Name"] + " (Sign Out)";
 
-            objConn = openDBConnection();
-            if (!IsPostBack)
-            {
-                populateTable();
-                populateDropDowns();
-                successDialog(successOrFail);
+			if (Session["Alna_num"] == null) {
+				redirectSafely("~/Login");
+				return;
+			}
 
-            }
-        }
+			objConn = openDBConnection();
+			populateTable();
+			populateDropDowns();
+			successDialog(successOrFail);
+		}
 
-        protected void btnReportIssue_Click(object sender, EventArgs e)
-        {
-            pnlViewIssues.Visible = false;
-            pnlReportIssue.Visible = true;
-        }
+		protected void btnIssueViewAndReport(object sender, EventArgs e) {
+			if (Session["temp"] == null)
+				Session["temp"] = true;
+			else
+				Session["temp"] = null;
+		}
 
-        protected void btnViewIssue_Click(object sender, EventArgs e)
-        {
-            pnlReportIssue.Visible = false;
-            pnlViewIssues.Visible = true;
-        }
+		public void Send_Notification(string recipient_email, string msg, string subject) {
+			try {
+				MailMessage mail = new MailMessage();
+				SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
-        public void Send_Notification(string recipient_email, string msg, string subject)
-        {
+				mail.From = new MailAddress("alnaandroidtest@gmail.com");
+				mail.To.Add(recipient_email);
+				mail.Subject = subject;
+				mail.Body = msg;
 
+				SmtpServer.Port = 587;
+				SmtpServer.UseDefaultCredentials = false;
+				SmtpServer.Credentials = new System.Net.NetworkCredential("alnaandroidtest@gmail.com", "alnatest");
 
-            try
-            {
-                MailMessage mail = new MailMessage();
-                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+				SmtpServer.Send(mail);
 
-                mail.From = new MailAddress("alnaandroidtest@gmail.com");
-                mail.To.Add(recipient_email);
-                mail.Subject = subject;
-                mail.Body = msg;
+			}
+			catch (Exception ex) {
+				writeStackTrace("Sending Notification", ex);
+			}
+		}
 
-                SmtpServer.Port = 587;
-                SmtpServer.UseDefaultCredentials = false;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("alnaandroidtest@gmail.com", "alnatest");
+		public string BuildEmailAddress() {
+			string temp = "";
+			return temp;
+		}
 
-                SmtpServer.Send(mail);
+		private void populateTable() {
+			if (Session["temp"] != null) {   //If this value is not null, this person wants to view a report. Skip the SQL.
+				return;
+			}
+			objConn.Open();
+			dgvViewIssues.DataSource = getDataTable("SELECT top 25 Id, Category, Severity, Summary, Due_Date, Status, Updated FROM IssueList", null, objConn);
+			dgvViewIssues.DataBind();
+			objConn.Close();
+		}
 
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Sending Notification", ex);
-            }
-        }
-
-        public string BuildEmailAddress(string name)
-        {
-            string temp = "";
-
-            return temp;
-        }
-
-        private void populateTable()
-        {
-            try
-            {
-                objConn.Open();
-                SqlDataAdapter objAdapter = new SqlDataAdapter();
-                objAdapter.SelectCommand =
-                    new SqlCommand("SELECT Id, Category, Severity, Summary, Due_Date, Status, Updated FROM IssueList",
-                        objConn);
-                DataSet objDataSet = new DataSet();
-                objAdapter.Fill(objDataSet);
-                dgvViewIssues.DataSource = objDataSet.Tables[0].DefaultView;
-                dgvViewIssues.DataBind();
-                objConn.Close();
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Populate List", ex);
-            }
-        }
-
-        private void populateDropDowns()
-        {
-            ddlCategory.Items.Clear();
-            ddlProject.Items.Clear();
-            ddlSeverity.Items.Clear();
-            ddlAssign.Items.Clear();
-            try
-            {
-                objConn.Open();
-                SqlDataAdapter objAdapter = new SqlDataAdapter();
-                objAdapter.SelectCommand =
-                    new SqlCommand("SELECT Employees.[Name] FROM Employees WHERE Active=1 ORDER BY Alna_num", objConn);
-                DataSet objDataSet = new DataSet();
-                objAdapter.Fill(objDataSet);
-                foreach (string item in objDataSet.Tables[0].Rows)
-                {
-                    ddlAssign.Items.Add(item);
-                }
-                foreach (string item in CATEGORIES)
-                {
-                    ddlCategory.Items.Add(item);
-                }
-                foreach (string item in SEVERITY)
-                {
-                    ddlSeverity.Items.Add(item);
-                }
-                objAdapter.SelectCommand = new SqlCommand("SELECT Name FROM Projects where Active=1;", objConn);
-                objDataSet = new DataSet();
-                objAdapter.Fill(objDataSet);
-                foreach (string item in objDataSet.Tables[0].Rows)
-                {
-                    ddlProject.Items.Add(item);
-                }
-                txtReporter.Text = (string) Session["Name"];
-                //   dgvViewIssues.DataSource = objDataSet.Tables[0].DefaultView;
-                //   dgvViewIssues.DataBind();
-                objConn.Close();
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Populate Dropdowns", ex);
-            }
-        }
+		private void populateDropDowns() {
+			if (Session["temp"] == null) //If temp is null, this person wants to see reports. Skip the report form.
+				return;
+			ddlCategory.Items.Clear();
+			ddlProject.Items.Clear();
+			ddlSeverity.Items.Clear();
+			ddlAssign.Items.Clear();
+			try {
+				objConn.Open();
+				DataTable table = getDataTable("SELECT Employees.[Name] FROM Employees WHERE Active=@value1 ORDER BY Alna_num", true, objConn);
+				DataSet objDataSet = new DataSet();
+				foreach (string item in table.Rows) {
+					ddlAssign.Items.Add(item);
+				}
+				foreach (string item in CATEGORIES) {
+					ddlCategory.Items.Add(item);
+				}
+				foreach (string item in SEVERITY) {
+					ddlSeverity.Items.Add(item);
+				}
+				DataTable projects = getDataTable("SELECT Name FROM Projects where Active=@value1;", true, objConn);
+				foreach (string item in projects.Rows) {
+					ddlProject.Items.Add(item);
+				}
+				txtReporter.Text = (string)Session["Name"];
+				//   dgvViewIssues.DataSource = objDataSet.Tables[0].DefaultView;
+				//   dgvViewIssues.DataBind();
+				objConn.Close();
+			}
+			catch (Exception ex) {
+				writeStackTrace("Populate Dropdowns", ex);
+			}
+		}
 
 
-        protected void dgvViewIssues_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
+		protected void dgvViewIssues_OnSelectedIndexChanged(object sender, EventArgs e) {
 
-        }
+		}
 
-        protected void btnReportIssue_OnClick(object sender, EventArgs e)
-        {
-            try
-            {
-                objConn.Open();
-                SqlDataAdapter objAdapter = new SqlDataAdapter();
-              /*  objAdapter.SelectCommand = new SqlCommand(
-                    "INSERT INTO IssueList Category, Severity, Summary, Due_Date, Status, Updated, Reporter_Id, Assignee_Id VALUES" +
-                    "@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8", objConn);*/
-                object[] o = {ddlCategory.SelectedItem, ddlSeverity.SelectedItem, txtSummary.Text, null, "0: Test", Date.Now, 1, 0 };
-                executeVoidSQLQuery("INSERT INTO IssueList Category, Severity, Summary, Due_Date, Status, Updated, Reporter_Id, Assignee_Id VALUES" +
-                                    "@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8", o, objConn);
+		protected void btnReportIssue_OnClick(object sender, EventArgs e) {
+			try {
+				objConn.Open();
+				object[] o = { ddlCategory.SelectedItem, ddlSeverity.SelectedItem, txtSummary.Text, null, "0: Test", Date.Now, 1, 0 };
+				executeVoidSQLQuery("INSERT INTO IssueList Category, Severity, Summary, Due_Date, Status, Updated, Reporter_Id, Assignee_Id VALUES" +
+									"@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8", o, objConn);
 
-                objConn.Close();
-            }
-            catch (Exception ex)
-            {
-                writeStackTrace("Sumbit Issue", ex);
-            }
-        }
-    }
+				objConn.Close();
+			}
+			catch (Exception ex) {
+				writeStackTrace("Sumbit Issue", ex);
+			}
+		}
+	}
 }

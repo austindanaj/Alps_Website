@@ -10,6 +10,9 @@ namespace CTBTeam {
 			if (!IsPostBack) {
 				if (Session["Alna_num"] != null) {
 					Session["Alna_num"] = null;
+					Session["Name"] = null;
+					Session["Full_time"] = null;
+					Session["Admin"] = null;
 					Session["loginStatus"] = "Sign in";
 					redirectSafely("~/");
 				}
@@ -33,12 +36,13 @@ namespace CTBTeam {
 				objConn = openDBConnection();
 				objConn.Open();
 
-				SqlCommand objCmd = new SqlCommand("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", objConn);
-				objCmd.Parameters.AddWithValue("@value1", txtUser.Text);
-				objCmd.Parameters.AddWithValue("@value2", txtPass.Text);
-				SqlDataReader reader = objCmd.ExecuteReader();
-
-				if (!reader.HasRows) {
+				object[] o = { txtUser.Text, txtPass.Text };
+				SqlDataReader reader = getReader("SELECT User, Admin FROM Accounts WHERE Accounts.[User]=@value1 and Accounts.[Pass]=@value2", o, objConn);
+				if (reader == null) {
+					throwJSAlert("Error accessing data");
+					return;
+				}
+				if(!reader.HasRows) {
 					throwJSAlert("Incorrect username or password");
 					reader.Close();
 					return;
@@ -47,9 +51,7 @@ namespace CTBTeam {
 				Session["Admin"] = reader.GetBoolean(1);
 				reader.Close();
 
-				objCmd = new SqlCommand("Select Alna_num, Name, Full_time from Employees where Employees.[Name]=@value1;", objConn);
-				objCmd.Parameters.AddWithValue("@value1", ddl.Text);
-				reader = objCmd.ExecuteReader();
+				reader = getReader("Select Alna_num, Name, Full_time from Employees where Employees.[Name]=@value1;", ddl.Text, objConn);
 				reader.Read();
 				Session["Alna_num"] = reader.GetValue(0);
 				Session["Name"] = reader.GetValue(1);
@@ -57,7 +59,6 @@ namespace CTBTeam {
 				Session["loginStatus"] = "Signed in as " + Session["Name"] + " (Sign out)";
 				redirectSafely("~/");
 			}
-			catch (ThreadAbortException ex) { }
 			catch (Exception ex) {
 				writeStackTrace("Login", ex);
 			}

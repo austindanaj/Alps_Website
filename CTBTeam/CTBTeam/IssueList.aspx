@@ -11,13 +11,11 @@
 	<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
     
     <asp:Panel ID="pnlHeader" runat="server">
-        <asp:LinkButton ID="lnkReportIssue" runat="server" OnClick="btnReportIssue_Click">Report Issue</asp:LinkButton>
-        <asp:LinkButton ID="lnkViewIssues" runat="server" OnClick="btnViewIssue_Click">View Issues</asp:LinkButton>
+        <asp:LinkButton ID="switchView" runat="server" OnClick="btnIssueViewAndReport">Report Issue</asp:LinkButton>
     </asp:Panel>
     
     <asp:Panel ID="pnlViewIssues" runat="server">
         <asp:GridView ID="dgvViewIssues" CssClass="gridview" runat="server" OnSelectedIndexChanged="dgvViewIssues_OnSelectedIndexChanged"   autogenerateselectbutton="True"></asp:GridView>
-
     </asp:Panel>
     
     <asp:Panel ID="pnlReportIssue" runat="server" Visible="False">
@@ -28,7 +26,7 @@
         <asp:DropDownList ID="ddlAssign" runat="server"></asp:DropDownList>
         <asp:TextBox ID="txtDescription" runat="server"></asp:TextBox>
         <asp:TextBox ID="txtReporter" runat="server" ReadOnly="True"></asp:TextBox>
-        <asp:Button ID="btnReportIssue" runat="server" Text="Submit" OnClick="btnReportIssue_OnClick" />
+        <asp:Button ID="btnReportIssue" runat="server" Text="Submit" OnClick="btnIssueViewAndReport" />
     </asp:Panel>
     
     <asp:Panel ID="pnlSelectedIssue" runat="server" Visible="False">
