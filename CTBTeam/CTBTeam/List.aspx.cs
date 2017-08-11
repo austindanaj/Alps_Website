@@ -25,8 +25,9 @@ namespace CTBTeam {
 		}
 
 		private void ddlInit() {
-			for(int i=1;i<=10;i++)
-				ddlPriority.Items.Add(""+i);
+			ddlPriority.Items.Add("Low - 1");
+			ddlPriority.Items.Add("Medium - 2");
+			ddlPriority.Items.Add("High - 3");
 		}
 
 		protected void purchase(object sender, EventArgs e) {
