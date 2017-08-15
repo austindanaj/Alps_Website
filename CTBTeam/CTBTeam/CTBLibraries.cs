@@ -60,7 +60,7 @@ namespace CTBTeam {
 				writeStackTrace("some sort of simple error just occurred (data was edited between execution, something was closed that shouldn't have been, etc.", e);
 			}
 			catch (InvalidCastException e) {
-				throwJSAlert("Someone may have screwed the code up. Tell someone to check the stack traces");
+				writeStackTrace("Someone may have screwed the code up. Tell someone to check the stack traces", e);
 			}
 			catch (SqlException e) {
 				SqlErrorCollection errors = e.Errors;

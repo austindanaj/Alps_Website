@@ -8,26 +8,11 @@ using System.Net.Mail;
 
 namespace CTBTeam {
 	public partial class IssueList : SuperPage {
-		SqlConnection objConn;
-		//	LinkedList<Button> dynamicButtonList = new LinkedList<Button>();
-
-		private static readonly string[] CATEGORIES =
-		{
-			"1: Inquiry/Request",
-			"2: Change Request",
-			"3: Problem",
-			"4: Memo"
-		};
-
-		private static readonly string[] SEVERITY =
-		{
-			"Minor",
-			"Major"
-		};
+		private SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
 			//TEST SCAFFOLD:
-			Session["Alna_num"] = 1730317;
+			Session["Alna_num"] = 173017;
 			Session["Name"] = "Anthony Hewins";
 			Session["Full_time"] = false;
 			Session["loginStatus"] = "Signed in as " + Session["Name"] + " (Sign Out)";
@@ -38,16 +23,24 @@ namespace CTBTeam {
 			}
 
 			objConn = openDBConnection();
-			populateTable();
-			populateDropDowns();
+
+			if (!IsPostBack) {
+				if (userWantsToView()) {
+					populateTable();
+				}
+				else {
+					populateDropDowns();
+				}
+			}
 			successDialog(successOrFail);
 		}
 
-		protected void btnIssueViewAndReport(object sender, EventArgs e) {
+		protected void btnSwitchView(object sender, EventArgs e) {
 			if (Session["temp"] == null)
 				Session["temp"] = true;
 			else
 				Session["temp"] = null;
+			redirectSafely("~/IssueList");
 		}
 
 		public void Send_Notification(string recipient_email, string msg, string subject) {
@@ -72,72 +65,117 @@ namespace CTBTeam {
 			}
 		}
 
-		public string BuildEmailAddress() {
-			string temp = "";
-			return temp;
+		public string getEmail() {
+			return ddlAssign.Text.ToLower().Replace(' ', '.') + "@alps.com";
+		}
+
+		private bool userWantsToView() {
+			if (Session["temp"] == null) {
+				pnlViewIssues.Visible = true;
+				pnlReportIssue.Visible = false;
+				switchView.Text = "Report Issue";
+				return true;
+			}
+			else if (Session["temp"] is bool) {
+				pnlViewIssues.Visible = false;
+				pnlReportIssue.Visible = true;
+				pnlAdd.Visible = true;
+				pnlSelectedIssue.Visible = false;
+				switchView.Text = "View Issues";
+				return false;
+			}
+			else {
+				pnlViewIssues.Visible = false;
+				pnlReportIssue.Visible = true;
+				pnlAdd.Visible = false;
+				pnlSelectedIssue.Visible = true;
+				switchView.Text = "View Issues";
+				return false;
+			}
 		}
 
 		private void populateTable() {
-			if (Session["temp"] != null) {   //If this value is not null, this person wants to view a report. Skip the SQL.
-				return;
-			}
 			objConn.Open();
-			dgvViewIssues.DataSource = getDataTable("SELECT top 25 Id, Category, Severity, Summary, Due_Date, Status, Updated FROM IssueList", null, objConn);
+			DataTable table = getDataTable("SELECT top 25 IssueList.ID, IssueList.Title, IssueList.Category, Projects.Name as Project, IssueList.Severity, IssueList.Due_Date as 'Due Date', IssueList.Status, IssueList.Updated, e1.Name as Reporter, e2.Name as Assignee from IssueList inner join Employees e1 on e1.Alna_num=IssueList.Reporter inner join Employees e2 on e2.Alna_num=IssueList.Assignee inner join Projects on IssueList.Proj_ID=Projects.ID where IssueList.Active=@value1;", true, objConn);
+			dgvViewIssues.DataSource = table;
 			dgvViewIssues.DataBind();
 			objConn.Close();
 		}
 
 		private void populateDropDowns() {
-			if (Session["temp"] == null) //If temp is null, this person wants to see reports. Skip the report form.
-				return;
-			ddlCategory.Items.Clear();
-			ddlProject.Items.Clear();
-			ddlSeverity.Items.Clear();
-			ddlAssign.Items.Clear();
-			try {
-				objConn.Open();
+			objConn.Open();
+			if (pnlAdd.Visible) {
 				DataTable table = getDataTable("SELECT Employees.[Name] FROM Employees WHERE Active=@value1 ORDER BY Alna_num", true, objConn);
-				DataSet objDataSet = new DataSet();
-				foreach (string item in table.Rows) {
-					ddlAssign.Items.Add(item);
-				}
-				foreach (string item in CATEGORIES) {
-					ddlCategory.Items.Add(item);
-				}
-				foreach (string item in SEVERITY) {
-					ddlSeverity.Items.Add(item);
+				foreach (DataRow item in table.Rows) {
+					ddlAssign.Items.Add(item[0].ToString());
 				}
 				DataTable projects = getDataTable("SELECT Name FROM Projects where Active=@value1;", true, objConn);
-				foreach (string item in projects.Rows) {
-					ddlProject.Items.Add(item);
+				foreach (DataRow item in projects.Rows) {
+					ddlProject.Items.Add(item[0].ToString());
 				}
-				txtReporter.Text = (string)Session["Name"];
-				//   dgvViewIssues.DataSource = objDataSet.Tables[0].DefaultView;
-				//   dgvViewIssues.DataBind();
-				objConn.Close();
 			}
-			catch (Exception ex) {
-				writeStackTrace("Populate Dropdowns", ex);
+			else {
+				SqlDataReader reader = getReader("Select Description, Comment, Due_Date from IssueList where ID=@value1", Session["temp"], objConn);
+				reader.Read();
+				txtDescription.Text = reader.GetString(0);
+				object o = reader.GetValue(1);
+				txtComment.Text = o.Equals(DBNull.Value) ? "" : (string)o;
+				o = reader.GetValue(2);
+				if(o.Equals(DBNull.Value)) {
+					dueDate.Checked = true;
+				} else {
+					dueDate.Checked = false;
+					cldDueDate.SelectedDate = (Date)o;
+				}
+				reader.Close();
 			}
+			objConn.Close();
 		}
 
+		protected void selectIssue(object sender, EventArgs e) {
+			if (!int.TryParse(dgvViewIssues.SelectedRow.Cells[1].Text, out int id)) {
+				throwJSAlert("The ID value was changed.");
+				return;
+			}
 
-		protected void dgvViewIssues_OnSelectedIndexChanged(object sender, EventArgs e) {
-
+			Session["temp"] = id;
+			redirectSafely("~/IssueList");
 		}
 
-		protected void btnReportIssue_OnClick(object sender, EventArgs e) {
-			try {
-				objConn.Open();
-				object[] o = { ddlCategory.SelectedItem, ddlSeverity.SelectedItem, txtSummary.Text, null, "0: Test", Date.Now, 1, 0 };
-				executeVoidSQLQuery("INSERT INTO IssueList Category, Severity, Summary, Due_Date, Status, Updated, Reporter_Id, Assignee_Id VALUES" +
-									"@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8", o, objConn);
+		protected void submitIssue(object sender, EventArgs e) {
+			objConn.Open();
+			object[] o;
+			if (pnlAdd.Visible) {
+				SqlDataReader reader = getReader("select Alna_num from Employees where Name=@value1", ddlAssign.Text, objConn);
+				reader.Read();
+				int alna = reader.GetInt32(0);
+				reader.Close();
+				reader = getReader("select ID from Projects where Name=@value1", ddlProject.Text, objConn);
+				reader.Read();
+				int proj_id = reader.GetInt32(0);
+				reader.Close();
 
-				objConn.Close();
+				object date;
+				if (dueDate.Checked)
+					date = DBNull.Value;
+				else
+					date = cldDueDate.SelectedDate;
+				o = new object[]{ txtTitle.Text, ddlCategory.SelectedValue, proj_id, ddlSeverity.SelectedValue, date, "Initial", Date.Today, Session["Alna_num"], alna, txtDescription.Text };
+				executeVoidSQLQuery("insert into IssueList (Title, Category, Proj_ID, Severity, Due_Date, Status, Updated, Reporter, Assignee, Description) values" +
+														  "(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10)", o, objConn);
+			} else {
+				object date;
+				if (dueDate.Checked)
+					date = DBNull.Value;
+				else
+					date = cldDueDate.SelectedDate;
+				o = new object[] { ddlSeverity.SelectedValue, txtDescription.Text, txtComment.Text, ddlStatus.SelectedValue, date, Session["temp"]};
+				executeVoidSQLQuery("update IssueList set Severity=@value1, Description=@value2, Comment=@value3, Status=@value4, Due_date=@value5 where ID=@value6", o,objConn);
+				Session["temp"] = null;
 			}
-			catch (Exception ex) {
-				writeStackTrace("Sumbit Issue", ex);
-			}
+			objConn.Close();
+		}
+
+		protected void cldUncheckBox(object sender, EventArgs e) { dueDate.Checked = false; }
 		}
 	}
-}
