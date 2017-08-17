@@ -140,11 +140,16 @@
     <Content Include="IssueList.aspx" />
     <Content Include="seed.sql" />
     <Content Include="SQL scripts\Script1.sql" />
+    <Content Include="SQL scripts\Script10.sql" />
+    <Content Include="SQL scripts\Script11.sql" />
     <Content Include="SQL scripts\Script2.sql" />
     <Content Include="SQL scripts\Script3.sql" />
     <Content Include="SQL scripts\Script4.sql" />
     <Content Include="SQL scripts\Script5.sql" />
     <Content Include="SQL scripts\Script6.sql" />
+    <Content Include="SQL scripts\Script7.sql" />
+    <Content Include="SQL scripts\Script8.sql" />
+    <Content Include="SQL scripts\Script9.sql" />
     <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

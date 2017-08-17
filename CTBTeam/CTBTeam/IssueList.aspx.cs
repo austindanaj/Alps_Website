@@ -183,7 +183,7 @@ namespace CTBTeam {
 				date = DBNull.Value;
 			else {
 				date = cldDueDate.SelectedDate;
-				if (Date.Today.CompareTo(date) > 0) {
+				if (Date.Today.CompareTo(date) > 0 & pnlAdd.Visible) {
 					Session["error"] = true;
 					redirectSafely("~/IssueList");
 					return;
