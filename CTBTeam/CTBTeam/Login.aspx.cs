@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Threading;
 
 namespace CTBTeam {
 	public partial class Login : SuperPage {
@@ -9,14 +8,10 @@ namespace CTBTeam {
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
 				if (Session["Alna_num"] != null) {
-					Session["Alna_num"] = null;
-					Session["Name"] = null;
-					Session["Full_time"] = null;
-					Session["Admin"] = null;
+					Session.Clear();
 					Session["loginStatus"] = "Sign in";
 					redirectSafely("~/");
 				}
-
 				loadEmployees();
 			}
 		}
@@ -24,8 +19,7 @@ namespace CTBTeam {
 		private void loadEmployees() {
 			objConn = openDBConnection();
 			objConn.Open();
-			SqlCommand objCmd = new SqlCommand("SELECT Name FROM Employees where Active=1;", objConn);
-			SqlDataReader reader = objCmd.ExecuteReader();
+			SqlDataReader reader = getReader("SELECT Name FROM Employees where Active=@value1;", true, objConn);
 			while (reader.Read()) {
 				ddl.Items.Add(reader.GetString(0));
 			}

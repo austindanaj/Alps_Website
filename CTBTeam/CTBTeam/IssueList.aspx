@@ -9,16 +9,25 @@
 	</style>
 
 	<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
+	<asp:TextBox ID="txtFail" runat="server" Text="Due date must be after today" Visible="false" ReadOnly="true" CssClass="feedback-textbox" style="width:220px;background-color:orangered"/>
 
 	<asp:Panel ID="pnlHeader" runat="server">
 		<asp:LinkButton ID="switchView" runat="server" OnClick="btnSwitchView">Report Issue</asp:LinkButton>
 	</asp:Panel>
 
-	<asp:Panel ID="pnlViewIssues" runat="server">
-		<asp:GridView ID="dgvViewIssues" runat="server" CssClass="gridview" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True"></asp:GridView>
+	<asp:Panel ID="pnlViewIssues" runat="server" Visible="false">
+		<asp:GridView ID="dgvViewIssues" runat="server" CssClass="gridview" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True" />
+		<br />
+		<div class="col-md-50">
+			<asp:Button ID="btnBackward" runat="server" Text="←" CssClass="btn-home" OnClick="viewOtherRows" />
+		</div>
+		<div class="col-md-50">
+			<asp:Button ID="btnForward" runat="server" Text="→" CssClass="btn-home" OnClick="viewOtherRows"/>
+		</div>
 	</asp:Panel>
 
 	<asp:Panel ID="pnlReportIssue" runat="server" Visible="false">
+		<asp:GridView ID="dgvCurrentIssue" runat="server" CssClass="gridview" Visible="false" />
 		<div class="col-md-50">
 			<asp:Panel ID="pnlAdd" runat="server" Visible="false">
 				<asp:Label ID="label5" runat="server" Text="Issue Title" CssClass="lbl-home-title" />
@@ -29,10 +38,10 @@
 				<asp:Label ID="label1" runat="server" Text="Category" CssClass="lbl-home-title" />
 				<br />
 				<asp:DropDownList ID="ddlCategory" runat="server" CssClass="drp-purchase">
-					<asp:ListItem Text="1: Memo" />
-					<asp:ListItem Text="2: " />
-					<asp:ListItem Text="3: " />
-					<asp:ListItem Text="4: " />					
+					<asp:ListItem Text="1: Inquiry/Request" />
+					<asp:ListItem Text="2: Change Request" />
+					<asp:ListItem Text="3: Problem" />
+					<asp:ListItem Text="4: Memo"/>					
 				</asp:DropDownList>
 				<br>
 				<br>
@@ -60,7 +69,9 @@
 			<asp:TextBox ID="txtDescription" runat="server" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" />
 			<br />
 			<br />
-			<asp:Panel ID="pnlSelectedIssue" runat="server" Visible="False">
+			<asp:Panel ID="pnlSelectedIssue" runat="server" Visible="false">
+				<br />
+				<br />
 				<asp:Label ID="label15" runat="server" Text="Comment" CssClass="lbl-home-title" />
 				<br />
 				<asp:TextBox ID="txtComment" runat="server" Text="" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" />

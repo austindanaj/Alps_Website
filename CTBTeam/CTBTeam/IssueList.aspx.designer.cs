@@ -22,6 +22,15 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.TextBox successOrFail;
         
         /// <summary>
+        /// txtFail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFail;
+        
+        /// <summary>
         /// pnlHeader control.
         /// </summary>
         /// <remarks>
@@ -58,6 +67,24 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.GridView dgvViewIssues;
         
         /// <summary>
+        /// btnBackward control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBackward;
+        
+        /// <summary>
+        /// btnForward control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnForward;
+        
+        /// <summary>
         /// pnlReportIssue control.
         /// </summary>
         /// <remarks>
@@ -65,6 +92,15 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlReportIssue;
+        
+        /// <summary>
+        /// dgvCurrentIssue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView dgvCurrentIssue;
         
         /// <summary>
         /// pnlAdd control.
