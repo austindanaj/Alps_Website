@@ -20,7 +20,7 @@ namespace CTBTeam {
 			if (!IsPostBack) {
 				cldTimeOffStart.SelectedDate = DateTime.Now;
 				init();
-				successDialog(successOrFail);
+				successDialog(txtSuccessBox);
 			}
 		}
 

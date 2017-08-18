@@ -1,14 +1,7 @@
 ﻿<%@ Page Title="Purchase List" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="List.aspx.cs" Inherits="CTBTeam.List" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-	<style type="text/css">
-		body {
-			background: url('Images/Gradient.jpg') no-repeat center center fixed;
-			background-size: cover;
-		}
-	</style>
-
-	<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
+	<asp:TextBox ID="txtSuccessBox" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
 	<div class="row">
 		<br />
 		<div class="col-md-33">

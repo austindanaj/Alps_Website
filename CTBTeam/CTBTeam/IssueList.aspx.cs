@@ -29,7 +29,7 @@ namespace CTBTeam {
 				else
 					populateIssuePanel();
 			}
-			successDialog(successOrFail);
+			successDialog(txtSuccessBox);
 		}
 
 		private bool userWantsToView() {
@@ -39,7 +39,7 @@ namespace CTBTeam {
 			//  3. If Session["temp"] is an int (the else statement), we want to edit the issue with that ID#
 			//Then we make things invisible/visible as they need to be.
 			if(null != Session["error"]) {
-				txtFail.Visible = true;
+				txtFailureBox.Visible = true;
 				Session["error"] = null;
 			}
 
@@ -49,13 +49,13 @@ namespace CTBTeam {
 			}
 			else if (Session["temp"] is bool) {
 				pnlReportIssue.Visible = true;
-				pnlAdd.Visible = true;
+				pnlAddIssue.Visible = true;
 				switchView.Text = "View Issues";
 				return false;
 			}
 			else {
 				pnlReportIssue.Visible = true;
-				pnlSelectedIssue.Visible = true;
+				pnlEditIssue.Visible = true;
 				switchView.Text = "View Issues";
 				return false;
 			}
@@ -107,7 +107,7 @@ namespace CTBTeam {
 			//The if statement is adding an issue, the else statement is editing it
 			objConn.Open();
 
-			if (pnlAdd.Visible) {
+			if (pnlAddIssue.Visible) {
 				SqlDataReader reader = getReader("SELECT Alna_num, Employees.[Name] FROM Employees WHERE Active=@value1 ORDER BY Alna_num", true, objConn);
 				int alna;
 				string temp;
@@ -183,14 +183,14 @@ namespace CTBTeam {
 				date = DBNull.Value;
 			else {
 				date = cldDueDate.SelectedDate;
-				if (Date.Today.CompareTo(date) > 0 & pnlAdd.Visible) {
+				if (Date.Today.CompareTo(date) > 0 & pnlAddIssue.Visible) {
 					Session["error"] = true;
 					redirectSafely("~/IssueList");
 					return;
 				}
 			}
 
-			if (pnlAdd.Visible) {
+			if (pnlAddIssue.Visible) {
 				SqlDataReader reader = getReader("select Alna_num from Employees where Name=@value1", ddlAssign.Text, objConn);
 				reader.Read();
 				int alna = reader.GetInt32(0);

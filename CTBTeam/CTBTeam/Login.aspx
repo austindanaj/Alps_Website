@@ -1,12 +1,6 @@
 ﻿<%@ Page Title="Sign In" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="CTBTeam.Login" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-	<style type="text/css">
-		body {
-			background: url('Images/Gradient.jpg') no-repeat center center fixed;
-			background-size: cover;
-		}
-	</style>
 	<br />
 
 

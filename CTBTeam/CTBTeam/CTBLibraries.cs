@@ -125,9 +125,9 @@ namespace CTBTeam {
 				conn.Close();
 		}
 
-		protected void successDialog(System.Web.UI.WebControls.TextBox successOrFail) {
+		protected void successDialog(System.Web.UI.WebControls.TextBox txtSuccessBox) {
 			if (Session["success?"] != null)
-				successOrFail.Visible = (bool)Session["success?"];
+				txtSuccessBox.Visible = (bool)Session["success?"];
 			Session["success?"] = false;
 		}
 
