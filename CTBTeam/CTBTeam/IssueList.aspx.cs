@@ -34,6 +34,7 @@ namespace CTBTeam {
 
 		private bool userWantsToView() {
 			//We use cookies to decide what the user wants to do.
+			//First we check if there's an error and display that first.
 			//  1. If Session["temp"] is null, we view issues
 			//  2. If Session["temp"] is true, we want to report an issue
 			//  3. If Session["temp"] is an int (the else statement), we want to edit the issue with that ID#
@@ -65,19 +66,20 @@ namespace CTBTeam {
 		//	Emails
 		//====================================================================================================
 
-		public void Send_Notification(string recipient_email, string msg, string subject) {
+		public void Send_Notification(string msg, string subject) {
+			string sendingAddress = "alnaandroidtest@gmail.com";
 			try {
 				MailMessage mail = new MailMessage();
 				SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
-				mail.From = new MailAddress("alnaandroidtest@gmail.com");
-				mail.To.Add(recipient_email);
+				mail.From = new MailAddress(sendingAddress);
+				mail.To.Add(ddlAssign.Text.ToLower().Replace(' ', '.') + "@alps.com");
 				mail.Subject = subject;
 				mail.Body = msg;
 
 				SmtpServer.Port = 587;
 				SmtpServer.UseDefaultCredentials = false;
-				SmtpServer.Credentials = new System.Net.NetworkCredential("alnaandroidtest@gmail.com", "alnatest");
+				SmtpServer.Credentials = new System.Net.NetworkCredential(sendingAddress, "alnatest");
 
 				SmtpServer.Send(mail);
 			}
@@ -85,8 +87,6 @@ namespace CTBTeam {
 				writeStackTrace("Sending Notification", ex);
 			}
 		}
-
-		public string getEmail() { return ddlAssign.Text.ToLower().Replace(' ', '.') + "@alps.com"; }
 
 		//====================================================================================================
 		//	Init functions
@@ -203,7 +203,7 @@ namespace CTBTeam {
 				o = new object[] { txtTitle.Text, ddlCategory.SelectedIndex, proj_id, ddlSeverity.SelectedIndex, date, 0, Date.Today, Session["Alna_num"], alna, txtDescription.Text };
 				executeVoidSQLQuery("insert into IssueList (Title, Category, Proj_ID, Severity, Due_Date, Status, Updated, Reporter, Assignee, Description) values" +
 														  "(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10)", o, objConn);
-				Send_Notification(getEmail(), txtTitle + "\n\n" + txtDescription, "CTBWebsite - New issue");
+				Send_Notification(txtTitle + "\n\n" + txtDescription, "CTBWebsite - New issue");
 			}
 			else {
 				o = new object[] { ddlSeverity.SelectedIndex, txtDescription.Text, txtComment.Text, ddlStatus.SelectedIndex, date, Session["temp"] };
