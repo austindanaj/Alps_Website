@@ -11,20 +11,13 @@
 
 	<%-- The table of all the issues. Visible becomes true by default or if the user clicks "View issues"--%>
 	<asp:Panel ID="pnlViewIssues" runat="server" Visible="false">
-		<asp:GridView ID="dgvViewIssues" runat="server" CssClass="gridview" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True" />
-		<br />
-		<div class="col-md-50">
-			<asp:Button ID="btnBackward" runat="server" Text="←" CssClass="btn-home" OnClick="viewOtherRows" />
-		</div>
-		<div class="col-md-50">
-			<asp:Button ID="btnForward" runat="server" Text="→" CssClass="btn-home" OnClick="viewOtherRows" />
-		</div>
+		<asp:GridView ID="dgvViewIssues" AllowPaging="true" PageSize="25" runat="server" CssClass="gridview" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True" OnPageIndexChanging="nextIssuePage" OnRowDataBound="color"/>
 	</asp:Panel>
 
     <asp:Panel ID="pnlReportIssue" runat="server" Visible="false">
         <asp:GridView ID="dgvCurrentIssue" runat="server" CssClass="gridview" Visible="false" />
         <div class="col-md-50">
-            <asp:Panel ID="pnlAdd" runat="server" Visible="false">
+            <asp:Panel ID="pnlAddIssue" runat="server" Visible="false">
                 <asp:Label ID="label5" runat="server" Text="Issue Title" CssClass="lbl-home-title" />
                 <br />
                 <asp:TextBox ID="txtTitle" runat="server" CssClass="txt-purchase" />
@@ -66,9 +59,9 @@
             <asp:TextBox ID="txtDescription" runat="server" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" />
             <br />
             <br />
-            <asp:Panel ID="pnlSelectedIssue" runat="server" Visible="false">
+            <asp:Panel ID="pnlEditIssue" runat="server" Visible="false">
                 <br />
-                <asp:Button ID="btnDownload" runat="server" Text="Submit" OnClick="btnDownload_OnClick" CssClass="btn-home" />
+                <asp:Button ID="btnDownload" runat="server" Text="Download" OnClick="btnDownload_OnClick" CssClass="btn-home" />
                 <br />
                 <asp:Label ID="label15" runat="server" Text="Comment" CssClass="lbl-home-title" />
                 <br />
