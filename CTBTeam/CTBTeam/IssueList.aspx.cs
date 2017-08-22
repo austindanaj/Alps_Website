@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data;
 using Date = System.DateTime;
 using System.Data.SqlClient;
+using System.IO;
 using System.Net.Mail;
+using System.Web.UI.WebControls;
 
 namespace CTBTeam {
 	public partial class IssueList : SuperPage {
@@ -24,10 +27,13 @@ namespace CTBTeam {
 				if (Session["temp_row"] == null)
 					Session["temp_row"] = 0;
 
-				if (userWantsToView())
-					populateTable();
-				else
-					populateIssuePanel();
+			    if (userWantsToView())
+			    {
+			        populateTable();
+                   }
+
+			    else
+			        populateIssuePanel();
 			}
 			successDialog(successOrFail);
 		}
@@ -67,20 +73,20 @@ namespace CTBTeam {
 
 		public void Send_Notification(string recipient_email, string msg, string subject) {
 			try {
-				MailMessage mail = new MailMessage();
-				SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+			    MailMessage mail = new MailMessage();
+			    SmtpClient SmtpServer = new SmtpClient("10.0.40.55");
 
-				mail.From = new MailAddress("alnaandroidtest@gmail.com");
-				mail.To.Add(recipient_email);
-				mail.Subject = subject;
-				mail.Body = msg;
+			    mail.From = new MailAddress("noreply-CTBWebsite@alps.com");
+			    mail.To.Add(recipient_email);
+			    mail.Subject = subject;
+			    mail.Body = msg;
 
-				SmtpServer.Port = 587;
-				SmtpServer.UseDefaultCredentials = false;
-				SmtpServer.Credentials = new System.Net.NetworkCredential("alnaandroidtest@gmail.com", "alnatest");
+			    //SmtpServer.Port = 587;
+			    //SmtpServer.UseDefaultCredentials = true;
+			    //SmtpServer.Credentials = new System.Net.NetworkCredential("noreply@alps.com", "alnatest");
 
-				SmtpServer.Send(mail);
-			}
+			    SmtpServer.Send(mail);
+            }
 			catch (Exception ex) {
 				writeStackTrace("Sending Notification", ex);
 			}
@@ -95,8 +101,40 @@ namespace CTBTeam {
 		private void populateTable() {
 			objConn.Open();
 			int whatRows = (int)Session["temp_row"];
-			dgvViewIssues.DataSource = getDataTable("select * from (SELECT row_number() over(order by IssueList.ID) as 'Row', IssueList.ID, Projects.Name as Project, IssueList.Title, c1.[Value] as Category, s1.Value as Severity, IssueList.Due_Date as 'Due Date', s2.[Value] as 'Status', IssueList.Updated, e1.Name as Reporter, e2.Name as Assignee from IssueList inner join Categories c1 on c1.ID=IssueList.Category inner join Severity s1 on s1.ID=IssueList.Severity inner join [dbo].[Status] s2 on s2.ID=IssueList.[Status] inner join Employees e1 on e1.Alna_num = IssueList.Reporter inner join Employees e2 on e2.Alna_num = IssueList.Assignee inner join Projects on IssueList.Proj_ID = Projects.ID where IssueList.Active = 1) as table1 where table1.Row between " + (whatRows + 1) + " and " + (whatRows + 25) + ";", true, objConn);
-			dgvViewIssues.DataBind();
+			DataTable dt = getDataTable("select * from (SELECT row_number() over(order by IssueList.ID) " +
+			                            "as 'Row', IssueList.ID, Projects.Name as Project, IssueList.Title, c1.[Value] " +
+			                            "as Category, s1.Value as Severity, IssueList.Due_Date as 'Due Date', s2.[Value] " +
+			                            "as 'Status', IssueList.Updated, e1.Name as Reporter, e2.Name as Assignee from IssueList " +
+			                            "inner join Categories c1 on c1.ID=IssueList.Category inner join Severity s1 " +
+			                            "on s1.ID=IssueList.Severity inner join [dbo].[Status] s2 on s2.ID=IssueList.[Status] " +
+			                            "inner join Employees e1 on e1.Alna_num = IssueList.Reporter inner join Employees e2 " +
+			                            "on e2.Alna_num = IssueList.Assignee inner join Projects on IssueList.Proj_ID = Projects.ID " +
+			                            "where IssueList.Active = 1) as table1 where table1.Row between " + (whatRows + 1) + " " +
+			                            "and " + (whatRows + 25) + " ORDER BY ID Desc;", true, objConn);
+		    // Logic for coloring cells goes here
+            //
+            //
+           
+
+            dgvViewIssues.DataSource = dt;
+            dgvViewIssues.DataBind();
+
+		    foreach (GridViewRow row in dgvViewIssues.Rows)
+		    {
+                if (row.Cells[6].Text.Equals("Initial"))
+		        {
+		            
+		        }
+                else if (row.Cells[6].Text.Equals("Initial"))
+		        {
+		            
+		        }
+                else if (row.Cells[6].Text.Equals("Initial"))
+                {
+                    
+                }
+		    }
+            
 			objConn.Close();
 		}
 
@@ -111,6 +149,7 @@ namespace CTBTeam {
 				SqlDataReader reader = getReader("SELECT Alna_num, Employees.[Name] FROM Employees WHERE Active=@value1 ORDER BY Alna_num", true, objConn);
 				int alna;
 				string temp;
+
 				while (reader.Read()) {
 					alna = reader.GetInt32(0);
 					if (alna == (int)Session["Alna_num"])   //Shouldn't be able to assign yourself to an issue, that's nonsense
@@ -198,16 +237,20 @@ namespace CTBTeam {
 				reader = getReader("select ID from Projects where Name=@value1", ddlProject.Text, objConn);
 				reader.Read();
 				int proj_id = reader.GetInt32(0);
-				reader.Close();				
-
-				o = new object[] { txtTitle.Text, ddlCategory.SelectedIndex, proj_id, ddlSeverity.SelectedIndex, date, 0, Date.Today, Session["Alna_num"], alna, txtDescription.Text };
+				reader.Close();
+			  //  string path = null;
+			    if (fileUpload.HasFile)
+			    {
+			        databaseFilePut(fileUpload.FileName);
+			    }
+				o = new object[] { txtTitle.Text, ddlCategory.SelectedIndex, proj_id, ddlSeverity.SelectedIndex, date, 0, DateTime.Now, Session["Alna_num"], alna, txtDescription.Text,  };
 				executeVoidSQLQuery("insert into IssueList (Title, Category, Proj_ID, Severity, Due_Date, Status, Updated, Reporter, Assignee, Description) values" +
 														  "(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10)", o, objConn);
-				Send_Notification(getEmail(), txtTitle + "\n\n" + txtDescription, "CTBWebsite - New issue");
+				Send_Notification(getEmail(), txtTitle.Text + "\n\n" + txtDescription.Text, "CTBWebsite - New issue");
 			}
 			else {
-				o = new object[] { ddlSeverity.SelectedIndex, txtDescription.Text, txtComment.Text, ddlStatus.SelectedIndex, date, Session["temp"] };
-				executeVoidSQLQuery("update IssueList set Severity=@value1, Description=@value2, Comment=@value3, Status=@value4, Due_date=@value5 where ID=@value6", o, objConn);
+				o = new object[] { ddlSeverity.SelectedIndex, txtDescription.Text, txtComment.Text, ddlStatus.SelectedIndex + 1, date, DateTime.Now, Session["temp"] };
+				executeVoidSQLQuery("update IssueList set Severity=@value1, Description=@value2, Comment=@value3, Status=@value4, Due_date=@value5, Updated=@value6 where ID=@value7", o, objConn);
 				Session["temp"] = null;
 			}
 			objConn.Close();
@@ -245,5 +288,53 @@ namespace CTBTeam {
 			}
 			redirectSafely("~/IssueList");
 		}
+
+
+	    public void databaseFilePut(string varFilePath)
+	    {
+	        byte[] file;
+	        using (var stream = new FileStream(varFilePath, FileMode.Open, FileAccess.Read))
+	        {
+	            using (var reader = new BinaryReader(stream))
+	            {
+	                file = reader.ReadBytes((int)stream.Length);
+	            }
+	        }
+	        objConn.Open();
+          //  using (var varConnection = Locale.sqlConnectOneTime(Locale.sqlDataConnectionDetails))
+	        using (var sqlWrite = new SqlCommand("INSERT INTO IssueList (Attachment) Values(@File)", objConn))
+	        {
+	            sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
+	            sqlWrite.ExecuteNonQuery();
+	        }
+	    }
+	    public void databaseFileRead(string varID, string varPathToNewLocation)
+	    {
+	        objConn.Open();
+           // using (var varConnection = Locale.sqlConnectOneTime(Locale.sqlDataConnectionDetails))
+	        using (var sqlQuery = new SqlCommand(@"SELECT Attachment FROM IssueList WHERE Id=@varID", objConn))
+	        {
+	            sqlQuery.Parameters.AddWithValue("@varID", varID);
+	            using (var sqlQueryResult = sqlQuery.ExecuteReader())
+	                if (sqlQueryResult != null)
+	                {
+	                    sqlQueryResult.Read();
+	                    var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
+	                    sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
+	                    using (var fs = new FileStream(varPathToNewLocation, FileMode.Create, FileAccess.Write))
+	                        fs.Write(blob, 0, blob.Length);
+	                }
+	        }
+	    }
+	   
+
+	    protected void btnDownload_OnClick(object sender, EventArgs e)
+	    {
+	        string id = dgvCurrentIssue.Rows[0].Cells[0].Text;
+	        string userRoot = Environment.GetEnvironmentVariable("USERPROFILE");
+	        string downloadFolder = Path.Combine(userRoot, "Downloads");
+            databaseFileRead(id, downloadFolder);
+
+	    }
 	}
 }

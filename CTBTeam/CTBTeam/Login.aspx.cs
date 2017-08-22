@@ -20,6 +20,7 @@ namespace CTBTeam {
 			objConn = openDBConnection();
 			objConn.Open();
 			SqlDataReader reader = getReader("SELECT Name FROM Employees where Active=@value1;", true, objConn);
+
 			while (reader.Read()) {
 				ddl.Items.Add(reader.GetString(0));
 			}
