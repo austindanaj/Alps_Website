@@ -13,7 +13,7 @@ namespace CTBTeam {
 
 			if (!IsPostBack) {
 				populateTables();
-				successDialog(successOrFail);
+				successDialog(txtSuccessBox);
 			}
 		}
 

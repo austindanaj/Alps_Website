@@ -35,17 +35,18 @@ namespace CTBTeam {
 			    else
 			        populateIssuePanel();
 			}
-			successDialog(successOrFail);
+			successDialog(txtSuccessBox);
 		}
 
 		private bool userWantsToView() {
 			//We use cookies to decide what the user wants to do.
+			//First we check if there's an error and display that first.
 			//  1. If Session["temp"] is null, we view issues
 			//  2. If Session["temp"] is true, we want to report an issue
 			//  3. If Session["temp"] is an int (the else statement), we want to edit the issue with that ID#
 			//Then we make things invisible/visible as they need to be.
 			if(null != Session["error"]) {
-				txtFail.Visible = true;
+				txtFailureBox.Visible = true;
 				Session["error"] = null;
 			}
 
@@ -55,13 +56,13 @@ namespace CTBTeam {
 			}
 			else if (Session["temp"] is bool) {
 				pnlReportIssue.Visible = true;
-				pnlAdd.Visible = true;
+				pnlAddIssue.Visible = true;
 				switchView.Text = "View Issues";
 				return false;
 			}
 			else {
 				pnlReportIssue.Visible = true;
-				pnlSelectedIssue.Visible = true;
+				pnlEditIssue.Visible = true;
 				switchView.Text = "View Issues";
 				return false;
 			}
@@ -71,7 +72,8 @@ namespace CTBTeam {
 		//	Emails
 		//====================================================================================================
 
-		public void Send_Notification(string recipient_email, string msg, string subject) {
+		public void Send_Notification(string msg, string subject) {
+			string sendingAddress = "alnaandroidtest@gmail.com";
 			try {
 			    MailMessage mail = new MailMessage();
 			    SmtpClient SmtpServer = new SmtpClient("10.0.40.55");
@@ -145,7 +147,7 @@ namespace CTBTeam {
 			//The if statement is adding an issue, the else statement is editing it
 			objConn.Open();
 
-			if (pnlAdd.Visible) {
+			if (pnlAddIssue.Visible) {
 				SqlDataReader reader = getReader("SELECT Alna_num, Employees.[Name] FROM Employees WHERE Active=@value1 ORDER BY Alna_num", true, objConn);
 				int alna;
 				string temp;
@@ -222,14 +224,14 @@ namespace CTBTeam {
 				date = DBNull.Value;
 			else {
 				date = cldDueDate.SelectedDate;
-				if (Date.Today.CompareTo(date) > 0 & pnlAdd.Visible) {
+				if (Date.Today.CompareTo(date) > 0 & pnlAddIssue.Visible) {
 					Session["error"] = true;
 					redirectSafely("~/IssueList");
 					return;
 				}
 			}
 
-			if (pnlAdd.Visible) {
+			if (pnlAddIssue.Visible) {
 				SqlDataReader reader = getReader("select Alna_num from Employees where Name=@value1", ddlAssign.Text, objConn);
 				reader.Read();
 				int alna = reader.GetInt32(0);
@@ -246,7 +248,7 @@ namespace CTBTeam {
 				o = new object[] { txtTitle.Text, ddlCategory.SelectedIndex, proj_id, ddlSeverity.SelectedIndex, date, 0, DateTime.Now, Session["Alna_num"], alna, txtDescription.Text,  };
 				executeVoidSQLQuery("insert into IssueList (Title, Category, Proj_ID, Severity, Due_Date, Status, Updated, Reporter, Assignee, Description) values" +
 														  "(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10)", o, objConn);
-				Send_Notification(getEmail(), txtTitle.Text + "\n\n" + txtDescription.Text, "CTBWebsite - New issue");
+				Send_Notification(txtTitle + "\n\n" + txtDescription, "CTBWebsite - New issue");
 			}
 			else {
 				o = new object[] { ddlSeverity.SelectedIndex, txtDescription.Text, txtComment.Text, ddlStatus.SelectedIndex + 1, date, DateTime.Now, Session["temp"] };

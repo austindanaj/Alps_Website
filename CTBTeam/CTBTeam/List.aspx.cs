@@ -19,7 +19,7 @@ namespace CTBTeam {
 			objConn = openDBConnection();
 			if (!IsPostBack) {
 				populateTable();
-				successDialog(successOrFail);
+				successDialog(txtSuccessBox);
 				ddlInit();
 			}
 		}

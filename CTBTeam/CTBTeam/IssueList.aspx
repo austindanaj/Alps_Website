@@ -1,20 +1,15 @@
 ﻿<%@ Page Title="Purchase List" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="IssueList.aspx.cs" Inherits="CTBTeam.IssueList" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-	<style type="text/css">
-		body {
-			background: url('Images/Gradient.jpg') no-repeat center center fixed;
-			background-size: cover;
-		}
-	</style>
+	<asp:TextBox ID="txtSuccessBox" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
+	<asp:TextBox ID="txtFailureBox" runat="server" Text="Due date must be after today" Visible="false" ReadOnly="true" CssClass="feedback-textbox" Style="width: 220px; background-color: orangered" />
 
-	<asp:TextBox ID="successOrFail" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
-	<asp:TextBox ID="txtFail" runat="server" Text="Due date must be after today" Visible="false" ReadOnly="true" CssClass="feedback-textbox" style="width:220px;background-color:orangered"/>
-
+	<%-- Switches the views --%>
 	<asp:Panel ID="pnlHeader" runat="server">
 		<asp:LinkButton ID="switchView" runat="server" OnClick="btnSwitchView">Report Issue</asp:LinkButton>
 	</asp:Panel>
 
+	<%-- The table of all the issues. Visible becomes true by default or if the user clicks "View issues"--%>
 	<asp:Panel ID="pnlViewIssues" runat="server" Visible="false">
 		<asp:GridView ID="dgvViewIssues" runat="server" CssClass="gridview" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True" />
 		<br />
@@ -22,7 +17,7 @@
 			<asp:Button ID="btnBackward" runat="server" Text="←" CssClass="btn-home" OnClick="viewOtherRows" />
 		</div>
 		<div class="col-md-50">
-			<asp:Button ID="btnForward" runat="server" Text="→" CssClass="btn-home" OnClick="viewOtherRows"/>
+			<asp:Button ID="btnForward" runat="server" Text="→" CssClass="btn-home" OnClick="viewOtherRows" />
 		</div>
 	</asp:Panel>
 
