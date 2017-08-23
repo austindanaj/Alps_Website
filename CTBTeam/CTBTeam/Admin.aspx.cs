@@ -102,6 +102,9 @@ namespace CTBTeam {
 			else if (sender.Equals(btnRemoveProject)) {
 				command = "Update Projects set Active=@value1 WHERE ID=@value2;";
 				text = txtRemoveProject.Text;
+			} else if (sender.Equals(btnRemoveIssue)) {
+				command = "update IssueList set Active=@value1 where ID=@value2;";
+				text = txtRemoveIssue.Text;
 			}
 			else {
 				writeStackTrace("Not implemented", new ArgumentException("This button isn't implemented"));
@@ -144,6 +147,9 @@ namespace CTBTeam {
 				populate(parameters);
 				parameters[0] = "SELECT ID, Name, Category FROM Projects where Active=1;";
 				parameters[1] = dgvProjects;
+				populate(parameters);
+				parameters[0] = "select IssueList.ID, IssueList.Title, e.Name as Employee from IssueList inner join Employees e on e.Alna_num=IssueList.Reporter where IssueList.Active=1;";
+				parameters[1] = dgvIssues;
 				populate(parameters);
 				objConn.Close();
 			} catch (SqlException e) {

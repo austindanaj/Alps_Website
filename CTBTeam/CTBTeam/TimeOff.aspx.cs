@@ -32,6 +32,9 @@ namespace CTBTeam {
 				return;
 			}
 
+			if (!reader.HasRows)
+				pnlRemoveTimeOff.Visible = false;
+
 			while (reader.Read())
 				ddlTimeTakenOff.Items.Add("ID#" + reader.GetInt32(0) + ":" + ((Date) reader.GetValue(1)).ToShortDateString() + " - " + ((Date) reader.GetValue(2)).ToShortDateString());
 			reader.Close();

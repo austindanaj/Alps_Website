@@ -6,7 +6,6 @@
 
 	<div class="login-page">
 		<div class="login">
-
 			<div class="login-form">
 
 				<asp:Label ID="lblLogin" runat="server" Text="Sign In As:" CssClass="username"></asp:Label>

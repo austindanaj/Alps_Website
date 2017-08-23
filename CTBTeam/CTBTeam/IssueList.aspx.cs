@@ -13,6 +13,7 @@ namespace CTBTeam {
 		//====================================================================================================
 
 		private SqlConnection objConn;
+		private static readonly string[] STATUS = { "Initial", "Countermeasure", "Analysis", "Completed" };
 		protected void Page_Load(object sender, EventArgs e) {
 			if (Session["Alna_num"] == null) {
 				redirectSafely("~/Login");
@@ -68,7 +69,6 @@ namespace CTBTeam {
 		//====================================================================================================
 
 		public void Send_Notification(string msg, string subject) {
-			string sendingAddress = "alnaandroidtest@gmail.com";
 			try {
 				MailMessage mail = new MailMessage();
 				SmtpClient SmtpServer = new SmtpClient("10.0.40.55");
@@ -112,9 +112,14 @@ namespace CTBTeam {
 		}
 
 		protected void color(object sender, GridViewRowEventArgs e) {
-			if (e.Row.RowType  == DataControlRowType.DataRow) {
+			int count = 0;
+			if (e.Row.RowType == DataControlRowType.DataRow) {
 				string status = e.Row.Cells[8].Text;
-				foreach(TableCell cell in e.Row.Cells) {
+				foreach (TableCell cell in e.Row.Cells) {
+					if (count == 0) {
+						count++;
+						continue;
+					}
 					if (status.Trim().Equals("Initial")) {
 						cell.BackColor = System.Drawing.Color.Red;
 					}
@@ -124,6 +129,10 @@ namespace CTBTeam {
 					else if (status.Trim().Equals("Completed")) {
 						cell.BackColor = System.Drawing.Color.LimeGreen;
 					}
+					else {
+						cell.BackColor = System.Drawing.Color.DeepSkyBlue;
+					}
+					count++;
 				}
 			}
 		}
@@ -138,7 +147,6 @@ namespace CTBTeam {
 			if (pnlAddIssue.Visible) {
 				SqlDataReader reader = getReader("SELECT Alna_num, Employees.[Name] FROM Employees WHERE Active=@value1 ORDER BY Alna_num", true, objConn);
 				int alna;
-				string temp;
 
 				ddlAssign.Items.Add("-- Please select someone to Assign --");
 				ddlProject.Items.Add("-- Please select a project --");
@@ -156,8 +164,9 @@ namespace CTBTeam {
 				reader.Close();
 			}
 			else {
-				ddlSeverity.Items.RemoveAt(0);	//Item[0] says "please select", but we already have a selection since we are editing the issue.
-				SqlDataReader reader = getReader("Select Severity, Description, Comment, Status, Due_Date from IssueList where ID=@value1", Session["temp"], objConn);
+				btnSubmit.Text = "Save changes";
+				ddlSeverity.Items.RemoveAt(0);  //Item[0] says "please select", but we already have a selection since we are editing the issue.
+				SqlDataReader reader = getReader("Select Severity, Description, Comment, Status, Due_Date, Filename, e.Name from IssueList inner join Employees e on e.Alna_num=IssueList.Assignee where ID=@value1", Session["temp"], objConn);
 				reader.Read();
 
 				ddlSeverity.SelectedIndex = reader.GetBoolean(0) ? 1 : 0; //booleans cant be cast to ints so heres the workaround
@@ -166,7 +175,27 @@ namespace CTBTeam {
 				object o = reader.GetValue(2);
 				txtComment.Text = o.Equals(DBNull.Value) ? "" : (string)o;
 
-				ddlStatus.SelectedIndex = reader.GetInt32(3);
+				int status = reader.GetInt32(3);
+				ddlStatus.Items.Add(STATUS[status]);
+				switch (status) {
+					case 0:
+						ddlStatus.Items.Add("Countermeasure");
+						ddlStatus.Items.Add("Analysis");
+						break;
+					case 1:
+						ddlStatus.Items.Add("Analysis");
+						ddlStatus.Items.Add("Completed");
+						break;
+					case 2:
+						ddlStatus.Items.Add("Initial");
+						ddlStatus.Items.Add("Countermeasure");
+						break;
+					default:
+						ddlStatus.Items.Add("Initial");
+						ddlStatus.Items.Add("Countermeasure");
+						ddlStatus.Items.Add("Analysis");
+						break;
+				}
 
 				//We get the due date and check if it's null because there doesn't always
 				//have to be one. If it's null we check the box "No due date", else we select
@@ -179,17 +208,42 @@ namespace CTBTeam {
 					dueDate.Checked = false;
 					cldDueDate.SelectedDate = (Date)o;
 				}
+
+				if (!reader.IsDBNull(5)) {
+					string filename = reader.GetString(5);
+					int length = filename.Length;
+					if (length > 23) { //make sure there's not too much text that it makes the button larger
+						btnDownload.Text += filename.Substring(0, 17) + "..." + filename.Substring(length - 4, length - 1);
+					}
+					else {
+						btnDownload.Text += filename;
+					}
+				}
+				else
+					btnDownload.Visible = false;
+
+				string currentAssignee = reader.GetString(6);
+				ddlAssign.Items.Add(currentAssignee);
+				reader.Close();
+
+				reader = getReader("select Name from Employees", null, objConn);
+				while (reader.Read()) {
+					string temp = reader.GetString(0);
+					if (temp.Equals(currentAssignee))
+						continue;
+					ddlAssign.Items.Add(temp);
+				}
 				reader.Close();
 
 				dgvCurrentIssue.Visible = true;
-				dgvCurrentIssue.DataSource = getDataTable("select i.ID, i.Category, p1.Name as Project, i.Title, i.Updated, e1.Name as Reporter, e2.Name as Assignee from IssueList as i inner join Employees e1 on e1.Alna_num = i.Reporter inner join Employees e2 on e2.Alna_num = i.Assignee inner join Projects p1 on p1.ID=i.Proj_ID where i.ID=@value1;", Session["temp"], objConn);
+				dgvCurrentIssue.DataSource = getDataTable("select i.ID, i.Category, p1.Name as Project, i.Title, s.Value as Severity, i.Updated, i.Status, e1.Name as Reporter, e2.Name as Assignee from IssueList as i inner join Employees e1 on e1.Alna_num = i.Reporter inner join Employees e2 on e2.Alna_num = i.Assignee inner join Projects p1 on p1.ID=i.Proj_ID inner join Severity s on s.ID=i.Severity where i.ID=@value1;", Session["temp"], objConn);
 				dgvCurrentIssue.DataBind();
 			}
 			objConn.Close();
 		}
 
 		//====================================================================================================
-		//	HTML Evenets
+		//	HTML Events
 		//====================================================================================================
 
 		protected void selectIssue(object sender, EventArgs e) {
@@ -256,28 +310,36 @@ namespace CTBTeam {
 				int proj_id = reader.GetInt32(0);
 				reader.Close();
 				//  string path = null;
-				object file;
+				object file, filename = DBNull.Value, contentType = DBNull.Value;
 				if (fileUpload.HasFile) {
 					using (var binReader = new BinaryReader(fileUpload.FileContent)) {
 						file = binReader.ReadBytes((int)fileUpload.FileContent.Length);
 					}
-					//databaseFilePut(fileUpload.FileName);
+					filename = fileUpload.FileName;
+					contentType = fileUpload.PostedFile.ContentType;
 				}
 				else {
-					file = DBNull.Value;
+					file = System.Data.SqlTypes.SqlBinary.Null; //There are two kinds of nulls, binary and not binary for some stupid reason
 				}
-				o = new object[] { txtTitle.Text, ddlCategory.SelectedIndex, proj_id, ddlSeverity.SelectedIndex, date, 0, DateTime.Now, Session["Alna_num"], alna, txtDescription.Text, file, fileUpload.FileName, fileUpload.PostedFile.ContentType};
+				o = new object[] { txtTitle.Text, ddlCategory.SelectedIndex, proj_id, ddlSeverity.SelectedIndex, date, 0, DateTime.Now, Session["Alna_num"], alna, txtDescription.Text, file, filename, contentType };
 				executeVoidSQLQuery("insert into IssueList (Title, Category, Proj_ID, Severity, Due_Date, Status, Updated, Reporter, Assignee, Description, Attachment, Filename, Content_type) values" +
 														  "(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8, @value9, @value10, @value11, @value12, @value13)", o, objConn);
-				Send_Notification(txtTitle.Text + "\n\n" + txtDescription.Text, "CTBWebsite - New issue");
+				Send_Notification(txtTitle.Text + "\n\n" + txtDescription.Text, "CTBWebsite - New issue from " + (string) Session["Name"]);
 			}
 			else {
-				o = new object[] { ddlSeverity.SelectedIndex, txtDescription.Text, txtComment.Text, ddlStatus.SelectedIndex + 1, date, DateTime.Now, Session["temp"] };
+				int statusIndex = 0;
+				for (int i = 0; i < STATUS.Length; i++)
+					if (STATUS[i].Equals(ddlStatus.SelectedValue)) {
+						statusIndex = i;
+						break;
+					}
+				o = new object[] { ddlSeverity.SelectedIndex, txtDescription.Text, txtComment.Text, statusIndex, date, DateTime.Now, Session["temp"] };
 				executeVoidSQLQuery("update IssueList set Severity=@value1, Description=@value2, Comment=@value3, Status=@value4, Due_date=@value5, Updated=@value6 where ID=@value7", o, objConn);
 				Session["temp"] = null;
 			}
 			objConn.Close();
 			Session["success?"] = true;
+			Send_Notification("Title:\n" + dgvCurrentIssue.Rows[0].Cells[3].Text + "\n\nDescription:\n" + txtDescription.Text + "\n\nComment:\n" + txtComment.Text, "CTBWebsite - " + (string) Session["Name"] + " edited an issue you're tagged in");
 			redirectSafely("~/IssueList");
 		}
 
@@ -294,22 +356,6 @@ namespace CTBTeam {
 		protected void nextIssuePage(object sender, GridViewPageEventArgs e) {
 			dgvViewIssues.PageIndex = e.NewPageIndex;
 			populateTable();
-		}
-
-		public void databaseFileRead(string varID, string varPathToNewLocation) {
-			objConn.Open();
-			// using (var varConnection = Locale.sqlConnectOneTime(Locale.sqlDataConnectionDetails))
-			using (var sqlQuery = new SqlCommand(@"SELECT Attachment FROM IssueList WHERE Id=@varID", objConn)) {
-				sqlQuery.Parameters.AddWithValue("@varID", varID);
-				using (var sqlQueryResult = sqlQuery.ExecuteReader())
-					if (sqlQueryResult != null) {
-						sqlQueryResult.Read();
-						var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
-						sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
-						using (var fs = new FileStream(varPathToNewLocation, FileMode.Create, FileAccess.Write))
-							fs.Write(blob, 0, blob.Length);
-					}
-			}
 		}
 
 		protected void btnDownload_OnClick(object sender, EventArgs e) {

@@ -31,24 +31,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.BulletedList bulletList;
         
         /// <summary>
-        /// ddlTimeTakenOff control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlTimeTakenOff;
-        
-        /// <summary>
-        /// btnRemoveTimeOff control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRemoveTimeOff;
-        
-        /// <summary>
         /// cldTimeOffStart control.
         /// </summary>
         /// <remarks>
@@ -83,6 +65,33 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnAddTimeOff;
+        
+        /// <summary>
+        /// pnlRemoveTimeOff control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlRemoveTimeOff;
+        
+        /// <summary>
+        /// ddlTimeTakenOff control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlTimeTakenOff;
+        
+        /// <summary>
+        /// btnRemoveTimeOff control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRemoveTimeOff;
         
         /// <summary>
         /// gv control.

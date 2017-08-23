@@ -20,14 +20,7 @@ namespace CTBTeam {
 			if (!IsPostBack) {
 				populateTable();
 				successDialog(txtSuccessBox);
-				ddlInit();
 			}
-		}
-
-		private void ddlInit() {
-			ddlPriority.Items.Add("Low - 1");
-			ddlPriority.Items.Add("Medium - 2");
-			ddlPriority.Items.Add("High - 3");
 		}
 
 		protected void purchase(object sender, EventArgs e) {
@@ -53,10 +46,14 @@ namespace CTBTeam {
 				throwJSAlert("Price is not a valid floating point number.");
 				return;
 			}
+			if (ddlPriority.SelectedIndex == 0) {
+				throwJSAlert("Select a valid priority level");
+				return;
+			}
 
 			try {
 				objConn.Open();
-				object[] o = { txtName.Text, Math.Abs(quantity), txtDesc.Text, Math.Abs(price), ddlPriority.SelectedIndex + 1, txtLink.Text, Session["Alna_num"], Date.Now.ToString() };
+				object[] o = { txtName.Text, Math.Abs(quantity), txtDesc.Text, Math.Abs(price), ddlPriority.SelectedIndex + 1, txtLink.Text, Session["Alna_num"], DateTime.Now};
 				executeVoidSQLQuery("INSERT INTO PurchaseOrders (Name, Qty, Description, Price, Priority, Link, Alna_num, Date_added) " +
 												"VALUES(@value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8)", o, objConn);
 				objConn.Close();

@@ -39,6 +39,7 @@
 			<br />
 			<br />
 			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+			<br />
 			<asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
 			<br />
 			<asp:Label ID="lblUserHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Your Hours: 0/40" />

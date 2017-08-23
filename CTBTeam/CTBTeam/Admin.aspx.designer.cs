@@ -211,6 +211,33 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Button btnRemoveVehicle;
         
         /// <summary>
+        /// lblIssues control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblIssues;
+        
+        /// <summary>
+        /// txtRemoveIssue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRemoveIssue;
+        
+        /// <summary>
+        /// btnRemoveIssue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRemoveIssue;
+        
+        /// <summary>
         /// dgvUsers control.
         /// </summary>
         /// <remarks>
@@ -236,5 +263,14 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView dgvCars;
+        
+        /// <summary>
+        /// dgvIssues control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView dgvIssues;
     }
 }

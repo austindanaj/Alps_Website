@@ -211,7 +211,7 @@
     color: #FFFFFF;
     font-size: 22px;
     display: block;
-    text-align: right;
+    text-align: left;
     width: auto;
 	border-color: #ccc;
 	color: #fff;
@@ -228,6 +228,34 @@
     color: #FFFFFF;
     font-size: 22px;
     text-align: center;
+}
+
+.gridview {
+	margin:auto;
+}
+
+.gridview-admin {
+	margin-left:0;
+}
+
+.gridview-admin th {
+	font-size: medium;
+	font-weight: bold;
+	background-color: #333;
+	border-color: #ccc;
+	color: #fff;
+	border: 2px solid #ccc;
+	padding: 8px;
+	text-align: center;
+}
+
+.gridview-admin td {
+	padding: 8px;
+	border: 2px solid black;
+	text-align: center;
+	background-color: #333;
+	border-color: #ccc;
+	color: #9d9d9d;
 }
 
 .gridview th {
@@ -249,6 +277,7 @@
 	border-color: #ccc;
 	color: #9d9d9d;
 }
+
 .gridview-issueList th {
     font-size: medium;
     font-weight: bold;
