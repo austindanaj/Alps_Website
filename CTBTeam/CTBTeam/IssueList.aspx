@@ -2,7 +2,6 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<asp:TextBox ID="txtSuccessBox" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
-	<asp:TextBox ID="txtFailureBox" runat="server" Text="Due date must be after today" Visible="false" ReadOnly="true" CssClass="feedback-textbox" Style="width: 220px; background-color: orangered" />
 
 	<%-- Switches the views --%>
 	<asp:Panel ID="pnlHeader" runat="server">
@@ -18,15 +17,12 @@
         <asp:GridView ID="dgvCurrentIssue" runat="server" CssClass="gridview" Visible="false" />
         <div class="col-md-50">
             <asp:Panel ID="pnlAddIssue" runat="server" Visible="false">
-                <asp:Label ID="label5" runat="server" Text="Issue Title" CssClass="lbl-home-title" />
-                <br />
-                <asp:TextBox ID="txtTitle" runat="server" CssClass="txt-purchase" />
+                <asp:TextBox ID="txtTitle" runat="server" CssClass="txt-purchase" placeholder="Title"/>
                 <br>
                 <br />
-                <asp:Label ID="label1" runat="server" Text="Category" CssClass="lbl-home-title" />
-                <br />
                 <asp:DropDownList ID="ddlCategory" runat="server" CssClass="drp-purchase">
-                    <asp:ListItem Text="1: Inquiry/Request" />
+                    <asp:ListItem Text="-- Select a category --" />
+					<asp:ListItem Text="1: Inquiry/Request" />
                     <asp:ListItem Text="2: Change Request" />
                     <asp:ListItem Text="3: Problem" />
                     <asp:ListItem Text="4: Memo" />
@@ -42,30 +38,27 @@
                 <br />
                 <asp:DropDownList ID="ddlAssign" runat="server" CssClass="drp-purchase" />
                 <br />
-                <asp:FileUpload ID="fileUpload" runat="server" />
+                <asp:FileUpload ID="fileUpload" runat="server"  CssClass="btn-home"/>
             </asp:Panel>
             <br />
             <br />
             <asp:Label ID="label3" runat="server" Text="Severity" CssClass="lbl-home-title" />
             <br />
             <asp:DropDownList ID="ddlSeverity" runat="server" CssClass="drp-purchase">
-                <asp:ListItem Text="Minor" />
+                <asp:ListItem Text="-- Please select the severity --" />
+				<asp:ListItem Text="Minor" />
                 <asp:ListItem Text="Major" />
             </asp:DropDownList>
             <br />
             <br />
-            <asp:Label ID="label7" runat="server" Text="Description" CssClass="lbl-home-title" />
-            <br />
-            <asp:TextBox ID="txtDescription" runat="server" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" />
+            <asp:TextBox ID="txtDescription" runat="server" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" placeholder="Description"/>
             <br />
             <br />
             <asp:Panel ID="pnlEditIssue" runat="server" Visible="false">
                 <br />
                 <asp:Button ID="btnDownload" runat="server" Text="Download" OnClick="btnDownload_OnClick" CssClass="btn-home" />
                 <br />
-                <asp:Label ID="label15" runat="server" Text="Comment" CssClass="lbl-home-title" />
-                <br />
-                <asp:TextBox ID="txtComment" runat="server" Text="" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" />
+                <asp:TextBox ID="txtComment" runat="server" Text="" CssClass="txt-purchase" Rows="6" TextMode="MultiLine" placeholder="Comment"/>
                 <br />
                 <br />
                 <asp:DropDownList ID="ddlStatus" runat="server" CssClass="drp-purchase">

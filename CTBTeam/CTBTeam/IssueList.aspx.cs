@@ -44,10 +44,6 @@ namespace CTBTeam {
 			//  2. If Session["temp"] is true, we want to report an issue
 			//  3. If Session["temp"] is an int (the else statement), we want to edit the issue with that ID#
 			//Then we make things invisible/visible as they need to be.
-			if (null != Session["error"]) {
-				txtFailureBox.Visible = true;
-				Session["error"] = null;
-			}
 
 			if (Session["temp"] == null) {
 				pnlViewIssues.Visible = true;
@@ -93,8 +89,6 @@ namespace CTBTeam {
 			}
 		}
 
-		public string getEmail() { return ddlAssign.Text.ToLower().Replace(' ', '.') + "@alps.com"; }
-
 		//====================================================================================================
 		//	Init functions
 		//====================================================================================================
@@ -110,12 +104,7 @@ namespace CTBTeam {
 										"on s1.ID=IssueList.Severity inner join [dbo].[Status] s2 on s2.ID=IssueList.[Status] " +
 										"inner join Employees e1 on e1.Alna_num = IssueList.Reporter inner join Employees e2 " +
 										"on e2.Alna_num = IssueList.Assignee inner join Projects on IssueList.Proj_ID = Projects.ID " +
-										"where IssueList.Active = 1) as table1"+/* where table1.Row "between " + (whatRows + 1) + " " +
-										"and " + (whatRows + 25) + */" ORDER BY ID Desc;", true, objConn);
-			// Logic for coloring cells goes here
-			//
-			//
-
+										"where IssueList.Active = @value1) as table1 ORDER BY ID Desc;", true, objConn);
 
 			dgvViewIssues.DataSource = dt;
 			dgvViewIssues.DataBind();
@@ -151,12 +140,14 @@ namespace CTBTeam {
 				int alna;
 				string temp;
 
+				ddlAssign.Items.Add("-- Please select someone to Assign --");
+				ddlProject.Items.Add("-- Please select a project --");
+
 				while (reader.Read()) {
 					alna = reader.GetInt32(0);
 					if (alna == (int)Session["Alna_num"])   //Shouldn't be able to assign yourself to an issue, that's nonsense
 						continue;
-					temp = reader.GetString(1);
-					ddlAssign.Items.Add(temp);
+					ddlAssign.Items.Add(reader.GetString(1));
 				}
 				reader.Close();
 				reader = getReader("SELECT Name FROM Projects where Active=@value1;", true, objConn);
@@ -165,10 +156,11 @@ namespace CTBTeam {
 				reader.Close();
 			}
 			else {
+				ddlSeverity.Items.RemoveAt(0);	//Item[0] says "please select", but we already have a selection since we are editing the issue.
 				SqlDataReader reader = getReader("Select Severity, Description, Comment, Status, Due_Date from IssueList where ID=@value1", Session["temp"], objConn);
 				reader.Read();
 
-				ddlSeverity.SelectedIndex = reader.GetBoolean(0) ? 1 : 0;
+				ddlSeverity.SelectedIndex = reader.GetBoolean(0) ? 1 : 0; //booleans cant be cast to ints so heres the workaround
 				txtDescription.Text = reader.GetString(1);
 
 				object o = reader.GetValue(2);
@@ -215,6 +207,11 @@ namespace CTBTeam {
 			//Since many of the dropdowns can be reused for both forms, I reused them to minimize the HTML that gets sent
 			//so this one method is a catch-all situation reporting an issue and editing it.
 			//The if statement is adding an issue, the else statement is editing it
+			if (string.IsNullOrEmpty(txtDescription.Text)) {
+				throwJSAlert("Description must not be empty");
+				return;
+			}
+
 			objConn.Open();
 			object[] o;
 			object date;    //It has to be an object because we may have to set it to DBNull if there's no due date
@@ -224,13 +221,32 @@ namespace CTBTeam {
 			else {
 				date = cldDueDate.SelectedDate;
 				if (Date.Today.CompareTo(date) > 0 & pnlAddIssue.Visible) {
-					Session["error"] = true;
-					redirectSafely("~/IssueList");
+					throwJSAlert("Due date needs to be in the future or today");
 					return;
 				}
 			}
 
 			if (pnlAddIssue.Visible) {
+				if (ddlAssign.SelectedIndex == 0) {
+					throwJSAlert("You need to pick someone to assign");
+					return;
+				}
+
+				if (ddlProject.SelectedIndex == 0) {
+					throwJSAlert("You need to select a project");
+					return;
+				}
+
+				if (ddlCategory.SelectedIndex == 0) {
+					throwJSAlert("You need to pick a valid category");
+					return;
+				}
+
+				if (string.IsNullOrEmpty(txtTitle.Text)) {
+					throwJSAlert("Need an issue title");
+					return;
+				}
+
 				SqlDataReader reader = getReader("select Alna_num from Employees where Name=@value1", ddlAssign.Text, objConn);
 				reader.Read();
 				int alna = reader.GetInt32(0);
@@ -330,10 +346,6 @@ namespace CTBTeam {
 			Response.BinaryWrite(blob);
 			Response.Flush();
 			Response.End();
-		}
-
-		protected void dgvViewIssues_PageIndexChanging(object sender, GridViewPageEventArgs e) {
-
 		}
 	}
 }

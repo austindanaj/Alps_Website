@@ -22,15 +22,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.TextBox txtSuccessBox;
         
         /// <summary>
-        /// txtFailureBox control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFailureBox;
-        
-        /// <summary>
         /// pnlHeader control.
         /// </summary>
         /// <remarks>
@@ -94,15 +85,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Panel pnlAddIssue;
         
         /// <summary>
-        /// label5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label label5;
-        
-        /// <summary>
         /// txtTitle control.
         /// </summary>
         /// <remarks>
@@ -110,15 +92,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtTitle;
-        
-        /// <summary>
-        /// label1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label label1;
         
         /// <summary>
         /// ddlCategory control.
@@ -193,15 +166,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.DropDownList ddlSeverity;
         
         /// <summary>
-        /// label7 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label label7;
-        
-        /// <summary>
         /// txtDescription control.
         /// </summary>
         /// <remarks>
@@ -227,15 +191,6 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnDownload;
-        
-        /// <summary>
-        /// label15 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label label15;
         
         /// <summary>
         /// txtComment control.
