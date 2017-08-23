@@ -6,7 +6,7 @@
 <head runat="server">
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title><%: Page.Title %> - CTB Website</title>
+	<title><%: Page.Title %> - Connectivity Engineering </title>
 	<link rel="stylesheet" runat="server" href="~/Content/AddedCSS.css" />
 	<asp:PlaceHolder runat="server">
 		<%: Scripts.Render("~/bundles/modernizr") %>
@@ -48,7 +48,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" runat="server" href="~/">CTB Time Tracking</a>
+					<a class="navbar-brand" runat="server" href="~/">Connectivity Engineering</a>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
@@ -78,7 +78,7 @@
 			</asp:ContentPlaceHolder>
 			<hr />
 			<footer class="footer">
-				<p>&copy; <%: DateTime.Now.Year %> - CTB Website</p>
+				<p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
 			</footer>
 		</div>
 

@@ -10,7 +10,7 @@
 
 	<%-- The table of all the issues. Visible becomes true by default or if the user clicks "View issues"--%>
 	<asp:Panel ID="pnlViewIssues" runat="server" Visible="false">
-		<asp:GridView ID="dgvViewIssues" AllowPaging="true" PageSize="25" runat="server" CssClass="gridview" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True" OnPageIndexChanging="nextIssuePage" OnRowDataBound="color"/>
+		<asp:GridView ID="dgvViewIssues" AllowPaging="true" PageSize="25" runat="server" CssClass="gridview-issueList" OnSelectedIndexChanged="selectIssue" AutoGenerateSelectButton="True" OnPageIndexChanging="nextIssuePage" OnRowDataBound="color"/>
 	</asp:Panel>
 
     <asp:Panel ID="pnlReportIssue" runat="server" Visible="false">

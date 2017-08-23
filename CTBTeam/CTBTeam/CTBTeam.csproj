@@ -138,7 +138,7 @@
     <Content Include="Debug\StackTrace.txt" />
     <Content Include="Images\FrankCadi.png" />
     <Content Include="IssueList.aspx" />
-    <Content Include="seed.sql" />
+    <Content Include="20170823Databaset.sql" />
     <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
