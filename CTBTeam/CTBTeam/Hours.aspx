@@ -17,18 +17,20 @@
 	<br />
 	<div class="row">
 		<div class="col-md-25" style="text-align: center;">
-			<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlWorkedHours" CssClass="drp-home" runat="server" />
-			<br />
-			<br />
-			<asp:TextBox ID="txtDelete" runat="server" CssClass="txt-purchase" placeholder="Type YES to confirm." />
-			<br />
-			<br />
-			<asp:Button ID="btnDelete" runat="server" OnClick="htmlEvent" Text="Delete" CssClass="btn-home" Style="color: white; font: bold; background-color: #ff0000" Text-Align="Center" Visible="true" />
-			<br />
-			<br />
+			<asp:Panel ID="pnlDeleteHours" runat="server" Visible="false">
+				<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlWorkedHours" CssClass="drp-home" runat="server" />
+				<br />
+				<br />
+				<asp:TextBox ID="txtDelete" runat="server" CssClass="txt-purchase" placeholder="Type YES to confirm." />
+				<br />
+				<br />
+				<asp:Button ID="btnDelete" runat="server" OnClick="htmlEvent" Text="Delete" CssClass="btn-home" Style="color: white; font: bold; background-color: #ff0000" Text-Align="Center" Visible="true" />
+				<br />
+				<br />
+			</asp:Panel>
 			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
 			<br />
 			<br />
@@ -43,18 +45,22 @@
 			<asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
 			<br />
 			<asp:Label ID="lblUserHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Your Hours: 0/40" />
+			<asp:Panel ID="pnlVehicleHours" runat="server" Visible="false">
+				<br />
+				<br />
+				<asp:Label ID="vehicleHoursTerns" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" Visible="false" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlVehicles" CssClass="drp-home" runat="server" Visible="false" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Visible="false" />
+				<br />
+				<br />
+				<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
+			</asp:Panel>
 			<br />
 			<br />
-			<asp:Label ID="vehicleHoursTerns" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" Visible="false" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlVehicles" CssClass="drp-home" runat="server" Visible="false" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Visible="false" />
-			<br />
-			<br />
-			<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
 		</div>
 		<div class="col-md-50">
 			<div class="row">

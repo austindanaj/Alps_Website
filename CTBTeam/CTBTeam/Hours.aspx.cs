@@ -87,15 +87,19 @@ namespace CTBTeam {
 				h.Add(id, name);
 			}
 
+			bool hasHoursWorked = false;
 			int alna = (int)Session["Alna_num"];
 			foreach (DataRow d in projectHoursData.Rows) {
 				if (alna == (int)d[1]) {
+					hasHoursWorked = true;
 					ddlWorkedHours.Items.Add("P_ID#" + d[0].ToString() + ": worked " + d[3] + " hours on " + h[d[2]]);
 				}
 			}
+			if (hasHoursWorked) pnlDeleteHours.Visible = true;
 
 			hoursUpdate();
 			if ((bool)Session["Full_time"]) return;
+			pnlVehicleHours.Visible = true;
 
 			h = new Hashtable();
 			foreach (DataRow r in vehiclesData.Rows) {
@@ -107,9 +111,11 @@ namespace CTBTeam {
 
 			foreach (DataRow d in vehicleHoursData.Rows) {
 				if (alna == (int)d[1]) {
+					hasHoursWorked = true;
 					ddlWorkedHours.Items.Add("V_ID#" + d[0].ToString() + ": " + d[3] + " hrs on " + h[d[2]]);
 				}
 			}
+			if (hasHoursWorked) pnlDeleteHours.Visible = true;
 
 			vehicleHoursTerns.Visible = true;
 			ddlVehicles.Visible = true;

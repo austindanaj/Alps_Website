@@ -58,6 +58,15 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.Button btnselectWeek;
         
         /// <summary>
+        /// pnlDeleteHours control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlDeleteHours;
+        
+        /// <summary>
         /// Label3 control.
         /// </summary>
         /// <remarks>
@@ -146,6 +155,15 @@ namespace CTBTeam {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblUserHours;
+        
+        /// <summary>
+        /// pnlVehicleHours control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlVehicleHours;
         
         /// <summary>
         /// vehicleHoursTerns control.
