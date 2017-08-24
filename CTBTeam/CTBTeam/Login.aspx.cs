@@ -20,13 +20,18 @@ namespace CTBTeam {
 			objConn = openDBConnection();
 			objConn.Open();
 			SqlDataReader reader = getReader("SELECT Name FROM Employees where Active=@value1;", true, objConn);
-
+            ddl.Items.Add("--Please Select a Name--");
 			while (reader.Read()) {
 				ddl.Items.Add(reader.GetString(0));
 			}
 		}
 
 		protected void Login_Clicked(Object sender, EventArgs e) {
+		    if (ddl.SelectedIndex == 0)
+		    {
+		        throwJSAlert("Please select a name!");
+		        return;
+		    }
 			try {
 				objConn = openDBConnection();
 				objConn.Open();
