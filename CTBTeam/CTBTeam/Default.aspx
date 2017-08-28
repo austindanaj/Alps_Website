@@ -14,7 +14,28 @@
 		</div>
 	</div>
 	<br />
-	<asp:Image ID="Image2" runat="server" ImageUrl="~/Images/CTBProjects.png" Width="100%" Height="650" />
+	<div class="col-md-50">
+		<asp:GridView ID="gv" runat="server" CssClass="gridview" />
+	</div>
+	<div class="col-md-50">
+		<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
+			BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
+			Width="700px" BorderlineColor="64, 0, 64">
+			<Titles>
+				<asp:Title ShadowOffset="10" Name="Project Percent" />
+			</Titles>
+			<Legends>
+				<asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
+					BackColor="Transparent" ForeColor="White" LegendStyle="Column" />
+			</Legends>
+			<Series>
+				<asp:Series Name="Default" />
+			</Series>
+			<ChartAreas>
+				<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
+			</ChartAreas>
+		</asp:Chart>
+	</div>
 	<br />
 	<div class="col-md-50">
 		<asp:Button runat="server" ID="toe" OnClick="toetruck" />

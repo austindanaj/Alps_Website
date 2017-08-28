@@ -267,6 +267,7 @@
 	border: 2px solid #ccc;
 	padding: 8px;
 	text-align: center;
+	width:150px;
 }
 
 .gridview td {
@@ -291,20 +292,14 @@
 .gridview-issueList td {
     padding: 8px;
     border: 2px solid black;
-    text-align: center;
-    
+    text-align: center;    
     background-color: #333;
     border-color: #ccc;
     color: #FFFFFF;
 }
 input[type='checkbox'] {
 	color: #9d9d9d;
-    margin-right: 5px;
-    width:18px;
-    height:18px;
     background:white;
-    border-radius:5px;
-    border:2px solid #555;
 }
 .main-title {
     color: #FFFFFF;

@@ -34,7 +34,6 @@ namespace CTBTeam {
 			}
 
 			populateTables();
-			populateDataPercentage();
 		}
 
 		private void getDate() {
@@ -301,77 +300,6 @@ namespace CTBTeam {
 			return true;
 		}
 
-		private void populateDataPercentage() {
-			if (projectHoursData.Rows.Count == 0)
-				return;
-			int numEmployees = employeesData.Rows.Count;
-			double[] projectHours = new double[4];
-			int totalHours = 0;
-
-			Dictionary<int, int> h = new Dictionary<int, int>();
-			foreach (DataRow d in projectData.Rows) {
-				switch (d[2]) {
-					case "A":
-						h.Add((int)d[0], 0);
-						break;
-					case "C":
-						h.Add((int)d[0], 2);
-						break;
-					case "D":
-						h.Add((int)d[0], 3);
-						break;
-					default:
-						h.Add((int)d[0], 1);
-						break;
-				}
-			}
-
-			foreach (DataRow d in projectHoursData.Rows) {
-				totalHours += (int)d[3];
-				projectHours[h[(int)d[2]]] += (int)d[3];
-			}
-
-			string[] category = { "A", "B", "C", "D" };
-			DataTable table = new DataTable();
-
-			for (int i = 0; i < category.Length; i++) {
-				table.Columns.Add(category[i], typeof(double));
-				projectHours[i] /= totalHours;
-			}
-
-			chartPercent.Series[0].Points.DataBindXY(category, projectHours);
-			chartPercent.Series[0].BorderWidth = 10;
-			chartPercent.Series[0].ChartType = SeriesChartType.Pie;
-
-			string text = "";
-			foreach (Series charts in chartPercent.Series) {
-				foreach (DataPoint point in charts.Points) {
-					switch (point.AxisLabel) {
-						case "A":
-							point.Color = System.Drawing.Color.Aqua;
-							text = "Advance Dev";
-							break;
-						case "B":
-							point.Color = System.Drawing.Color.SpringGreen;
-							text = "Time Off";
-							break;
-						case "C":
-							point.Color = System.Drawing.Color.Salmon;
-							text = "Production Dev (Auto)";
-							break;
-						case "D":
-							point.Color = System.Drawing.Color.Violet;
-							text = "Design in Market (Non-Auto)";
-							break;
-					}
-					point.Label = string.Format("{0:P} - {1}", point.YValues[0], point.AxisLabel);
-					point.LegendText = string.Format("{1} - " + text + "", point.YValues[0], point.AxisLabel);
-				}
-			}
-
-			lblTotalHours.Text = "Hours: " + totalHours + " / " + (40 * numEmployees);
-		}
-
 		private void populateTables() {
 			dgvProject.DataSource = getProjectHours(Session["Date_ID"], true);
 			dgvProject.DataBind();
@@ -380,7 +308,7 @@ namespace CTBTeam {
 		}
 
 		private void hoursUpdate() {
-			int hoursWorked = 0;
+			int hoursWorked = 0, totalHours = 0;
 
 			Lambda howMuchHoursWorked = new Lambda(delegate (object o) {
 				DataTable temp = (DataTable)o;
@@ -388,6 +316,7 @@ namespace CTBTeam {
 				foreach (DataRow d in temp.Rows) {
 					if ((int)d[1] == session)
 						hoursWorked += (int)d[3];
+					totalHours += (int)d[3];
 				}
 			});
 
@@ -405,6 +334,8 @@ namespace CTBTeam {
 			ddlHours.Items.Add("--Select A Percent (Out of 40 hrs)--");
 			howMuchHoursWorked(projectHoursData);
 			addDDLoptions(ddlHours);
+			lblUserHours.Text = "Your Hours: " + hoursWorked + "/40";
+			if (hoursWorked == 40) pnlAddHours.Visible = false;
 
 			if ((bool)Session["Full_time"]) return;
 

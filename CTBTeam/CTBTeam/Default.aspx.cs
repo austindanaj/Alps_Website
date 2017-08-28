@@ -3,16 +3,14 @@ using System.Data.SqlClient;
 using System.Data;
 using System.IO;
 using Date = System.DateTime;
-using System.Collections.Generic;
 using System.Web;
+using System.Web.UI.DataVisualization.Charting;
 
 namespace CTBTeam {
 	public partial class _Default : HoursPage {
-		private SqlConnection objConn;
-
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
-				objConn = openDBConnection();
+				SqlConnection objConn = openDBConnection();
 				objConn.Open();
 				SqlDataReader reader = getReader("select Dates from Dates order by Dates desc", null, objConn);
 				if (reader == null) {
@@ -22,11 +20,81 @@ namespace CTBTeam {
 				while (reader.Read())
 					ddlselectWeek.Items.Add(reader.GetDateTime(0).ToShortDateString());
 				reader.Close();
+				populatePieChart(objConn);
+				populateDaysOffTable(objConn);
 				objConn.Close();
-			}
-				
+			}			
 		}
 
+		//----------------------------------------------------------------
+		// Inits
+		//----------------------------------------------------------------
+		private void populatePieChart(SqlConnection objConn) {
+			SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by ID desc);", null, objConn);
+			if (!reader.HasRows) {
+				chartPercent.Visible = false;
+				reader.Close();
+				return;
+			}
+			double[] projectHours = new double[4];
+
+			int hours, totalHours = 0;
+			while (reader.Read()) {
+				hours = reader.GetInt32(0);
+				if (reader.GetString(1).Equals("A"))
+					projectHours[0] += hours;
+				else if (reader.GetString(1).Equals("B"))
+					projectHours[1] += hours;
+				else if (reader.GetString(1).Equals("C"))
+					projectHours[2] += hours;
+				else
+					projectHours[3] += hours;
+				totalHours += hours;
+			}
+			reader.Close();
+
+			for (int i = 0; i < projectHours.Length; i++)
+				projectHours[i] /= totalHours;
+
+			chartPercent.Series[0].Points.DataBindXY(new string[] { "A", "B", "C", "D" }, projectHours);
+			chartPercent.Series[0].BorderWidth = 10;
+			chartPercent.Series[0].ChartType = SeriesChartType.Pie;
+
+			string text = "";
+			foreach (Series charts in chartPercent.Series) {
+				foreach (DataPoint point in charts.Points) {
+					switch (point.AxisLabel) {
+						case "A":
+							point.Color = System.Drawing.Color.Aqua;
+							text = "Advance Dev";
+							break;
+						case "B":
+							point.Color = System.Drawing.Color.SpringGreen;
+							text = "Time Off";
+							break;
+						case "C":
+							point.Color = System.Drawing.Color.Salmon;
+							text = "Production Dev (Auto)";
+							break;
+						case "D":
+							point.Color = System.Drawing.Color.Violet;
+							text = "Design in Market (Non-Auto)";
+							break;
+					}
+					point.Label = string.Format("{0:P} - {1}", point.YValues[0], point.AxisLabel);
+					point.LegendText = string.Format("{1} - " + text + "", point.YValues[0], point.AxisLabel);
+				}
+			}
+		}
+
+		private void populateDaysOffTable(SqlConnection objConn) {
+			gv.DataSource = getDataTable("select e.Name as 'Employees out this week' from Employees e where e.Alna_num in (select Alna_num from TimeOff where (select top 1 Dates from Dates order by ID desc) between TimeOff.Start and TimeOff.[End]);", null, objConn);
+			gv.DataBind();
+		}
+
+		//----------------------------------------------------------------
+		// HTML events
+		//----------------------------------------------------------------
 		protected void toetruck(object sender, EventArgs e) {
 			redirectSafely("~/ToeTruck");
 		}
@@ -93,5 +161,6 @@ namespace CTBTeam {
 				throwJSAlert("Something wrong with the directory structure/file IO; contact an admin");
 			}
 		}
+
 	}
 }

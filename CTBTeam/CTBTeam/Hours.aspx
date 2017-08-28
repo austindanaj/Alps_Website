@@ -16,9 +16,39 @@
 	</div>
 	<br />
 	<div class="row">
-		<div class="col-md-25" style="text-align: center;">
+		<div class="col-md-33" style="text-align: center">
+			<asp:Panel ID="pnlAddHours" runat="server">
+				<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlHours" CssClass="drp-home" runat="server" />
+				<br />
+				<br />
+				<asp:Button ID="btnSubmitPercent" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
+				<br />
+				<asp:Label ID="lblUserHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Your Hours: 0/40" />
+			</asp:Panel>
+		</div>
+		<div class="col-md-33" style="text-align: center">
+			<asp:Panel ID="pnlVehicleHours" runat="server" Visible="false">
+				<asp:Label ID="vehicleHoursTerns" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" Visible="false" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlVehicles" CssClass="drp-home" runat="server" Visible="false" />
+				<br />
+				<br />
+				<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Visible="false" />
+				<br />
+				<br />
+				<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
+			</asp:Panel>
+		</div>
+		<div class="col-md-33" style="text-align: center;">
 			<asp:Panel ID="pnlDeleteHours" runat="server" Visible="false">
-				<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours for this week" />
+				<asp:Label ID="Label3" runat="server" CssClass="lbl-home-title" Text="Delete hours" />
 				<br />
 				<br />
 				<asp:DropDownList ID="ddlWorkedHours" CssClass="drp-home" runat="server" />
@@ -31,69 +61,20 @@
 				<br />
 				<br />
 			</asp:Panel>
-			<asp:Label ID="Label2" runat="server" CssClass="lbl-home-title" Text="Project Percent" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlProjects" CssClass="drp-home" runat="server" />
-			<br />
-			<br />
-			<asp:DropDownList ID="ddlHours" CssClass="drp-home" runat="server" />
-			<br />
-			<br />
-			<asp:Button ID="btnSubmitPercent" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" />
-			<br />
-			<asp:Label ID="lblTotalHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Hours: 0/0" />
-			<br />
-			<asp:Label ID="lblUserHours" runat="server" ForeColor="White" Font-Size="X-Small" Text="Your Hours: 0/40" />
-			<asp:Panel ID="pnlVehicleHours" runat="server" Visible="false">
-				<br />
-				<br />
-				<asp:Label ID="vehicleHoursTerns" runat="server" CssClass="lbl-home-title" Text="Vehicle Hours" Visible="false" />
-				<br />
-				<br />
-				<asp:DropDownList ID="ddlVehicles" CssClass="drp-home" runat="server" Visible="false" />
-				<br />
-				<br />
-				<asp:DropDownList ID="ddlHoursVehicles" runat="server" CssClass="drp-home" Visible="false" />
-				<br />
-				<br />
-				<asp:Button ID="btnSubmitVehicles" runat="server" OnClick="htmlEvent" Text="Submit" CssClass="btn-home" Text-Align="Center" Visible="false" />
-			</asp:Panel>
-			<br />
-			<br />
 		</div>
-		<div class="col-md-50">
-			<div class="row">
-				<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
-					BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
-					Width="700px" BorderlineColor="64, 0, 64">
-					<Titles>
-						<asp:Title ShadowOffset="10" Name="Project Percent" />
-					</Titles>
-					<Legends>
-						<asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
-							BackColor="Transparent" ForeColor="White" LegendStyle="Column" />
-					</Legends>
-					<Series>
-						<asp:Series Name="Default" />
-					</Series>
-					<ChartAreas>
-						<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
-					</ChartAreas>
-				</asp:Chart>
-			</div>
-			<br />
-			<div class="row">
-				<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" Style="width: 940px;" />
-				<%--<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+	</div>
+	<br />
+	<div class="col-md-50">
+		<div class="row">
+			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" />
+			<%--<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 				<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
-			</div>
-			<br />
-			<div class="row">
-				<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" Style="width: 940px;" />
-				<%-- <asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+		</div>
+		<br />
+		<div class="row">
+			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" />
+			<%-- <asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 				<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
-			</div>
 		</div>
 	</div>
 	<br />
