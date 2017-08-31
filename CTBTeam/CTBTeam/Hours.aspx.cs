@@ -176,7 +176,8 @@ namespace CTBTeam {
 				redirectSafely("~/Hours");
 			}
 			else {
-				writeStackTrace("Btn not implemented", new ArgumentException("The button that called this function had no onclick implementation implemented"));
+				dgvCars.Visible = !dgvCars.Visible;
+				dgvProject.Visible = !dgvProject.Visible;
 			}
 		}
 

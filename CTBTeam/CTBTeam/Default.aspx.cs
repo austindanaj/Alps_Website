@@ -5,6 +5,9 @@ using System.IO;
 using Date = System.DateTime;
 using System.Web;
 using System.Web.UI.DataVisualization.Charting;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace CTBTeam {
 	public partial class _Default : HoursPage {
@@ -23,7 +26,7 @@ namespace CTBTeam {
 				populatePieChart(objConn);
 				populateDaysOffTable(objConn);
 				objConn.Close();
-			}			
+			}
 		}
 
 		//----------------------------------------------------------------
@@ -88,10 +91,78 @@ namespace CTBTeam {
 		}
 
 		private void populateDaysOffTable(SqlConnection objConn) {
-			gv.DataSource = getDataTable("select e.Name as 'Employees out this week' from Employees e where e.Alna_num in (select Alna_num from TimeOff where (select top 1 Dates from Dates order by ID desc) between TimeOff.Start and TimeOff.[End]);", null, objConn);
-			gv.DataBind();
+			dgvOffThisWeek.DataSource = getDataTable("select e.Name as 'Employees out this week' from Employees e where e.Alna_num in (select Alna_num from TimeOff where (select top 1 Dates from Dates order by ID desc) between TimeOff.Start and TimeOff.[End]);", null, objConn);
+			dgvOffThisWeek.DataBind();
 		}
+		/*
+		private void populateInternSchedules(SqlConnection objConn) {
+			Session["weekday"] = Session["weekday"] == null ? 1 : Session["weekday"]; //Init session so no null references occur
 
+			/* This function is responsible for populating the schedule tables. It's rather complicated and needs to be fast,
+			 * so this will explain it all.
+			 * 
+			 * 1. First we just get employee information. Nothing special here. We just need to use Linkedlists first because the amount of employees we have may change.
+			 *	  Then we convert them to arrays for fast access.
+			 * 2. Now we get the schedule data, but while we do it we create a special hashtable: it will take in the Alna_num and the weekday as an object array and 
+			 *	  return an object array with the times that person is available for. We do this for speed in populating the table.
+			 
+
+			//1. First get Alna nums and names
+
+			List<int> temp_alna_nums = new List<int>();
+			List<string> temp_names = new List<string>();
+
+			SqlDataReader reader = getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true, objConn);
+			while (reader.Read()) {
+				temp_alna_nums.Add(reader.GetInt32(0));
+				temp_names.Add(reader.GetString(1));
+			}
+			reader.Close();
+			int[] alna_nums = temp_alna_nums.ToArray();     //We want fast O(1) access because we are going to be doing a good amount of computation
+			string[] names = temp_names.ToArray();
+
+			//2. Get schedule data
+			LinkedList<int> alna_num_list = new LinkedList<int>();
+			LinkedList<int> timestart_list = new LinkedList<int>();
+			LinkedList<int> timeend_list = new LinkedList<int>();
+			reader = getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"], objConn);
+			while (reader.Read()) {
+				alna_num_list.AddLast(reader.GetInt32(0));
+				timestart_list.AddLast(reader.GetInt16(1));
+				timeend_list.AddLast(reader.GetInt16(2));
+			}
+			reader.Close();
+
+			object key, value;
+			for (int i = 0;i < alna_num_list.Count;i++) {
+				key = new object[] { alna_num_list.First, dayofweek_list.First };
+				alna_num_list.RemoveFirst();
+				dayofweek_list.RemoveFirst();
+				if ((((object[])key)[0]) == alna_num_list.First)
+					do {
+
+					} while ((((object[])key)[0]) == alna_num_list.First);
+				else {
+
+				}
+			}
+
+			Hashtable h = new Hashtable();
+
+
+			GridView[] gridviews = { dgvMonday, dgvTuesday, dgvWednesday, dgvTuesday, dgvFriday };
+			int[] workday = { 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6 };
+			DataTable table;
+
+			foreach (GridView gridview in gridviews) {
+				table = new DataTable();
+				table.Columns.Add("Time");
+				foreach (string s in names)
+					table.Columns.Add(s);
+
+			}
+		}
+	*/
 		//----------------------------------------------------------------
 		// HTML events
 		//----------------------------------------------------------------
@@ -100,7 +171,7 @@ namespace CTBTeam {
 		}
 
 		protected void download(object sender, EventArgs e) {
-			if(!Date.TryParse(ddlselectWeek.SelectedValue, out Date date)) {
+			if (!Date.TryParse(ddlselectWeek.SelectedValue, out Date date)) {
 				throwJSAlert("Not a valid date");
 				return;
 			}
@@ -115,7 +186,7 @@ namespace CTBTeam {
 
 			//Write file then transmit it
 			try {
-				string s, fileName = @"" + Server.MapPath("~/Logs/DBLog.csv");
+				string s, fileName = @"" + Server.MapPath("~/Logs/" + Date.Today.Year + "-" + Date.Today.Month + "-" + Date.Today.Day + "_DBLog.csv");
 				File.Create(fileName).Dispose();
 				StreamWriter file = new StreamWriter(fileName);
 
@@ -162,5 +233,17 @@ namespace CTBTeam {
 			}
 		}
 
+	}
+
+	class Schedule {
+		private struct key {
+			int alna;
+			int day;
+		}
+
+		private struct value {
+			int start;
+			int end;
+		}
 	}
 }

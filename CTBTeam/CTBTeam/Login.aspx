@@ -2,16 +2,16 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<br />
-
-
 	<div class="login-page">
 		<div class="login">
 			<div class="login-form">
 
-				<asp:Label ID="lblLogin" runat="server" Text="Sign In As:" CssClass="username"></asp:Label>
+				<asp:Label ID="lblLogin" runat="server" Text="Sign In As:" CssClass="username" />
 				<br />
 				<br />
-				<asp:DropDownList ID="ddl" runat="server" CssClass="drp-login"/>
+				<asp:DropDownList ID="ddl" runat="server" CssClass="drp-login">
+					<asp:ListItem Text="-- Select yourself --" />
+				</asp:DropDownList>
 				<br />
 				<br />
 				<br />

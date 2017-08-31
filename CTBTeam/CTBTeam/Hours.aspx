@@ -5,8 +5,11 @@
 		<asp:TextBox ID="txtSuccessBox" runat="server" Text="Success." Visible="false" ReadOnly="true" CssClass="feedback-textbox" />
 	</div>
 	<div class="row">
+		<asp:LinkButton ID="btnSwitchView" runat="server" Text="Switch views" OnClick="htmlEvent" />
+	</div>
+	<div class="row">
 		<div class="col-md-50">
-			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title"></asp:Label>
+			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title" />
 		</div>
 		<div class="col-md-50" style="text-align: left;">
 			<asp:CheckBox ID="chkInactive" runat="server" Style="color: white;" Text="Show me inactive projects, old employees, etc." />
@@ -64,18 +67,14 @@
 		</div>
 	</div>
 	<br />
-	<div class="col-md-50">
-		<div class="row">
-			<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" />
-			<%--<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+	<div class="row">
+		<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" />
+		<%--<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 				<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
-		</div>
-		<br />
-		<div class="row">
-			<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" />
-			<%-- <asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
+
+		<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" Visible="false" />
+		<%-- <asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
 				<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
-		</div>
 	</div>
 	<br />
 </asp:Content>

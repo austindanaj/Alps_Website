@@ -27,6 +27,11 @@ namespace CTBTeam {
 		}
 
 		protected void Login_Clicked(Object sender, EventArgs e) {
+			if (ddl.SelectedIndex == 0) {
+				throwJSAlert("Select your name");
+				return;
+			}
+
 			try {
 				objConn = openDBConnection();
 				objConn.Open();

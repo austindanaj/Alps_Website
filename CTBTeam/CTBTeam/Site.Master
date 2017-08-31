@@ -76,10 +76,12 @@
 			</style>
 			<asp:ContentPlaceHolder ID="MainContent" runat="server">
 			</asp:ContentPlaceHolder>
-			<hr />
-			<footer class="footer">
-				<p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
-			</footer>
+			<br />
+			<div class="row">
+				<footer class="footer">
+					<p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
+				</footer>
+			</div>
 		</div>
 
 	</form>

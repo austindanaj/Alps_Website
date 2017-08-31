@@ -15,31 +15,35 @@
 	</div>
 	<br />
 	<div class="col-md-50">
-		<asp:GridView ID="gv" runat="server" CssClass="gridview" />
+		<asp:GridView ID="dgvOffThisWeek" runat="server" CssClass="gridview" />
 	</div>
-	<div class="col-md-50">
-		<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
-			BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
-			Width="700px" BorderlineColor="64, 0, 64">
-			<Titles>
-				<asp:Title ShadowOffset="10" Name="Project Percent" />
-			</Titles>
-			<Legends>
-				<asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default"
-					BackColor="Transparent" ForeColor="White" LegendStyle="Column" />
-			</Legends>
-			<Series>
-				<asp:Series Name="Default" />
-			</Series>
-			<ChartAreas>
-				<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
-			</ChartAreas>
-		</asp:Chart>
+	<div class="row">
+		<div class="col-md-50">
+			<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
+				BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
+				Width="700px" BorderlineColor="64, 0, 64">
+				<Titles>
+					<asp:Title ShadowOffset="10" Name="Project Percent" />
+				</Titles>
+				<Legends>
+					<asp:Legend Alignment="Center" Docking="Right" IsTextAutoFit="False" Name="Default" BackColor="Transparent" ForeColor="White" LegendStyle="Column" />
+				</Legends>
+				<Series>
+					<asp:Series Name="Default" />
+				</Series>
+				<ChartAreas>
+					<asp:ChartArea Name="ChartArea1" BorderWidth="0" BackColor="Transparent" />
+				</ChartAreas>
+			</asp:Chart>
+		</div>
 	</div>
-	<br />
-	<div class="col-md-50">
+	<div class="row">
+		<asp:GridView ID="dgvMonday" runat="server" CssClass="gridview" />
+		<asp:GridView ID="dgvTuesday" runat="server" CssClass="gridview" />
+		<asp:GridView ID="dgvWednesday" runat="server" CssClass="gridview" />
+		<asp:GridView ID="dgvThursday" runat="server" CssClass="gridview" />
+		<asp:GridView ID="dgvFriday" runat="server" CssClass="gridview" />
+		<br />
 		<asp:Button runat="server" ID="toe" OnClick="toetruck" />
 	</div>
-	<br />
 </asp:Content>
-
