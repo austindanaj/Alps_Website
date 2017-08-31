@@ -5,12 +5,13 @@ using System.IO;
 using Date = System.DateTime;
 using System.Web;
 using System.Web.UI.DataVisualization.Charting;
-using System.Web.UI.WebControls;
 using System.Collections.Generic;
-using System.Collections;
+using System.Web.UI.WebControls;
 
 namespace CTBTeam {
 	public partial class _Default : HoursPage {
+		private delegate string Lambda1(int time);
+
 		protected void Page_Load(object sender, EventArgs e) {
 			if (!IsPostBack) {
 				SqlConnection objConn = openDBConnection();
@@ -25,6 +26,7 @@ namespace CTBTeam {
 				reader.Close();
 				populatePieChart(objConn);
 				populateDaysOffTable(objConn);
+				populateInternSchedules(objConn);
 				objConn.Close();
 			}
 		}
@@ -94,10 +96,8 @@ namespace CTBTeam {
 			dgvOffThisWeek.DataSource = getDataTable("select e.Name as 'Employees out this week' from Employees e where e.Alna_num in (select Alna_num from TimeOff where (select top 1 Dates from Dates order by ID desc) between TimeOff.Start and TimeOff.[End]);", null, objConn);
 			dgvOffThisWeek.DataBind();
 		}
-		/*
-		private void populateInternSchedules(SqlConnection objConn) {
-			Session["weekday"] = Session["weekday"] == null ? 1 : Session["weekday"]; //Init session so no null references occur
 
+		private void populateInternSchedules(SqlConnection objConn) {
 			/* This function is responsible for populating the schedule tables. It's rather complicated and needs to be fast,
 			 * so this will explain it all.
 			 * 
@@ -105,13 +105,14 @@ namespace CTBTeam {
 			 *	  Then we convert them to arrays for fast access.
 			 * 2. Now we get the schedule data, but while we do it we create a special hashtable: it will take in the Alna_num and the weekday as an object array and 
 			 *	  return an object array with the times that person is available for. We do this for speed in populating the table.
-			 
-
+			 */
+			
+			Session["weekday"] = Session["weekday"] == null ? 1 : Session["weekday"]; //Init session so no null references occur
+			
 			//1. First get Alna nums and names
 
 			List<int> temp_alna_nums = new List<int>();
 			List<string> temp_names = new List<string>();
-
 			SqlDataReader reader = getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true, objConn);
 			while (reader.Read()) {
 				temp_alna_nums.Add(reader.GetInt32(0));
@@ -121,48 +122,89 @@ namespace CTBTeam {
 			int[] alna_nums = temp_alna_nums.ToArray();     //We want fast O(1) access because we are going to be doing a good amount of computation
 			string[] names = temp_names.ToArray();
 
+
 			//2. Get schedule data
-			LinkedList<int> alna_num_list = new LinkedList<int>();
-			LinkedList<int> timestart_list = new LinkedList<int>();
-			LinkedList<int> timeend_list = new LinkedList<int>();
+			temp_alna_nums = new List<int>();
+			List<int> temp_timestart_list = new List<int>();
+			List<int> temp_timeend_list = new List<int>();
 			reader = getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"], objConn);
 			while (reader.Read()) {
-				alna_num_list.AddLast(reader.GetInt32(0));
-				timestart_list.AddLast(reader.GetInt16(1));
-				timeend_list.AddLast(reader.GetInt16(2));
+				temp_alna_nums.Add(reader.GetInt32(0));
+				temp_timestart_list.Add(reader.GetInt16(1));
+				temp_timeend_list.Add(reader.GetInt16(2));
 			}
 			reader.Close();
+			int[] schedule_alna_nums = temp_alna_nums.ToArray();
+			int[] timestart = temp_timestart_list.ToArray();
+			int[] timeend = temp_timeend_list.ToArray();
 
-			object key, value;
-			for (int i = 0;i < alna_num_list.Count;i++) {
-				key = new object[] { alna_num_list.First, dayofweek_list.First };
-				alna_num_list.RemoveFirst();
-				dayofweek_list.RemoveFirst();
-				if ((((object[])key)[0]) == alna_num_list.First)
-					do {
+			DataTable table = new DataTable();
+			table.Columns.Add("Time");
+			foreach (string name in names)
+				table.Columns.Add(name);
 
-					} while ((((object[])key)[0]) == alna_num_list.First);
-				else {
+			Lambda1 military_to_standard = new Lambda1(delegate (int time) {
+				if (time >= 1300)
+					time -= 1200;
+				string s = time.ToString();
+				if (s.Length == 3)
+					s = s[0] + ":" + s.Substring(1, 2);
+				else
+					s = s.Substring(0,2) + ":" + s.Substring(1, 2);
+				return s;
+			});
 
+			DataRow d;
+			int[] workday = { 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700 };
+			int tableColumns = table.Columns.Count;
+			int scheduleColumns = schedule_alna_nums.Length;
+			foreach (int i in workday) {
+				d = table.NewRow();
+				d[0] = military_to_standard(i);
+				for (int j= 0;j < alna_nums.Length;j++) {
+					for (int k=0;k<scheduleColumns;k++) {
+						if (alna_nums[j] == schedule_alna_nums[k]) {
+							if (i <= timestart[k] & i + 100 > timestart[k])
+								d[j + 1] = "In @" + military_to_standard(timestart[k]);
+							else if (i <= timeend[k] & i + 100 > timeend[k])
+								d[j + 1] = "Out @" + military_to_standard(timeend[k]);
+							else if (i > timestart[k] & i <= timeend[k])
+								d[j + 1] = "Working";
+						}
+					}
 				}
+				table.Rows.Add(d);
 			}
 
-			Hashtable h = new Hashtable();
-
-
-			GridView[] gridviews = { dgvMonday, dgvTuesday, dgvWednesday, dgvTuesday, dgvFriday };
-			int[] workday = { 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6 };
-			DataTable table;
-
-			foreach (GridView gridview in gridviews) {
-				table = new DataTable();
-				table.Columns.Add("Time");
-				foreach (string s in names)
-					table.Columns.Add(s);
-
+			switch ((int)Session["weekday"]) {
+				case 1:
+					dgvMonday.Visible = true;
+					dgvMonday.DataSource = table;
+					dgvMonday.DataBind();
+					break;
+				case 2:
+					dgvTuesday.Visible = true;
+					dgvTuesday.DataSource = table;
+					dgvTuesday.DataBind();
+					break;
+				case 3:
+					dgvWednesday.Visible = true;
+					dgvWednesday.DataSource = table;
+					dgvWednesday.DataBind();
+					break;
+				case 4:
+					dgvThursday.Visible = true;
+					dgvThursday.DataSource = table;
+					dgvThursday.DataBind();
+					break;
+				default:
+					dgvFriday.Visible = true;
+					dgvFriday.DataSource = table;
+					dgvFriday.DataBind();
+					break;
 			}
 		}
-	*/
+
 		//----------------------------------------------------------------
 		// HTML events
 		//----------------------------------------------------------------
@@ -233,17 +275,22 @@ namespace CTBTeam {
 			}
 		}
 
-	}
-
-	class Schedule {
-		private struct key {
-			int alna;
-			int day;
+		protected void color(object sender, GridViewRowEventArgs e) {
+			if (e.Row.RowType == DataControlRowType.DataRow) {
+				for (int i = 1; i < e.Row.Cells.Count; i++) {
+					string cellText = e.Row.Cells[i].Text;
+					if (string.IsNullOrEmpty(cellText)) continue;
+					if (cellText.Equals("Working")) {
+						e.Row.Cells[i].BackColor = System.Drawing.Color.Purple;
+						e.Row.Cells[i].ForeColor = System.Drawing.Color.White;
+					}
+					else if (cellText.Contains("In ") | cellText.Contains("Out ")) {
+						e.Row.Cells[i].BackColor = System.Drawing.Color.Red;
+						e.Row.Cells[i].ForeColor = System.Drawing.Color.White;
+					}
+				}
+			}
 		}
 
-		private struct value {
-			int start;
-			int end;
-		}
 	}
 }

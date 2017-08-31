@@ -38,11 +38,11 @@
 		</div>
 	</div>
 	<div class="row">
-		<asp:GridView ID="dgvMonday" runat="server" CssClass="gridview" />
-		<asp:GridView ID="dgvTuesday" runat="server" CssClass="gridview" />
-		<asp:GridView ID="dgvWednesday" runat="server" CssClass="gridview" />
-		<asp:GridView ID="dgvThursday" runat="server" CssClass="gridview" />
-		<asp:GridView ID="dgvFriday" runat="server" CssClass="gridview" />
+		<asp:GridView ID="dgvMonday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
+		<asp:GridView ID="dgvTuesday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
+		<asp:GridView ID="dgvWednesday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
+		<asp:GridView ID="dgvThursday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
+		<asp:GridView ID="dgvFriday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
 		<br />
 		<asp:Button runat="server" ID="toe" OnClick="toetruck" />
 	</div>
