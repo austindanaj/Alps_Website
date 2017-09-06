@@ -9,8 +9,6 @@ namespace CTBTeam {
 		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
-			//SCAFFOLD
-			Session["Alna_num"] = 173017;
 			objConn = openDBConnection();
 			if (!IsPostBack) {
 				objConn.Open();
