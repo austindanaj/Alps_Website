@@ -23,6 +23,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -139,6 +140,7 @@
     <Content Include="Images\FrankCadi.png" />
     <Content Include="IssueList.aspx" />
     <Content Include="20170823Databaset.sql" />
+    <Content Include="Schedule.aspx" />
     <Content Include="ttc823jdnajs3.aspx" />
     <Content Include="ToeTruck.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -227,6 +229,13 @@
     </Compile>
     <Compile Include="IssueList.aspx.designer.cs">
       <DependentUpon>IssueList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule.aspx.cs">
+      <DependentUpon>Schedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Schedule.aspx.designer.cs">
+      <DependentUpon>Schedule.aspx</DependentUpon>
     </Compile>
     <Compile Include="ttc823jdnajs3.aspx.cs">
       <DependentUpon>ttc823jdnajs3.aspx</DependentUpon>

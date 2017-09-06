@@ -106,9 +106,9 @@ namespace CTBTeam {
 			 * 2. Now we get the schedule data, but while we do it we create a special hashtable: it will take in the Alna_num and the weekday as an object array and 
 			 *	  return an object array with the times that person is available for. We do this for speed in populating the table.
 			 */
-			
+
 			Session["weekday"] = Session["weekday"] == null ? 1 : Session["weekday"]; //Init session so no null references occur
-			
+
 			//1. First get Alna nums and names
 
 			List<int> temp_alna_nums = new List<int>();
@@ -139,7 +139,7 @@ namespace CTBTeam {
 			int[] timeend = temp_timeend_list.ToArray();
 
 			DataTable table = new DataTable();
-			table.Columns.Add("Time");
+			table.Columns.Add(ddlSelectScheduleDay.Items[(int)Session["weekday"] - 1].Text);
 			foreach (string name in names)
 				table.Columns.Add(name);
 
@@ -150,19 +150,19 @@ namespace CTBTeam {
 				if (s.Length == 3)
 					s = s[0] + ":" + s.Substring(1, 2);
 				else
-					s = s.Substring(0,2) + ":" + s.Substring(1, 2);
+					s = s.Substring(0, 2) + ":" + s.Substring(2, 2);
 				return s;
 			});
 
 			DataRow d;
-			int[] workday = { 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700 };
+			int[] workday = { 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800 };
 			int tableColumns = table.Columns.Count;
 			int scheduleColumns = schedule_alna_nums.Length;
 			foreach (int i in workday) {
 				d = table.NewRow();
 				d[0] = military_to_standard(i);
-				for (int j= 0;j < alna_nums.Length;j++) {
-					for (int k=0;k<scheduleColumns;k++) {
+				for (int j = 0; j < alna_nums.Length; j++) {
+					for (int k = 0; k < scheduleColumns; k++) {
 						if (alna_nums[j] == schedule_alna_nums[k]) {
 							if (i <= timestart[k] & i + 100 > timestart[k])
 								d[j + 1] = "In @" + military_to_standard(timestart[k]);
@@ -176,33 +176,8 @@ namespace CTBTeam {
 				table.Rows.Add(d);
 			}
 
-			switch ((int)Session["weekday"]) {
-				case 1:
-					dgvMonday.Visible = true;
-					dgvMonday.DataSource = table;
-					dgvMonday.DataBind();
-					break;
-				case 2:
-					dgvTuesday.Visible = true;
-					dgvTuesday.DataSource = table;
-					dgvTuesday.DataBind();
-					break;
-				case 3:
-					dgvWednesday.Visible = true;
-					dgvWednesday.DataSource = table;
-					dgvWednesday.DataBind();
-					break;
-				case 4:
-					dgvThursday.Visible = true;
-					dgvThursday.DataSource = table;
-					dgvThursday.DataBind();
-					break;
-				default:
-					dgvFriday.Visible = true;
-					dgvFriday.DataSource = table;
-					dgvFriday.DataBind();
-					break;
-			}
+			dgvSchedule.DataSource = table;
+			dgvSchedule.DataBind();
 		}
 
 		//----------------------------------------------------------------
@@ -292,5 +267,12 @@ namespace CTBTeam {
 			}
 		}
 
+		protected void changeScheduleDay(object sender, EventArgs e) {
+			Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
+			SqlConnection objConn = openDBConnection();
+			objConn.Open();
+			populateInternSchedules(objConn);
+			objConn.Close();
+		}
 	}
 }

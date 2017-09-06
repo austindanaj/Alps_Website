@@ -22,24 +22,6 @@ namespace CTBTeam {
         protected global::System.Web.UI.WebControls.DropDownList ddlselectWeek;
         
         /// <summary>
-        /// Image1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
-        
-        /// <summary>
-        /// dgvOffThisWeek control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvOffThisWeek;
-        
-        /// <summary>
         /// chartPercent control.
         /// </summary>
         /// <remarks>
@@ -49,49 +31,40 @@ namespace CTBTeam {
         protected global::System.Web.UI.DataVisualization.Charting.Chart chartPercent;
         
         /// <summary>
-        /// dgvMonday control.
+        /// Image1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvMonday;
+        protected global::System.Web.UI.WebControls.Image Image1;
         
         /// <summary>
-        /// dgvTuesday control.
+        /// ddlSelectScheduleDay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvTuesday;
+        protected global::System.Web.UI.WebControls.DropDownList ddlSelectScheduleDay;
         
         /// <summary>
-        /// dgvWednesday control.
+        /// dgvSchedule control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvWednesday;
+        protected global::System.Web.UI.WebControls.GridView dgvSchedule;
         
         /// <summary>
-        /// dgvThursday control.
+        /// dgvOffThisWeek control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvThursday;
-        
-        /// <summary>
-        /// dgvFriday control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView dgvFriday;
+        protected global::System.Web.UI.WebControls.GridView dgvOffThisWeek;
         
         /// <summary>
         /// toe control.

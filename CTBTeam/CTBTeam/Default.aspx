@@ -4,20 +4,11 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<div class="row">
-		<div class="col-md-50">
-			<h1 style="font-weight: 700; font-size: 70px;">Project Hours</h1>
+		<div class="col-md-25">
+			<h1 style="font-weight: 700; font-size: 50px;">Project Hours</h1>
 			<asp:DropDownList ID="ddlselectWeek" runat="server" CssClass="drp-home" /><br />
 			<asp:Button runat="server" OnClick="download" Text="Download" CssClass="btn btn-default" />
 		</div>
-		<div class="col-md-50">
-			<asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Images/Globe.png" CssClass="image_main" />
-		</div>
-	</div>
-	<br />
-	<div class="col-md-50">
-		<asp:GridView ID="dgvOffThisWeek" runat="server" CssClass="gridview" />
-	</div>
-	<div class="row">
 		<div class="col-md-50">
 			<asp:Chart ID="chartPercent" runat="server" BackColor="Transparent" EnableViewState="true"
 				BorderlineWidth="0" Height="360px" Palette="None" PaletteCustomColors="Maroon"
@@ -36,14 +27,32 @@
 				</ChartAreas>
 			</asp:Chart>
 		</div>
+		<div class="col-md-25">
+			<asp:Image ID="Image1" runat="server" Height="300" Width="300" ImageUrl="~/Images/Globe.png" CssClass="image_main" />
+		</div>
 	</div>
+	<br />
 	<div class="row">
-		<asp:GridView ID="dgvMonday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
-		<asp:GridView ID="dgvTuesday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
-		<asp:GridView ID="dgvWednesday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
-		<asp:GridView ID="dgvThursday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
-		<asp:GridView ID="dgvFriday" runat="server" CssClass="gridview" Visible="false" OnRowDataBound="color" />
-		<br />
-		<asp:Button runat="server" ID="toe" OnClick="toetruck" />
+		<div class="col-md-50">
+			<h1 style="font-weight: 700; font-size: 50px;">Intern schedule</h1>
+			<asp:DropDownList ID="ddlSelectScheduleDay" runat="server" CssClass="drp-home" OnSelectedIndexChanged="changeScheduleDay" AutoPostBack="true">
+				<asp:ListItem Text="Monday" />
+				<asp:ListItem Text="Tuesday" />
+				<asp:ListItem Text="Wednesday" />
+				<asp:ListItem Text="Thursday" />
+				<asp:ListItem Text="Friday" />
+			</asp:DropDownList>
+		</div>
 	</div>
+	<br />
+	<div class="row">
+		<div class="col-md-80">
+			<asp:GridView ID="dgvSchedule" runat="server" CssClass="gridview" OnRowDataBound="color" />
+		</div>
+		<div class="col-md-20">
+			<asp:GridView ID="dgvOffThisWeek" runat="server" CssClass="gridview" />
+		</div>
+	</div>
+	<br />
+	<asp:Button runat="server" ID="toe" OnClick="toetruck" />
 </asp:Content>

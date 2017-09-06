@@ -64,7 +64,7 @@ namespace CTBTeam {
 			}
 			catch (SqlException e) {
 				SqlErrorCollection errors = e.Errors;
-				
+
 				bool failure = false, codeError = false;
 				foreach (SqlError error in errors) {
 					if (error.Class > 16) {
@@ -143,9 +143,8 @@ namespace CTBTeam {
 		}
 
 		protected DataTable getDataTable(string command, object parameter, SqlConnection objConn) {
-			bool state = objConn.State == ConnectionState.Closed;
-			if (state)
-				objConn.Open();
+			if (objConn.State == ConnectionState.Closed)
+				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
@@ -154,10 +153,7 @@ namespace CTBTeam {
 				cmd.Parameters.AddWithValue("@value1", parameter);
 			objAdapter.SelectCommand = cmd;
 			object[] o = { objAdapter, objDataSet };
-			objDataSet = (DataSet) sqlExecuter(o, SqlTypes.DataTable);
-
-			if (state)
-				objConn.Close();
+			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
 
 			return objDataSet == null ? null : objDataSet.Tables[0];
 		}
@@ -166,9 +162,8 @@ namespace CTBTeam {
 			if (parameters == null)
 				return getDataTable(command, (object)null, objConn);
 
-			bool state = objConn.State == ConnectionState.Closed;
-			if (state)
-				objConn.Open();
+			if (objConn.State == ConnectionState.Closed)
+				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlDataAdapter objAdapter = new SqlDataAdapter();
 			DataSet objDataSet = new DataSet();
@@ -182,37 +177,27 @@ namespace CTBTeam {
 			object[] o = { objAdapter, objDataSet };
 			objDataSet = (DataSet)sqlExecuter(o, SqlTypes.DataTable);
 
-			if (state)
-				objConn.Close();
-
 			return objDataSet == null ? null : objDataSet.Tables[0];
 		}
 
 		protected SqlDataReader getReader(string query, object parameters, SqlConnection objConn) {
-			bool state = objConn.State == ConnectionState.Closed;
-			if (state)
-				objConn.Open();
+			if (objConn.State == ConnectionState.Closed)
+				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlCommand cmd = new SqlCommand(query, objConn);
 			if (parameters != null) {
 				cmd.Parameters.AddWithValue("@value1", parameters);
 			}
 
-			SqlDataReader reader = (SqlDataReader) sqlExecuter(cmd, SqlTypes.DataReader);
-
-			if (state)
-				objConn.Close();
-
-			return reader;
+			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader); ;
 		}
 
 		protected SqlDataReader getReader(string query, object[] parameters, SqlConnection objConn) {
 			if (parameters == null)
 				return getReader(query, (object)parameters, objConn);
 
-			bool state = objConn.State == ConnectionState.Closed;
-			if (state)
-				objConn.Open();
+			if (objConn.State == ConnectionState.Closed)
+				throw new Exception("You forgot to open the object connection. You have to leave it open until you're done with the data reader.");
 
 			SqlCommand cmd = new SqlCommand(query, objConn);
 			int i = 1;
@@ -221,12 +206,7 @@ namespace CTBTeam {
 				i++;
 			}
 
-			SqlDataReader reader = (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader);
-
-			if (state)
-				objConn.Close();
-
-			return reader;
+			return (SqlDataReader)sqlExecuter(cmd, SqlTypes.DataReader);
 		}
 
 		protected void initDate(SqlConnection objConn) {
@@ -365,10 +345,11 @@ namespace CTBTeam {
 				modelTable = "Projects";
 				hoursTable = "ProjectHours";
 				innerID = "Proj_ID";
-			} else {
+			}
+			else {
 				modelTable = "Vehicles";
 				hoursTable = "VehicleHours";
-				innerID = "Vehicle_ID"; 
+				innerID = "Vehicle_ID";
 			}
 
 
@@ -377,7 +358,7 @@ namespace CTBTeam {
 			if (state) objConn.Open();
 			DataTable employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
 			DataTable modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1", true, objConn);
-			DataTable hoursData = getDataTable("select Alna_num, " + innerID+ ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
+			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
 			if (state) objConn.Close();
 
 			if (null == employeesData || null == modelData || null == hoursData)
