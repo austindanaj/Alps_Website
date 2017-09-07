@@ -13,6 +13,10 @@ namespace CTBTeam {
 			if (Session["admin"] != null)
 				if ((bool)Session["admin"])
 					admin.Visible = true;
+
+			if (Session["Full_time"] != null)
+				if (!(bool)Session["Full_time"])
+					lstSchedule.Visible = true;
 		}
 
 

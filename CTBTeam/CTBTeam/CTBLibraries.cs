@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using Date = System.DateTime;
 
 namespace CTBTeam {
@@ -249,11 +250,11 @@ namespace CTBTeam {
 	public class HoursPage : SuperPage {
 		SqlConnection objConn;
 
-		protected DataTable getProjectHours(object date, bool includeFullTimers) {
+		public DataTable getProjectHours(object date, bool includeFullTimers) {
 			return getFormattedDataTable(date, includeFullTimers, true);
 		}
 
-		protected DataTable getVehicleHours(object date) {
+		public DataTable getVehicleHours(object date) {
 			return getFormattedDataTable(date, false, false);
 		}
 
@@ -405,6 +406,151 @@ namespace CTBTeam {
 				modelDataTable.Rows.Add(d);
 
 			return modelDataTable;
+		}
+	}
+
+	public class SchedulePage : SuperPage {
+		protected void populateInternSchedules(SqlConnection objConn, GridView gridView) {
+			/* This function is responsible for populating the schedule tables. It's rather complicated and needs to be fast, so I will break it down here because
+			 * commenting in-line will just be confusing. (Runtime: Omicron(n^3), Omega(n^2))
+			 * 
+			 * 1. First we just get employee information. Nothing special here. We just need to use Linkedlists first because the amount of employees we have may change.
+			 *	  Then we convert them to arrays for fast access. Important property to note is when they get converted to arrays it looks like this:
+			 *	  
+			 *					Index 0 of either
+			 *					array is my alna
+			 *					and name, important
+			 *					property later on
+			 *						|
+			 *						V
+			 *	  int[] alna = { 173017			,...
+			 *	  int[] name = {"Anthony Hewins",...
+			 *	  
+			 *						 same here too
+			 *	  int[] alna =		{173017,173017,...				<-This is alna #
+			 *	  int[] startTime = {800   ,800   ,...				<-This is military time (least significant digits cannot ever be greater than 59, database checks for it)
+			 *	  int[] endTime =	{1700  ,1700  ,...				<-This is military time
+			 *	  int[] dayofweek = {1	   ,2	  ,...				<-Day of the week (Sunday=0, Monday=1, ...)
+			 *	  
+			 * 2. Next is schedule info, same exact thing.
+			 * 3. Afterwards we start populating the table with columns. Columns should look like this:
+			 *		+-------------------------+-------------------------+-------------------------+
+			 *		|	(Day of the week)	  |			Anthony Hewins	|		Employee 2		  | .....
+			 *		+-------------------------+-------------------------+-------------------------+
+			 * 4. Afterwards we have to add rows. Since we get the schedule information and the employee info with ORDER BY ID ASC, we know that the table columns will almost correspond to
+			 *	  the schedule data in the array. I say almost because having two rows in the database for the same day screws it up a bit since you need to check more records. Here's what happens:
+			 *	  
+			 *	  
+			 *		Pretend we're working on this cell		int i = currentRecordInTheScheduleArray		
+			 *				   |							if alna[i] == row10am.column[1]
+			 *				   v								if youre_working_during_this_time(starttime[i], endtime[i])
+			 *		  +------+----+----------+						row10am[1] = working
+			 *		  |Monday|You |Other dude|					else
+			 *		  +------+----+----------+						continue
+			 *		  |8:00am|Work|Off		 |
+			 *		  |9:00am|Off |Work		 |
+			 *	->	  |10:00 |	  |			 |
+			 *			...
+			 *			...
+			 *			...
+			 */
+
+			Session["weekday"] = Session["weekday"] == null ? 1 : Session["weekday"]; //This contains the information on what day of week the user wants
+
+			//1. First get Alna nums and names
+			List<int> temp_alna_nums = new List<int>();
+			List<string> temp_names = new List<string>();
+			SqlDataReader reader = getReader("select Alna_num, Name from Employees where Active=@value1 and Full_time!=@value1 order by Alna_num asc", true, objConn);
+			while (reader.Read()) {
+				temp_alna_nums.Add(reader.GetInt32(0));
+				temp_names.Add(reader.GetString(1));
+			}
+			reader.Close();
+			int[] alna_nums = temp_alna_nums.ToArray();     //We want fast O(1) access because we are going to be doing a good amount of computation
+			string[] names = temp_names.ToArray();
+
+			//2. Get schedule data
+			temp_alna_nums = new List<int>();
+			List<int> temp_timestart_list = new List<int>();
+			List<int> temp_timeend_list = new List<int>();
+			reader = getReader("select Alna_num, TimeStart, TimeEnd from Schedule where DayOfWeek=@value1 order by Alna_num asc", Session["weekday"], objConn);
+			while (reader.Read()) {
+				temp_alna_nums.Add(reader.GetInt32(0));
+				temp_timestart_list.Add(reader.GetInt16(1));
+				temp_timeend_list.Add(reader.GetInt16(2));
+			}
+			reader.Close();
+			int[] schedule_alna_nums = temp_alna_nums.ToArray();
+			int[] timestart = temp_timestart_list.ToArray();
+			int[] timeend = temp_timeend_list.ToArray();
+
+			//3. Populate columns
+			DataTable table = new DataTable();
+			string[] weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
+			table.Columns.Add(weekdays[(int)Session["weekday"] - 1]);
+			foreach (string name in names)
+				table.Columns.Add(name);
+
+			//4. Table population
+			DataRow d;
+			int[] workday = { 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800 };
+			int tableColumns = table.Columns.Count;
+			int scheduleColumns = schedule_alna_nums.Length;
+			int alnaNumLength = alna_nums.Length;
+			bool endOfSearch = false;
+			foreach (int i in workday) {
+				d = table.NewRow();
+				d[0] = military_to_standard(i);
+				for (int j = 0; j < alnaNumLength; j++) {
+					for (int k = 0; k < scheduleColumns; k++) {
+						if (alna_nums[j] == schedule_alna_nums[k]) {
+							endOfSearch = true;
+							if (i <= timestart[k] & i + 100 > timestart[k])
+								d[j + 1] = "In @" + military_to_standard(timestart[k]);
+							else if (i <= timeend[k] & i + 100 > timeend[k])
+								d[j + 1] = "Out @" + military_to_standard(timeend[k]);
+							else if (i > timestart[k] & i <= timeend[k])
+								d[j + 1] = "Working";
+						} else if (endOfSearch) {
+							endOfSearch = false;
+							break;
+						}
+					}
+				}
+				table.Rows.Add(d);
+			}
+
+			gridView.DataSource = table;
+			gridView.DataBind();
+		}
+
+		protected void color(object sender, GridViewRowEventArgs e) {
+			if (e.Row.RowType == DataControlRowType.DataRow) {
+				for (int i = 1; i < e.Row.Cells.Count; i++) {
+					string cellText = e.Row.Cells[i].Text;
+					if (string.IsNullOrEmpty(cellText)) continue;
+					if (cellText.Equals("Working")) {
+						e.Row.Cells[i].BackColor = System.Drawing.Color.Blue;
+						e.Row.Cells[i].ForeColor = System.Drawing.Color.Yellow;
+					}
+					else if (cellText.Contains("In ") | cellText.Contains("Out ")) {
+						e.Row.Cells[i].BackColor = System.Drawing.Color.Yellow;
+						e.Row.Cells[i].ForeColor = System.Drawing.Color.Blue;
+					}
+				}
+			}
+		}
+
+		protected string military_to_standard(int time) {
+			string period_of_day = time >= 1200 ? "pm" : "am";
+			if (time >= 1300)
+				time -= 1200;
+			string s = time.ToString();
+			if (s.Length == 3)
+				s = s[0] + ":" + s.Substring(1, 2);
+			else
+				s = s.Substring(0, 2) + ":" + s.Substring(2, 2);
+			return s + period_of_day;
 		}
 	}
 }
