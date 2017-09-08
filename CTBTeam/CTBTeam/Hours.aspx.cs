@@ -240,11 +240,6 @@ namespace CTBTeam {
 
 			int hours = (int)(40 * (decHours / 100));
 
-			if (hours < 1 | hours > 40) {
-				throwJSAlert("An error occurred, the site thought you tried submit an hour amount more than 40 or less than 1.");
-				return false;
-			}
-
 			string table;
 			string column;
 			DataTable tableToUpdate;
