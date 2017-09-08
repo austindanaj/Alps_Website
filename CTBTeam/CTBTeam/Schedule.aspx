@@ -34,14 +34,14 @@
 				</asp:DropDownList>
 			</div>
 			<div class="row">
-				<asp:TextBox ID="txtStartTime" runat="server" CssClass="txt-time" placeholder="HH:mm" TextMode="Time" format="HH:mm" MaxLength="5" />
+				<asp:TextBox ID="txtStartTime" runat="server" CssClass="txt-time" placeholder="HH:mm" MaxLength="5" />
 				<asp:DropDownList ID="ddlStartAmPm" runat="server" CssClass="ddl-time">
 					<asp:ListItem Text="am" />
 					<asp:ListItem Text="pm" />
 				</asp:DropDownList>
 			</div>
 			<div class="row">
-				<asp:TextBox ID="txtEndTime" runat="server" CssClass="txt-time" placeholder="HH:mm" TextMode="Time" format="HH:mm" MaxLength="5" />
+				<asp:TextBox ID="txtEndTime" runat="server" CssClass="txt-time" placeholder="HH:mm" MaxLength="5" />
 				<asp:DropDownList ID="ddlEndAmPm" runat="server" CssClass="ddl-time">
 					<asp:ListItem Text="am" />
 					<asp:ListItem Text="pm" />

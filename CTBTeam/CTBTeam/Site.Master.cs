@@ -18,7 +18,5 @@ namespace CTBTeam {
 				if (!(bool)Session["Full_time"])
 					lstSchedule.Visible = true;
 		}
-
-
 	}
 }

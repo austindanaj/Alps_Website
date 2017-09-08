@@ -5,9 +5,7 @@ using Date = System.DateTime;
 using System;
 using System.Web.UI.WebControls;
 using System.Data;
-using System.Web.UI.DataVisualization.Charting;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace CTBTeam {
 	public partial class Hours : HoursPage {
