@@ -410,7 +410,7 @@ namespace CTBTeam {
 	}
 
 	public class SchedulePage : SuperPage {
-		protected void populateInternSchedules(SqlConnection objConn, GridView gridView) {
+		protected void populateInternSchedules(SqlConnection objConn, GridView gridView, DropDownList ddl) {
 			/* This function is responsible for populating the schedule tables. It's rather complicated and needs to be fast, so I will break it down here because
 			 * commenting in-line will just be confusing. (Runtime: Omicron(n^3), Omega(n^2))
 			 * 
@@ -455,7 +455,14 @@ namespace CTBTeam {
 			 *			...
 			 */
 
-			Session["weekday"] = Session["weekday"] == null ? 1 : Session["weekday"]; //This contains the information on what day of week the user wants
+			if (Session["weekday"] == null) {
+				int dayOfWeek = (int)Date.Today.DayOfWeek;
+				if (dayOfWeek == 0 | dayOfWeek == 6)
+					Session["weekday"] = 1;
+				else
+					Session["weekday"] = dayOfWeek;
+			}
+			ddl.SelectedIndex = (int)Session["weekday"] - 1;
 
 			//1. First get Alna nums and names
 			List<int> temp_alna_nums = new List<int>();

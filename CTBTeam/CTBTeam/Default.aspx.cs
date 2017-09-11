@@ -24,7 +24,7 @@ namespace CTBTeam {
 				reader.Close();
 				populatePieChart(objConn);
 				populateDaysOffTable(objConn);
-				populateInternSchedules(objConn, dgvSchedule);
+				populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
 				objConn.Close();
 			}
 		}
@@ -170,7 +170,7 @@ namespace CTBTeam {
 			Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
 			SqlConnection objConn = openDBConnection();
 			objConn.Open();
-			populateInternSchedules(objConn, dgvSchedule);
+			populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
 			objConn.Close();
 		}
 	}

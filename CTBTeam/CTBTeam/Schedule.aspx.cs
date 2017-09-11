@@ -14,7 +14,7 @@ namespace CTBTeam {
 			objConn = openDBConnection();
 			if (!IsPostBack) {
 				objConn.Open();
-				populateInternSchedules(objConn, dgvSchedule);
+				populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
 				populateScheduledHoursDdl(objConn);
 				objConn.Close();
 			}
@@ -46,7 +46,7 @@ namespace CTBTeam {
 			Session["weekday"] = ddlSelectScheduleDay.SelectedIndex + 1;
 			SqlConnection objConn = openDBConnection();
 			objConn.Open();
-			populateInternSchedules(objConn, dgvSchedule);
+			populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
 			objConn.Close();
 		}
 
@@ -121,7 +121,7 @@ namespace CTBTeam {
 				}
 				objConn.Open();
 				executeVoidSQLQuery("delete from Schedule where ID=@value1", id, objConn);
-				populateInternSchedules(objConn, dgvSchedule);
+				populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
 				populateScheduledHoursDdl(objConn);
 			}
 		}
