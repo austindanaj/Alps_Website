@@ -110,6 +110,7 @@ namespace CTBTeam {
 				obj = new object[] { Session["Alna_num"], start, end, ddlDay.SelectedIndex + 1 };
 				executeVoidSQLQuery("insert into Schedule (Alna_num, TimeStart, TimeEnd, DayOfWeek) values (@value1, @value2, @value3, @value4)", obj, objConn);
 				throwJSAlert("Successfully added new schedule entry");
+				pnlDelete.Visible = true;
 				redirectSafely("~/Schedule");
 			}
 			else {
