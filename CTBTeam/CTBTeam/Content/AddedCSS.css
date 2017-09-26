@@ -130,6 +130,10 @@
 	border-color: #ccc;
 	color: #9d9d9d;
 }
+.btn-home:hover {
+	transition-duration: 1s;
+	background-color: grey;
+}
 .lbl-home {
     color: #FFFFFF;
     font-size: 22px;
@@ -160,6 +164,11 @@
 	border-color: #ccc;
 	color: #9d9d9d;
 }
+
+.drp-purchase option:hover {
+	display: block;
+}
+
 .txt-purchase-mult {
 	display: inline-block;
 	resize: none;
@@ -498,15 +507,12 @@ input[type='checkbox'] {
 	font-size: 18px;
 	text-align: left;
 }
-/*
-.drp-login:hover {
-	display: block;
-}
 
-.drp-phones:hover {
-	display: block;
+/*
+select.drp-phones:hover {
+	background-color: white;
 }
 
 .drp-model:hover {
-	display: block;
+	background-color: white;
 }*/

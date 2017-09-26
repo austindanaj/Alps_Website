@@ -67,8 +67,8 @@ namespace CTBTeam {
 					return;
 			}
 
-			object[] parameters = { text.Replace(" ", "_"), projectCategory };
-			executeVoidSQLQuery("INSERT INTO Projects (Name, Category) VALUES (@value1, @value2);", parameters, objConn);
+			object[] parameters = { text.Replace(" ", "_"), projectCategory, txtAbbreviation.Text };
+			executeVoidSQLQuery("INSERT INTO Projects (Name, Category, Abbreviation) VALUES (@value1, @value2, @value3);", parameters, objConn);
 
 			Session["success?"] = true;
 			redirectSafely("~/Admin");

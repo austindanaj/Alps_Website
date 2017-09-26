@@ -1,7 +1,6 @@
 ﻿using System;
 using Date = System.DateTime;
 using System.Data.SqlClient;
-using System.Web.UI.WebControls;
 using System.Data;
 
 namespace CTBTeam {
@@ -55,7 +54,7 @@ namespace CTBTeam {
 			for (i = 0; i <= 4; i++)
 				weekdays[i] = mondayOfCurrentWeek.AddDays(i);
 
-			DataTable employees = getDataTable("select Alna_num, Name from Employees order by Alna_num", null, objConn);
+			DataTable employees = getDataTable("select Alna_num, Name from Employees where Active=@value1 order by Alna_num", true, objConn);
 			DataTable timeOff = getDataTable("select Alna_num, Start, TimeOff.[End], Business from TimeOff order by Alna_num", null, objConn);
 
 			if (employees ==null | timeOff == null) {

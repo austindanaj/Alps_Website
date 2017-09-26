@@ -306,6 +306,27 @@ namespace CTBTeam {
 			dgvCars.DataBind();
 		}
 
+		protected void color(object sender, GridViewRowEventArgs e) {
+			if (e.Row.RowType == DataControlRowType.DataRow) {
+				int n = e.Row.Cells.Count;
+				int accumulator = 0;
+				for (int i = 1; i < n; i++) {
+					string text = e.Row.Cells[i].Text;
+					if (text.Equals("&nbsp;"))	//If the cell is blank ASP puts this there for whatever reason
+						continue;
+					if (!int.TryParse(text, out int hour)) {
+						e.Row.Cells[0].BackColor = System.Drawing.Color.Red;
+						return;
+					}
+					accumulator += hour;
+				}
+				if (accumulator != 40)
+					e.Row.Cells[0].BackColor = System.Drawing.Color.Red;
+				else
+					e.Row.Cells[0].BackColor = System.Drawing.Color.Green;
+			}
+		}
+
 		private void hoursUpdate() {
 			int hoursWorked = 0, totalHours = 0;
 

@@ -28,6 +28,7 @@
 				<asp:ListItem Text="C – Production Development" />
 				<asp:ListItem Text="D – Design in Market (Non-Auto)" />
 			</asp:RadioButtonList>
+			<asp:TextBox CssClass="txt-admin" ID="txtAbbreviation" runat="server" placeholder="Abbreviation" />
 			<asp:Button Class="btn-home" Width="120px" ID="btnProject" runat="server" OnClick="Project_Clicked" Text="Add Project"></asp:Button>
 		</div>
 		<div class="col-md-25">
