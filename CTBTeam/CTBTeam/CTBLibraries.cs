@@ -25,8 +25,8 @@ namespace CTBTeam {
 		}
 
 		protected SqlConnection openDBConnection() {
-			return new SqlConnection(LOCALHOST_CONNECTION_STRING);
-			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+			//return new SqlConnection(LOCALHOST_CONNECTION_STRING);
+			return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
 		}
 
 		protected void throwJSAlert(string s) {
@@ -250,16 +250,16 @@ namespace CTBTeam {
 	public class HoursPage : SuperPage {
 		SqlConnection objConn;
 
-		public DataTable getProjectHours(object date, bool includeFullTimers) {
-			return getFormattedDataTable(date, includeFullTimers, true);
+		public DataTable getProjectHours(object date, bool includeFullTimers, bool isActive) {
+			return getFormattedDataTable(date, includeFullTimers, true, isActive);
 		}
 
-		public DataTable getVehicleHours(object date) {
-			return getFormattedDataTable(date, false, false);
+		public DataTable getVehicleHours(object date, bool isActive) {
+			return getFormattedDataTable(date, false, false, isActive);
 		}
 
 		//Can be date or dateID
-		private DataTable getFormattedDataTable(object date, bool includeFullTimers, bool isProjectHours) {
+		private DataTable getFormattedDataTable(object date, bool includeFullTimers, bool isProjectHours, bool isActive) {
 			/*
 			 * Need to put the partTimeEmployee/vehicle records into gridview.
 			 * Due to really annoying limitations of SQL and C#, this is
@@ -357,8 +357,20 @@ namespace CTBTeam {
 			objConn = objConn == null ? openDBConnection() : objConn;
 			bool state = objConn.State == ConnectionState.Closed;
 			if (state) objConn.Open();
-			DataTable employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
-			DataTable modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
+            DataTable employeesData;
+            DataTable modelData;
+
+            if (isActive) {
+                employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
+                modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
+            }
+            else
+            {
+                employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
+                modelData = getDataTable("select ID, Abbreviation from " + modelTable + " " + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
+
+            }
+		
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
 			if (state) objConn.Close();
 

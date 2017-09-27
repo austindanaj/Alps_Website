@@ -126,6 +126,7 @@
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Debug\" />
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
@@ -136,7 +137,6 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="CRC.exe" />
     <Content Include="Images\CTBProjects.png" />
-    <Content Include="Debug\StackTrace.txt" />
     <Content Include="Images\FrankCadi.png" />
     <Content Include="IssueList.aspx" />
     <Content Include="20170823Databaset.sql" />
@@ -373,15 +373,6 @@
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="VBIDE">
-      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>5</VersionMajor>
-      <VersionMinor>3</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>

@@ -109,8 +109,8 @@ namespace CTBTeam {
 			}
 
 			HoursPage h = new HoursPage();
-			DataTable projectDataTable = h.getProjectHours(date, true);
-			DataTable vehicleDataTable = h.getVehicleHours(date);
+			DataTable projectDataTable = h.getProjectHours(date, true, !true);
+			DataTable vehicleDataTable = h.getVehicleHours(date, !true);
 
 			if (projectDataTable == null | vehicleDataTable == null) {
 				throwJSAlert("Data could not be downloaded; some sort of error");

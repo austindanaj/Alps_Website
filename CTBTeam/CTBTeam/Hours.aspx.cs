@@ -248,9 +248,9 @@ namespace CTBTeam {
 		}
 
 		private void populateTables() {
-			dgvProject.DataSource = getProjectHours(Session["Date_ID"], true);
+			dgvProject.DataSource = getProjectHours(Session["Date_ID"], true, !chkInactive.Checked);
 			dgvProject.DataBind();
-			dgvCars.DataSource = getVehicleHours(Session["Date_ID"]) ;
+			dgvCars.DataSource = getVehicleHours(Session["Date_ID"], !chkInactive.Checked) ;
 			dgvCars.DataBind();
 		}
 
