@@ -10,7 +10,7 @@ using System.Collections;
 namespace CTBTeam {
 	public partial class Hours : HoursPage {
 		private SqlConnection objConn;
-		private DataTable projectData, projectHoursData, vehicleHoursData, employeesData, vehiclesData, datesData;
+		private DataTable projectData, projectHoursData, vehicleHoursData, vehiclesData, datesData;
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
 		protected void Page_Load(object sender, EventArgs e) {
@@ -58,7 +58,7 @@ namespace CTBTeam {
 			datesData = getDataTable("select Dates from Dates order by ID desc", null, objConn);
 			objConn.Close();
 
-			if (employeesData == null || projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null) {
+			if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null) {
 				throwJSAlert("Problem accessing data; contact Anthony or Austin");
 				return;
 			}
