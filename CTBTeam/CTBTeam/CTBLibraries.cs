@@ -358,7 +358,7 @@ namespace CTBTeam {
 			bool state = objConn.State == ConnectionState.Closed;
 			if (state) objConn.Open();
 			DataTable employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
-			DataTable modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1", true, objConn);
+			DataTable modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
 			if (state) objConn.Close();
 

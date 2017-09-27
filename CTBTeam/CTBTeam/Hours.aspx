@@ -69,12 +69,7 @@
 	<br />
 	<div class="row">
 		<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" OnRowDataBound="color"/>
-		<%--<asp:Button runat="server" ID="btnProjectPrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-				<asp:Button runat="server" ID="btnProjectNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
-
 		<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" Visible="false" />
-		<%-- <asp:Button runat="server" ID="btnVehiclePrevious" Text="←" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />
-				<asp:Button runat="server" ID="btnVehicleNext" Text="→" OnClick="Arrow_Button_Clicked" CssClass="btn-home" Width="500px" />--%>
 	</div>
 	<br />
 </asp:Content>

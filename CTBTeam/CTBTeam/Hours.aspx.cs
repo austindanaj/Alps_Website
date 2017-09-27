@@ -44,13 +44,11 @@ namespace CTBTeam {
 
 			//TODO: make the employees queries only one query and seperate them by Full_time
 			if (!chkInactive.Checked) {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 order by Full_time;", true, objConn);
-				projectData = getDataTable("select ID, Name, Category from Projects where Active=@value1", true, objConn);
+				projectData = getDataTable("select ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
 			}
 			else {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees order by Full_time", null, objConn);
-				projectData = getDataTable("select ID, Name, Categories from Projects", null, objConn);
+				projectData = getDataTable("select ID, Name, Category from Projects order by Projects.PriorityOrder", null, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
 			}
 
@@ -178,56 +176,6 @@ namespace CTBTeam {
 				dgvProject.Visible = !dgvProject.Visible;
 			}
 		}
-
-		//Listener for clicks on the arrow buttons below the tables
-		/*
-		protected void Arrow_Button_Clicked(object sender, EventArgs e) {
-			string s;
-			DATA_TYPE type;
-			bool increment;
-			//This entire if-else block figures out what arrow button was pressed
-			//(referring to the arrow buttons below each table)
-			if (sender.Equals(btnProjectPrevious)) {
-				s = "ProjectCol";
-				type = DATA_TYPE.PROJECT;
-				increment = false;
-			}
-			else if (sender.Equals(btnProjectNext)) {
-				s = "ProjectCol";
-				type = DATA_TYPE.PROJECT;
-				increment = true;
-			}
-			else if (sender.Equals(btnVehiclePrevious)) {
-				s = "VehicleCol";
-				type = DATA_TYPE.VEHICLE;
-				increment = false;
-			}
-			else if (sender.Equals(btnVehicleNext)) {
-				s = "VehicleCol";
-				type = DATA_TYPE.VEHICLE;
-				increment = true;
-			}
-			else {
-				writeStackTrace("Sender object in Arrow_Button_Clicked had unexpected identity", new ArgumentException(sender.ToString()));
-				return;
-			}
-
-			//Based on what button was pressed we perform this logic on the session.
-			//The session holds the cookie for what table range of the tables the user
-			//wants to view. The physical value is an int value that discriminates what rows to grab from
-			//the table. We don't allow the users to have an offset above 18, because then they would view nothing.
-			//TODO: make the hardcoded value the length of the table minus 5.
-			if (increment) {
-				Session[s] = (int)Session[s] + 6;
-				if ((int)Session[s] > 18)
-					Session[s] = 18;
-			}
-			else {
-				Session[s] = (int)Session[s] - 6;
-				if ((int)Session[s] < 1)
-					Session[s] = 1;
-			}
-		}*/
 
 		private bool insertRecord(string projectOrVehicle, string hoursSpent, DATA_TYPE type) {
 			hoursSpent = hoursSpent.Substring(0, 4).Trim().Replace("%", "").Replace("-", "");
