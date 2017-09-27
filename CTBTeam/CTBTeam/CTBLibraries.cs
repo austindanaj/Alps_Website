@@ -392,12 +392,16 @@ namespace CTBTeam {
 				colAndRowTracker++;
 			}
 
-			int whatCol, whatRow;
+			int whatCol = 0, whatRow;
 			foreach (DataRow d in hoursData.Rows) {
 				int alna = (int)d[0];
 				if (!employeeHashTable.ContainsKey(alna))   //We skip full time employees since they will not appear in the Hashtable
 					continue;
-				whatCol = modelHashTable[(int)d[1]];
+				try {
+					whatCol = modelHashTable[(int)d[1]];
+				} catch (KeyNotFoundException) {
+					continue; //The project must be inactive that you're looking at, just skip it
+				}
 				whatRow = employeeHashTable[alna];
 				tempMatrix[whatRow][whatCol] = d[2];
 			}
