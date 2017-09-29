@@ -47,6 +47,7 @@ namespace CTBTeam {
 			SqlConnection objConn = openDBConnection();
 			objConn.Open();
 			populateInternSchedules(objConn, dgvSchedule, ddlSelectScheduleDay);
+			populateScheduledHoursDdl(objConn);
 			objConn.Close();
 		}
 
@@ -56,13 +57,20 @@ namespace CTBTeam {
 				Lambda parse = new Lambda(delegate (object o) {
 					bool isStartTime = (bool)o;
 					try {
-						if (isStartTime)
-							temp = int.Parse(txtStartTime.Text.Replace(" ", "").Replace(":", "")) + (ddlStartAmPm.SelectedIndex * 1200);
-						else
-							temp = int.Parse(txtEndTime.Text.Replace(" ", "").Replace(":", "")) + (ddlEndAmPm.SelectedIndex * 1200);
-						if (temp < 1859 & temp >= 700 | temp % 100 < 60) return;
+						if (isStartTime) {
+							temp = int.Parse(txtStartTime.Text.Replace(" ", "").Replace(":", ""));
+							temp += temp >= 1200 ? 0 : (ddlStartAmPm.SelectedIndex * 1200);
+						}
+						else {
+							temp = int.Parse(txtEndTime.Text.Replace(" ", "").Replace(":", ""));
+							temp += temp >= 1200 ? 0 : (ddlEndAmPm.SelectedIndex * 1200);
+						}
+							
+						if (temp < 1859 & temp >= 700 | temp % 100 < 60) return; 
 					}
-					catch { }
+					catch {
+						writeStackTrace("Looks like 1 of 2 things happened here: someone tried hacking the parser for the time in saveOrDelete or there's a logic messup somewhere, but the first case is more likely", new ArgumentException());
+					}
 					temp = -1;
 				});
 				parse(true);
@@ -101,7 +109,7 @@ namespace CTBTeam {
 					if ((compareStart <= start & compareEnd >= start) | (compareStart <= end & compareEnd >= end) | (compareStart >= start & end >= compareEnd)) {
 						reader.Close();
 						objConn.Close();
-						throwJSAlert("Conflicts with another schedule entry you have");
+						throwJSAlert("Conflicts with another schedule entry you have. Make sure that the day you want to add is selected in the dropdown, you may be adding it for Monday on accident.");
 						return;
 					}
 				}

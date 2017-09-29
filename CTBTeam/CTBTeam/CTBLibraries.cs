@@ -12,6 +12,7 @@ namespace CTBTeam {
 	public class SuperPage : Page {
 		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
 		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
+		private readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 		private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
 		protected void writeStackTrace(string s, Exception ex) {
@@ -25,8 +26,9 @@ namespace CTBTeam {
 		}
 
 		protected SqlConnection openDBConnection() {
-			//return new SqlConnection(LOCALHOST_CONNECTION_STRING);
-			return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+			return new SqlConnection(LOCALHOST_CONNECTION_STRING);
+			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+			//return new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
 
 		protected void throwJSAlert(string s) {
@@ -357,20 +359,18 @@ namespace CTBTeam {
 			objConn = objConn == null ? openDBConnection() : objConn;
 			bool state = objConn.State == ConnectionState.Closed;
 			if (state) objConn.Open();
-            DataTable employeesData;
-            DataTable modelData;
+			DataTable employeesData;
+			DataTable modelData;
 
-            if (isActive) {
-                employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
-                modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
-            }
-            else
-            {
-                employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
-                modelData = getDataTable("select ID, Abbreviation from " + modelTable + " " + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
+			if (isActive) {
+				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
+				modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
+			}
+			else {
+				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
+				modelData = getDataTable("select ID, Abbreviation from " + modelTable + " " + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
+			}
 
-            }
-		
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
 			if (state) objConn.Close();
 
@@ -411,7 +411,8 @@ namespace CTBTeam {
 					continue;
 				try {
 					whatCol = modelHashTable[(int)d[1]];
-				} catch (KeyNotFoundException) {
+				}
+				catch (KeyNotFoundException) {
 					continue; //The project must be inactive that you're looking at, just skip it
 				}
 				whatRow = employeeHashTable[alna];
@@ -534,7 +535,8 @@ namespace CTBTeam {
 								d[j + 1] = "Out @" + military_to_standard(timeend[k]);
 							else if (i > timestart[k] & i <= timeend[k])
 								d[j + 1] = "Working";
-						} else if (endOfSearch) {
+						}
+						else if (endOfSearch) {
 							endOfSearch = false;
 							break;
 						}

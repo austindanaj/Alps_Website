@@ -36,6 +36,8 @@
 			<br />
 			<asp:TextBox Class="txt-admin" ID="txtCar" runat="server" placeholder="Vehicle Name"></asp:TextBox>
 			<br />
+			<asp:TextBox Class="txt-admin" ID="txtCarAbbreviation" runat="server" placeholder="Abbreviation"></asp:TextBox>
+			<br />
 			<br />
 			<asp:Button Class="btn-home" Width="120px" ID="btnCar" runat="server" OnClick="Car_Clicked" Text="Add Vehicle"></asp:Button>
 		</div>

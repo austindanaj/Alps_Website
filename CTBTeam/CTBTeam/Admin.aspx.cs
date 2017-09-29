@@ -76,12 +76,12 @@ namespace CTBTeam {
 
 		protected void Car_Clicked(object sender, EventArgs e) {
 			string text = txtCar.Text;
-			if (string.IsNullOrEmpty(text)) {
-				throwJSAlert("Car needs a name");
+			if (string.IsNullOrEmpty(text) | string.IsNullOrEmpty(txtCarAbbreviation.Text)) {
+				throwJSAlert("Car needs a name and an abbreviation");
 				return;
 			}
 
-			executeVoidSQLQuery("INSERT INTO Vehicles (Name) VALUES (@value1);", text.Replace(" ", "_"), objConn);
+			executeVoidSQLQuery("INSERT INTO Vehicles (Name, Abbreviation) VALUES (@value1, @value2);", new object[] { text.Replace(" ", "_"), txtCarAbbreviation.Text }, objConn);
 
 			Session["success?"] = true;
 			redirectSafely("~/Admin");
