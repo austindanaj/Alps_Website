@@ -14,7 +14,9 @@
 			<br />
 			<asp:TextBox Class="txt-admin" ID="txtName" runat="server" placeholder="First and Last Name"></asp:TextBox>
 			<br />
-			<asp:CheckBox ID="chkPartTime" runat="server" Text="Part Time" Style="color: white" />
+			<asp:CheckBox ID="chkPartTime" runat="server" Text="Part Time and use vehicles" Style="color: white" />
+			<br />
+			<asp:CheckBox ID="chkUseVehicle" runat="server" Text="Only use vehicles" Style="color: white" />
 			<br />
 			<asp:Button Class="btn-home" Width="100px" ID="btnName" runat="server" OnClick="User_Clicked" Text="Add User"></asp:Button>
 		</div>

@@ -42,7 +42,6 @@ namespace CTBTeam {
 		private void getData() {
 			objConn.Open();
 
-			//TODO: make the employees queries only one query and seperate them by Full_time
 			if (!chkInactive.Checked) {
 				projectData = getDataTable("select ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
@@ -250,7 +249,7 @@ namespace CTBTeam {
 		private void populateTables() {
 			dgvProject.DataSource = getProjectHours(Session["Date_ID"], true, !chkInactive.Checked);
 			dgvProject.DataBind();
-			dgvCars.DataSource = getVehicleHours(Session["Date_ID"], !chkInactive.Checked) ;
+			dgvCars.DataSource = getVehicleHours(Session["Date_ID"], !chkInactive.Checked);
 			dgvCars.DataBind();
 		}
 
@@ -260,7 +259,7 @@ namespace CTBTeam {
 				int accumulator = 0;
 				for (int i = 1; i < n; i++) {
 					string text = e.Row.Cells[i].Text;
-					if (text.Equals("&nbsp;"))	//If the cell is blank ASP puts this there for whatever reason
+					if (text.Equals("&nbsp;"))  //If the cell is blank ASP puts this there for whatever reason
 						continue;
 					if (!int.TryParse(text, out int hour)) {
 						e.Row.Cells[0].BackColor = System.Drawing.Color.Red;

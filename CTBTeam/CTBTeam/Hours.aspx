@@ -10,9 +10,9 @@
 	<div class="row">
 		<div class="col-md-50">
 			<asp:Label ID="lblWeekOf" runat="server" Text="Week Of: 0/00/0000" CssClass="lbl time-title" />
-		</div>
-		<div class="col-md-50" style="text-align: left;">
+			<br />
 			<asp:CheckBox ID="chkInactive" runat="server" Style="color: white;" Text="Show me inactive projects, old employees, etc." />
+			<br />
 			<asp:DropDownList ID="ddlselectWeek" CssClass="drp-home" runat="server" OnSelectedIndexChanged="htmlEvent" />
 			<asp:Button ID="btnselectWeek" CssClass="btn-home" runat="server" Text="Go" Width="50px" OnClick="htmlEvent" />
 		</div>
@@ -68,7 +68,7 @@
 	</div>
 	<br />
 	<div class="row">
-		<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" OnRowDataBound="color"/>
+		<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" OnRowDataBound="color" />
 		<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" Visible="false" />
 	</div>
 	<br />

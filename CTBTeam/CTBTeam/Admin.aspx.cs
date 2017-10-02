@@ -34,9 +34,9 @@ namespace CTBTeam {
 				return;
 			}
 
-			object[] o = { alna, txtName.Text, !chkPartTime.Checked };
+			object[] o = { alna, txtName.Text, !chkPartTime.Checked, chkUseVehicle.Checked | chkPartTime.Checked };
 
-			executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time) VALUES (@value1, @value2, @value3);", o, objConn);
+			executeVoidSQLQuery("INSERT INTO Employees (Alna_num, Name, Full_Time, Vehicle) VALUES (@value1, @value2, @value3, @value4);", o, objConn);
 			Session["success?"] = true;
 			redirectSafely("~/Admin");
 		}
@@ -102,7 +102,8 @@ namespace CTBTeam {
 			else if (sender.Equals(btnRemoveProject)) {
 				command = "Update Projects set Active=@value1 WHERE ID=@value2;";
 				text = txtRemoveProject.Text;
-			} else if (sender.Equals(btnRemoveIssue)) {
+			}
+			else if (sender.Equals(btnRemoveIssue)) {
 				command = "update IssueList set Active=@value1 where ID=@value2;";
 				text = txtRemoveIssue.Text;
 			}
@@ -115,7 +116,7 @@ namespace CTBTeam {
 				throwJSAlert("Not an integer!");
 				return;
 			}
-			object[] args = {false, id};
+			object[] args = { false, id };
 			executeVoidSQLQuery(command, args, objConn);
 			Session["success?"] = true;
 			redirectSafely("~/Admin");
@@ -129,37 +130,24 @@ namespace CTBTeam {
 			 */
 			Lambda populate = new Lambda(delegate (object o) {
 				object[] args = (object[])o;
-				SqlDataAdapter objAdapter = new SqlDataAdapter();
-				objAdapter.SelectCommand = new SqlCommand((string) args[0], objConn);
-				DataSet objDataSet = new DataSet();
-				objAdapter.Fill(objDataSet);
 				GridView g = (GridView)args[1];
-				g.DataSource = objDataSet.Tables[0].DefaultView;
+				g.DataSource = getDataTable((string)args[0], true, objConn);
 				g.DataBind();
 			});
 
-			try {
-				objConn.Open();
-				object[] parameters = { "SELECT Alna_num, Employees.[Name], Full_time from Employees where Active=1 ORDER BY Alna_num", dgvUsers };
-				populate(parameters);
-				parameters[0] = "SELECT ID, Vehicles.[Name] FROM Vehicles where Active=1;";
-				parameters[1] = dgvCars;
-				populate(parameters);
-				parameters[0] = "SELECT ID, Name, Category FROM Projects where Active=1;";
-				parameters[1] = dgvProjects;
-				populate(parameters);
-				parameters[0] = "select IssueList.ID, IssueList.Title, e.Name as Employee from IssueList inner join Employees e on e.Alna_num=IssueList.Reporter where IssueList.Active=1;";
-				parameters[1] = dgvIssues;
-				populate(parameters);
-				objConn.Close();
-			} catch (SqlException e) {
-				writeStackTrace("Sql issue in populating tables", e);
-				throwJSAlert("Database failure: SqlException");
-			}
-			catch (Exception e) {
-				writeStackTrace("Error in populating tables", e);
-				throwJSAlert("Failure populating tables");
-			}
+			objConn.Open();
+			object[] parameters = { "SELECT Alna_num, Employees.[Name], Full_time, Vehicle from Employees where Active=@value1 ORDER BY Alna_num", dgvUsers };
+			populate(parameters);
+			parameters[0] = "SELECT ID, Vehicles.[Name] FROM Vehicles where Active=@value1;";
+			parameters[1] = dgvCars;
+			populate(parameters);
+			parameters[0] = "SELECT ID, Name, Category FROM Projects where Active=@value1;";
+			parameters[1] = dgvProjects;
+			populate(parameters);
+			parameters[0] = "select IssueList.ID, IssueList.Title, e.Name as Employee from IssueList inner join Employees e on e.Alna_num=IssueList.Reporter where IssueList.Active=@value1;";
+			parameters[1] = dgvIssues;
+			populate(parameters);
+			objConn.Close();
 		}
 	}
 }

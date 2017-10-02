@@ -257,7 +257,7 @@ namespace CTBTeam {
 		}
 
 		public DataTable getVehicleHours(object date, bool isActive) {
-			return getFormattedDataTable(date, false, false, isActive);
+			return getFormattedDataTable(date, true, false, isActive);
 		}
 
 		//Can be date or dateID
@@ -363,12 +363,12 @@ namespace CTBTeam {
 			DataTable modelData;
 
 			if (isActive) {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
+				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1" + (isProjectHours ? "" : " and Vehicle=@value1"), true, objConn);
 				modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
 			}
 			else {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
-				modelData = getDataTable("select ID, Abbreviation from " + modelTable + " " + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
+				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees" + (isProjectHours ? "" : " where Vehicle=@value1"), null, objConn);
+				modelData = getDataTable("select ID, Abbreviation from " + modelTable + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
 			}
 
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
@@ -377,15 +377,14 @@ namespace CTBTeam {
 			if (null == employeesData || null == modelData || null == hoursData)
 				return null;
 
-			int colAndRowTracker = 0;
+			int colAndRowTracker = 1;
 			Dictionary<int, int> employeeHashTable = new Dictionary<int, int>();
 			Dictionary<int, int> modelHashTable = new Dictionary<int, int>();        //I had to make 3 separate hash tables because there might be collisions
 
 			DataTable modelDataTable = new DataTable();
 			modelDataTable.Columns.Add("Name");
-
 			foreach (DataRow d in modelData.Rows) {
-				modelHashTable.Add((int)d[0], colAndRowTracker + 1); //Add one because column 0 is name
+				modelHashTable.Add((int)d[0], colAndRowTracker); //Add one because column 0 is name
 				modelDataTable.Columns.Add((string)d[1]);
 				colAndRowTracker++;
 			}
