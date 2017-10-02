@@ -367,7 +367,12 @@ namespace CTBTeam {
 				modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
 			}
 			else {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees" + (isProjectHours ? "" : " where Vehicle=@value1"), null, objConn);
+				if (isProjectHours) {
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
+				}
+				else {
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1", true, objConn);
+				}
 				modelData = getDataTable("select ID, Abbreviation from " + modelTable + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
 			}
 

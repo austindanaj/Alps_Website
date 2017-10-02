@@ -21,17 +21,19 @@ namespace CTBTeam {
 
 			objConn = openDBConnection();
 
-			if (Session["Date"] == null)
-				initDate(objConn);
-
-			getDate();
-			getData();
-
 			if (!IsPostBack) {
+				if (Session["Date"] == null)
+					initDate(objConn);
+				if (Session["Active"] == null)
+					Session["Active"] = true;
+
+				getDate();
+				getData();
 				ddlInit();
 			}
-
 			populateTables();
+
+			chkInactive.Checked = !(bool)Session["Active"];
 		}
 
 		private void getDate() {
@@ -133,14 +135,15 @@ namespace CTBTeam {
 				reader.Read();
 				Session["Date_ID"] = (int)reader.GetValue(0);
 				objConn.Close();
+				Session["Active"] = !(bool)Session["Active"];
 				redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitPercent)) {
-				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedValue, DATA_TYPE.PROJECT))
+				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedIndex, DATA_TYPE.PROJECT))
 					redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitVehicles)) {
-				if (insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedValue, DATA_TYPE.VEHICLE))
+				if (insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedIndex, DATA_TYPE.VEHICLE))
 					redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnDelete)) {
@@ -176,27 +179,20 @@ namespace CTBTeam {
 			}
 		}
 
-		private bool insertRecord(string projectOrVehicle, string hoursSpent, DATA_TYPE type) {
-			hoursSpent = hoursSpent.Substring(0, 4).Trim().Replace("%", "").Replace("-", "");
-			if (!decimal.TryParse(hoursSpent, out decimal decHours)) {
-				throwJSAlert("Error in hours selection. try again");
-				return false;
-			}
-
-			int hours = (int)(40 * (decHours / 100));
-
-			string table;
-			string column;
+		private bool insertRecord(string projectOrVehicle, int hours, DATA_TYPE type) {
+			string table, modelTable, column;
 			DataTable tableToUpdate;
 			switch (type) {
 				case DATA_TYPE.PROJECT:
 					table = "ProjectHours";
 					column = "Proj_ID";
+					modelTable = "Projects";
 					tableToUpdate = projectData;
 					break;
 				case DATA_TYPE.VEHICLE:
 					table = "VehicleHours";
 					column = "Vehicle_ID";
+					modelTable = "Vehicles";
 					tableToUpdate = vehiclesData;
 					break;
 				default:
@@ -204,22 +200,10 @@ namespace CTBTeam {
 					return false;
 			}
 
-			int projOrVehicleID = -1;
-			foreach (DataRow d in tableToUpdate.Rows)
-				if (d[1].Equals(projectOrVehicle)) {
-					projOrVehicleID = (int)d[0];
-					break;
-				}
-
-			if (projOrVehicleID == -1) {
-				throwJSAlert("Project/vehicle does not exist");
-				return false;
-			}
-
 			try {
 				objConn.Open();
-				object[] o = { Session["Alna_num"], projOrVehicleID, Session["Date_ID"] };
-				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=@value2 and Date_ID=@value3", o, objConn);
+				object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
+				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=(select ID from " + modelTable + " where Name=@value2) and Date_ID=@value3", o, objConn);
 				if (reader == null) return false;
 
 				if (reader.HasRows) {
@@ -234,8 +218,8 @@ namespace CTBTeam {
 					reader.Close();
 				}
 
-				object[] o2 = { o[0], projOrVehicleID, hours, o[2] };
-				executeVoidSQLQuery("insert into " + table + " values(@value1, @value2, @value3, @value4)", o2, objConn);
+				o = new object[] { o[0], projectOrVehicle, hours, o[2] };
+				executeVoidSQLQuery("insert into " + table + " values(@value1, (select ID from " + modelTable + " where Name=@value2), @value3, @value4)", o, objConn);
 				objConn.Close();
 			}
 			catch (Exception ex) {
@@ -247,9 +231,9 @@ namespace CTBTeam {
 		}
 
 		private void populateTables() {
-			dgvProject.DataSource = getProjectHours(Session["Date_ID"], true, !chkInactive.Checked);
+			dgvProject.DataSource = getProjectHours(Session["Date_ID"], true, (bool)Session["Active"]);
 			dgvProject.DataBind();
-			dgvCars.DataSource = getVehicleHours(Session["Date_ID"], !chkInactive.Checked);
+			dgvCars.DataSource = getVehicleHours(Session["Date_ID"], (bool)Session["Active"]);
 			dgvCars.DataBind();
 		}
 
