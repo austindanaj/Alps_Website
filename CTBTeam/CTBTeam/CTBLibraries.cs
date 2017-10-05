@@ -26,8 +26,8 @@ namespace CTBTeam {
 		}
 
 		protected SqlConnection openDBConnection() {
-			return new SqlConnection(LOCALHOST_CONNECTION_STRING);
-			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+			//return new SqlConnection(LOCALHOST_CONNECTION_STRING);
+			return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
 			//return new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
 
