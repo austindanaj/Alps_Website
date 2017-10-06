@@ -343,14 +343,12 @@ namespace CTBTeam {
 			else
 				return null;
 
-			string modelTable, hoursTable, innerID;
+			string hoursTable, innerID;
 			if (isProjectHours) {
-				modelTable = "Projects";
 				hoursTable = "ProjectHours";
 				innerID = "Proj_ID";
 			}
 			else {
-				modelTable = "Vehicles";
 				hoursTable = "VehicleHours";
 				innerID = "Vehicle_ID";
 			}
@@ -363,17 +361,24 @@ namespace CTBTeam {
 			DataTable modelData;
 
 			if (isActive) {
-				employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1" + (isProjectHours ? "" : " and Vehicle=@value1"), true, objConn);
-				modelData = getDataTable("select ID, Abbreviation from " + modelTable + "  where Active=@value1" + (isProjectHours ? " order by Projects.PriorityOrder" : ""), true, objConn);
+				if (isProjectHours) {
+					modelData = getDataTable("select Project_ID, Abbreviation from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1", true, objConn);
+				}
+				else {
+					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Active=@value1 and Vehicle=@value1", true, objConn);
+					modelData = getDataTable("select ID, Abbreviation from Vehicles where Active=@value1", true, objConn);
+				}
 			}
 			else {
 				if (isProjectHours) {
+					modelData = getDataTable("select ID, Abbreviation from Projects order by Projects.PriorityOrder", null, objConn);
 					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
 				}
 				else {
+					modelData = getDataTable("select ID, Abbreviation from Vehicles", null, objConn);
 					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees where Vehicle=@value1", true, objConn);
 				}
-				modelData = getDataTable("select ID, Abbreviation from " + modelTable + (isProjectHours ? " order by Projects.PriorityOrder" : ""), null, objConn);
 			}
 
 			DataTable hoursData = getDataTable("select Alna_num, " + innerID + ", Hours_worked from " + hoursTable + " where Date_ID=" + constraint, date, objConn);
