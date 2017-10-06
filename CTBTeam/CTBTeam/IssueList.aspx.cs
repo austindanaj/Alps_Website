@@ -103,7 +103,7 @@ namespace CTBTeam {
 										"inner join Categories c1 on c1.ID=IssueList.Category inner join Severity s1 " +
 										"on s1.ID=IssueList.Severity inner join [dbo].[Status] s2 on s2.ID=IssueList.[Status] " +
 										"inner join Employees e1 on e1.Alna_num = IssueList.Reporter inner join Employees e2 " +
-										"on e2.Alna_num = IssueList.Assignee inner join Projects on IssueList.Proj_ID = Projects.ID " +
+										"on e2.Alna_num = IssueList.Assignee inner join Projects on IssueList.Proj_ID = Projects.Project_ID " +
 										"where IssueList.Active = @value1) as table1 ORDER BY ID Desc;", true, objConn);
 
 			dgvViewIssues.DataSource = dt;
@@ -236,7 +236,7 @@ namespace CTBTeam {
 				reader.Close();
 
 				dgvCurrentIssue.Visible = true;
-				dgvCurrentIssue.DataSource = getDataTable("select i.ID, i.Category, p1.Name as Project, i.Title, s.Value as Severity, i.Updated, i.Status, e1.Name as Reporter, e2.Name as Assignee from IssueList as i inner join Employees e1 on e1.Alna_num = i.Reporter inner join Employees e2 on e2.Alna_num = i.Assignee inner join Projects p1 on p1.ID=i.Proj_ID inner join Severity s on s.ID=i.Severity where i.ID=@value1;", Session["temp"], objConn);
+				dgvCurrentIssue.DataSource = getDataTable("select i.ID, i.Category, p1.Name as Project, i.Title, s.Value as Severity, i.Updated, i.Status, e1.Name as Reporter, e2.Name as Assignee from IssueList as i inner join Employees e1 on e1.Alna_num = i.Reporter inner join Employees e2 on e2.Alna_num = i.Assignee inner join Projects p1 on p1.Project_ID=i.Proj_ID inner join Severity s on s.ID=i.Severity where i.ID=@value1;", Session["temp"], objConn);
 				dgvCurrentIssue.DataBind();
 			}
 			objConn.Close();
@@ -305,7 +305,7 @@ namespace CTBTeam {
 				reader.Read();
 				int alna = reader.GetInt32(0);
 				reader.Close();
-				reader = getReader("select ID from Projects where Name=@value1", ddlProject.Text, objConn);
+				reader = getReader("select Project_ID from Projects where Name=@value1", ddlProject.Text, objConn);
 				reader.Read();
 				int proj_id = reader.GetInt32(0);
 				reader.Close();

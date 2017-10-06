@@ -33,7 +33,7 @@ namespace CTBTeam {
 		// Inits
 		//----------------------------------------------------------------
 		private void populatePieChart(SqlConnection objConn) {
-			SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by ID desc);", null, objConn);
+			SqlDataReader reader = getReader("select p1.[Hours_worked], p2.Category from ProjectHours p1 inner join Projects p2 on p2.Project_ID=p1.Proj_ID where p1.Date_ID=(select top 1 ID from Dates order by ID desc);", null, objConn);
 			if (!reader.HasRows) {
 				chartPercent.Visible = false;
 				reader.Close();

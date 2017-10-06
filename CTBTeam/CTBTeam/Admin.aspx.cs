@@ -141,7 +141,7 @@ namespace CTBTeam {
 			parameters[0] = "SELECT ID, Vehicles.[Name] FROM Vehicles where Active=@value1;";
 			parameters[1] = dgvCars;
 			populate(parameters);
-			parameters[0] = "SELECT ID, Name, Category FROM Projects where Active=@value1;";
+			parameters[0] = "SELECT Project_ID, Name, Category FROM Projects where Active=@value1;";
 			parameters[1] = dgvProjects;
 			populate(parameters);
 			parameters[0] = "select IssueList.ID, IssueList.Title, e.Name as Employee from IssueList inner join Employees e on e.Alna_num=IssueList.Reporter where IssueList.Active=@value1;";
