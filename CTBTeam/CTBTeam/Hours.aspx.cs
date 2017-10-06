@@ -45,11 +45,11 @@ namespace CTBTeam {
 			objConn.Open();
 
 			if (!chkInactive.Checked) {
-				projectData = getDataTable("select ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
+				projectData = getDataTable("select Project_ID, Name, Category from Projects where Active=@value1 order by Projects.PriorityOrder", true, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles where Active=@value1", true, objConn);
 			}
 			else {
-				projectData = getDataTable("select ID, Name, Category from Projects order by Projects.PriorityOrder", null, objConn);
+				projectData = getDataTable("select Project_ID, Name, Category from Projects order by Projects.PriorityOrder", null, objConn);
 				vehiclesData = getDataTable("select ID, Name from Vehicles;", null, objConn);
 			}
 
