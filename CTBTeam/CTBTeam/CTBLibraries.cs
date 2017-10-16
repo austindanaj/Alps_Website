@@ -372,7 +372,7 @@ namespace CTBTeam {
 			}
 			else {
 				if (isProjectHours) {
-					modelData = getDataTable("select ID, Abbreviation from Projects order by Projects.PriorityOrder", null, objConn);
+					modelData = getDataTable("select Project_ID, Abbreviation from Projects order by Projects.PriorityOrder", null, objConn);
 					employeesData = getDataTable("select Alna_num, Name, Full_time from Employees", null, objConn);
 				}
 				else {
