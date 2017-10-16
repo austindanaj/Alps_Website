@@ -82,26 +82,26 @@
 		<br />
 		<div class="col-md-25">
 			<asp:GridView ID="dgvUsers" runat="server" Width="350" HeaderStyle-BackColor="#3AC0F2"
-				CssClass="gridview-admin"
-				AlternatingRowStyle-CssClass="alt"
+				CssClass="table table-striped table-bordered table-hover"
+		
 				AutoGenerateColumns="true" />
 		</div>
 		<div class="col-md-25">
 			<asp:GridView ID="dgvProjects" runat="server" Width="300" HeaderStyle-BackColor="#3AC0F2"
-				CssClass="gridview-admin"
-				AlternatingRowStyle-CssClass="alt"
+				CssClass="table table-striped table-bordered table-hover"
+				
 				AutoGenerateColumns="true">
 			</asp:GridView>
 		</div>
 		<div class="col-md-25">
 			<asp:GridView ID="dgvCars" runat="server" Width="200" HeaderStyle-BackColor="#3AC0F2"
-				CssClass="gridview-admin"
+				CssClass="table table-striped table-bordered table-hover"
 				AutoGenerateColumns="true">
 			</asp:GridView>
 		</div>
 		<div class="col-md-25">
 			<asp:GridView ID="dgvIssues" runat="server" Width="200" HeaderStyle-BackColor="#3AC0F2"
-				CssClass="gridview-admin"
+				CssClass="table table-striped table-bordered table-hover"
 				AutoGenerateColumns="true" />
 		</div>
 		<br />

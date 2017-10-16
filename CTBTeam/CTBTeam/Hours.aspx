@@ -68,8 +68,10 @@
 	</div>
 	<br />
 	<div class="row">
-		<asp:GridView ID="dgvProject" runat="server" CssClass="gridview" OnRowDataBound="color" />
-		<asp:GridView ID="dgvCars" runat="server" CssClass="gridview" Visible="false" />
+		<asp:GridView ID="dgvProject" runat="server" CssClass="table_display table-striped table-bordered table-hover"
+ OnRowDataBound="color" />
+		<asp:GridView ID="dgvCars" runat="server" CssClass="table_display table-striped table-bordered table-hover"
+ Visible="false" />
 	</div>
 	<br />
 </asp:Content>

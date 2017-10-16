@@ -15,10 +15,12 @@ namespace CTBTeam {
 		private SqlConnection objConn;
 		private static readonly string[] STATUS = { "Initial", "Countermeasure", "Analysis", "Completed" };
 		protected void Page_Load(object sender, EventArgs e) {
+            /*
 			if (Session["Alna_num"] == null) {
 				redirectSafely("~/Login");
 				return;
 			}
+            */
 
 			objConn = openDBConnection();
 

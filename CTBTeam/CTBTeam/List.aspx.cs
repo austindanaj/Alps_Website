@@ -11,12 +11,14 @@ namespace CTBTeam {
 		LinkedList<Button> dynamicButtonList = new LinkedList<Button>();
 
 		protected void Page_Load(object sender, EventArgs e) {
-			if (Session["Alna_num"] == null) {
-				redirectSafely("~/Login");
-				return;
-			}
+            /*
+           if (Session["Alna_num"] == null) {
+               redirectSafely("~/Login");
+               return;
+           }
+           */
 
-			objConn = openDBConnection();
+            objConn = openDBConnection();
 			if (!IsPostBack) {
 				populateTable();
 				successDialog(txtSuccessBox);

@@ -1,5 +1,7 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="CTBTeam.SiteMaster" %>
 
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -16,74 +18,113 @@
 	<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 </head>
 <body>
-	<form runat="server">
-		<asp:ScriptManager runat="server">
-			<Scripts>
-				<%--To learn more about bundling scripts in ScriptManager see http://go.microsoft.com/fwlink/?LinkID=301884 --%>
-				<%--Framework Scripts--%>
-				<asp:ScriptReference Name="MsAjaxBundle" />
-				<asp:ScriptReference Name="jquery" />
-				<asp:ScriptReference Name="bootstrap" />
-				<asp:ScriptReference Name="respond" />
-				<asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
-				<asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
-				<asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
-				<asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
-				<asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
-				<asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
-				<asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
-				<asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
-				<asp:ScriptReference Name="WebFormsBundle" />
-				<%--Site Scripts--%>
-			</Scripts>
-		</asp:ScriptManager>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%--To learn more about bundling scripts in ScriptManager see http://go.microsoft.com/fwlink/?LinkID=301884 --%>
+                <%--Framework Scripts--%>
+                <asp:ScriptReference Name="MsAjaxBundle" />
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="bootstrap" />
+                <asp:ScriptReference Name="respond" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
+                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
+                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
+                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
+                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
+                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
+                <asp:ScriptReference Name="WebFormsBundle" />
+                <%--Site Scripts--%>
+            </Scripts>
+        </asp:ScriptManager>
 
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" runat="server" href="~/">Connectivity Engineering</a>
-				</div>
-				<div class="navbar-collapse collapse">
-					<ul class="nav navbar-nav">
-						<li><a runat="server" href="~/Hours">Hours</a></li>
-						<li><a runat="server" href="~/TimeOff">Time Off</a></li>
-						<li><a runat="server" href="~/List">Purchase List</a></li>
-						<li><a runat="server" href="~/PhoneCheckOut">Phone Checkout</a></li>
-						<li><a runat="server" href="~/IssueList">Issues</a></li>
-					</ul>
 
-					<ul class="nav navbar-nav  navbar-right">
-						<li id="lstSchedule" runat="server" Visible="false"><a runat="server" href="~/Schedule">Schedule</a> </li>
-						<li id="admin" runat="server" visible="false"><a runat="server" href="~/Admin">Admin</a></li>
-						<li><a runat="server" href="~/Login"><%:(string)Session["loginStatus"] %></a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="container body-content">
-			<style type="text/css">
-				body {
-					background: url('Images/Gradient.jpg') no-repeat center center fixed;
-					background-size: cover;
-				}
-			</style>
-			<asp:ContentPlaceHolder ID="MainContent" runat="server">
-			</asp:ContentPlaceHolder>
-			<br />
-			<div class="row">
-				<footer class="footer">
-					<p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
-				</footer>
-			</div>
-		</div>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" runat="server" href="~/">Connectivity Engineering</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a runat="server" id="hoursPage" onserverclick="Is_SignedIn">Hours</a></li>
+                        <li><a runat="server" id="timeOffPage" onserverclick="Is_SignedIn">Time Off</a></li>
+                        <li><a runat="server" id="purchasePage" onserverclick="Is_SignedIn">Purchase List</a></li>
+                        <li><a runat="server" id="checkoutPage" onserverclick="Is_SignedIn">Phone Checkout</a></li>
+                        <li><a runat="server" id="issuesPage" onserverclick="Is_SignedIn">Issues</a></li>
+                    </ul>
 
-	</form>
+                    <ul class="nav navbar-nav  navbar-right">
+                        <li id="lstSchedule" runat="server" visible="false"><a runat="server" href="~/Schedule">Schedule</a> </li>
+                        <li id="admin" runat="server" visible="false"><a runat="server" href="~/Admin">Admin</a></li>
+                          <li id="btnLogin" runat="server" visible="true"><a id="OpenLogin" runat="server" onserverclick="Open_Login"><%:(string)Session["loginStatus"] %></a></li>
+                       
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container body-content">
+            <style type="text/css">
+                body {
+                    background-image: url('../Images/Gradient.jpg');
+                    background-size: cover;
+                }
+            </style>
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+            <br />
+            <div class="row">
+                <footer class="footer">
+                    <p>&copy; <%: DateTime.Now.Year %> - Connectivity Engineering Website</p>
+                </footer>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $('#inputPassword').keypress(function(e){
+                  if(e.keyCode==13)
+                  $('#OkClicked').click();
+                });
+            });
+        </script>
+        <asp:Panel ID="loginContainer" runat="server">
+            <div class="modal fade loginSocialModal in" data-backdrop="static" id="loginModal" tabindex="-1" aria-hidden="false" style="display: block">
+                <div class="card card-container">
+                    <div class="form-signin">
+                        <div class="modalHeader">
+                            <asp:Label ID="lblTitle" runat="server" style="font-size: 20px; font:bold;" Text="Sign In"  />
+                        <span id="CancelClicked" class="close">&times;</span>
+                           <br />
+                        </div>
+                        <div>
+                            <asp:DropDownList ID="ddl" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="-- Select yourself --" />
+                            </asp:DropDownList>
+                              <span id="reauth-email" class="reauth-email"></span>
+                            <input type="text" runat="server" ID="inputUsername" class="form-control" placeholder="Username" required autofocus />
+                            <input type="password" runat="server" ID="inputPassword" class="form-control" placeholder="Password" required/>
+
+                            <asp:Button ID="OkClicked" class="btn btn-lg btn-primary btn-block btn-signin" OnClick="Login_Clicked" runat="server" Text="Sign In" type="submit" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </asp:Panel>
+        <asp:Button ID="hiddenButton" runat="server" style="display:none" />
+
+        <ajaxToolkit:ModalPopupExtender ID="mpeLogin" runat="server" TargetControlID="hiddenButton" PopupControlID="loginContainer" BackgroundCssClass="modalBackground" CancelControlID="CancelClicked" />
+
+    </form>
+
 </body>
 </html>

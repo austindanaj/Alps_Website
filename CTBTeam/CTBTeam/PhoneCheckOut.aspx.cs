@@ -10,12 +10,14 @@ namespace CTBTeam {
 		SqlConnection objConn;
 
 		protected void Page_Load(object sender, EventArgs e) {
-			if (Session["Alna_num"] == null) {
-				redirectSafely("~/Login");
-				return;
-			}
+            /*
+           if (Session["Alna_num"] == null) {
+               redirectSafely("~/Login");
+               return;
+           }
+           */
 
-			objConn = openDBConnection();
+            objConn = openDBConnection();
 
 			if (!IsPostBack) {
 				populateDropdowns(); // Populates table with Phone Data on start up

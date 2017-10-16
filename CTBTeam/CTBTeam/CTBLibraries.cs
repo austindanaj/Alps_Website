@@ -12,7 +12,7 @@ namespace CTBTeam {
 	public class SuperPage : Page {
 		private readonly static string LOCALHOST_CONNECTION_STRING = "Data Source=(LocalDB)\\v13.0;Server = (localdb)\\MSSQLLocalDB;Database=Alps;";
 		private readonly static string DEPLOYMENT_CONNECTION_STRING = "Server=(local);Database=CTBwebsite;User Id=admin;Password=alnatest;";
-		private readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+		public  readonly static string LOCAL_TO_SERVER_CONNECTION_STRING = "Data Source=ahfreya;Initial Catalog=CTBwebsite;Integrated Security=False;User ID=Admin;Password=alnatest;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 		private enum SqlTypes { DataTable, VoidQuery, DataReader };
 
 		protected void writeStackTrace(string s, Exception ex) {
@@ -27,8 +27,8 @@ namespace CTBTeam {
 
 		protected SqlConnection openDBConnection() {
 			//return new SqlConnection(LOCALHOST_CONNECTION_STRING);
-			return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
-			//return new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
+			//return new SqlConnection(DEPLOYMENT_CONNECTION_STRING);
+			return new SqlConnection(LOCAL_TO_SERVER_CONNECTION_STRING);
 		}
 
 		protected void throwJSAlert(string s) {
@@ -404,6 +404,8 @@ namespace CTBTeam {
 			DataRow temp;
 			List<DataRow> tempMatrix = new List<DataRow>();
 			foreach (DataRow d in employeesData.Rows) {
+                if (d[2].Equals(DBNull.Value))
+                    continue;
 				if ((bool)d[2] & !includeFullTimers)
 					continue;
 				employeeHashTable.Add((int)d[0], colAndRowTracker);

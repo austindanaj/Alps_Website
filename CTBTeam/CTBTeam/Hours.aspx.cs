@@ -14,11 +14,12 @@ namespace CTBTeam {
 		private enum DATA_TYPE { VEHICLE, PROJECT };
 
 		protected void Page_Load(object sender, EventArgs e) {
+            /*
 			if (Session["Alna_num"] == null) {
 				redirectSafely("~/Login");
 				return;
 			}
-
+            */
 			objConn = openDBConnection();
 
 			if (!IsPostBack) {
@@ -135,7 +136,7 @@ namespace CTBTeam {
 				reader.Read();
 				Session["Date_ID"] = (int)reader.GetValue(0);
 				objConn.Close();
-				Session["Active"] = !(bool)Session["Active"];
+				Session["Active"] = !chkInactive.Checked;
 				redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitPercent)) {
@@ -180,20 +181,22 @@ namespace CTBTeam {
 		}
 
 		private bool insertRecord(string projectOrVehicle, int hours, DATA_TYPE type) {
-			string table, modelTable, column;
+			string table, modelTable, column, id;
 			DataTable tableToUpdate;
 			switch (type) {
 				case DATA_TYPE.PROJECT:
 					table = "ProjectHours";
 					column = "Proj_ID";
 					modelTable = "Projects";
+                    id = "Project_ID";
 					tableToUpdate = projectData;
 					break;
 				case DATA_TYPE.VEHICLE:
 					table = "VehicleHours";
 					column = "Vehicle_ID";
 					modelTable = "Vehicles";
-					tableToUpdate = vehiclesData;
+                    id = "ID";
+                    tableToUpdate = vehiclesData;
 					break;
 				default:
 					new NotImplementedException("Method has not been implemented");
@@ -203,7 +206,7 @@ namespace CTBTeam {
 			try {
 				objConn.Open();
 				object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
-				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=(select ID from " + modelTable + " where Name=@value2) and Date_ID=@value3", o, objConn);
+				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=(select " + id + " from " + modelTable + " where Name=@value2) and Date_ID=@value3", o, objConn);
 				if (reader == null) return false;
 
 				if (reader.HasRows) {
@@ -219,7 +222,7 @@ namespace CTBTeam {
 				}
 
 				o = new object[] { o[0], projectOrVehicle, hours, o[2] };
-				executeVoidSQLQuery("insert into " + table + " values(@value1, (select ID from " + modelTable + " where Name=@value2), @value3, @value4)", o, objConn);
+				executeVoidSQLQuery("insert into " + table + " values(@value1, (select " + id + " from " + modelTable + " where Name=@value2), @value3, @value4)", o, objConn);
 				objConn.Close();
 			}
 			catch (Exception ex) {
