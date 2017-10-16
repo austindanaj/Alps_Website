@@ -6,10 +6,11 @@ using System.IO;
 using Date = System.DateTime;
 using System.Web.UI.HtmlControls;
 
-namespace CTBTeam {
+namespace CTBTeam
+{
     public partial class SiteMaster : MasterPage
     {
-       
+
         private enum SqlTypes { DataTable, VoidQuery, DataReader };
         SqlConnection objConn;
         protected void Page_Load(object sender, EventArgs e)
@@ -27,7 +28,12 @@ namespace CTBTeam {
             if (Session["Full_time"] != null)
                 if (!(bool)Session["Full_time"])
                     lstSchedule.Visible = true;
+
+            if (Session["Vehicle"] == null)
+                Session["Vehicle"] = false;
+
         }
+
 
         private void loadEmployees()
         {
@@ -147,9 +153,9 @@ namespace CTBTeam {
             }
             mpeLogin.Show();
             loadEmployees();
-            
+
         }
-        protected void Is_SignedIn (Object sender, EventArgs e)
+        protected void Is_SignedIn(Object sender, EventArgs e)
         {
             if (Session["Alna_num"] == null)
             {
@@ -161,10 +167,10 @@ namespace CTBTeam {
             {
 
                 HtmlAnchor a = (HtmlAnchor)sender;
-                
+
                 switch (a.InnerText)
                 {
-                    case "Hours":
+                    case "Hours":                      
                         redirectSafely("~/Hours");
                         break;
                     case "Time Off":
@@ -178,7 +184,7 @@ namespace CTBTeam {
                         break;
                     case "Issues":
                         redirectSafely("~/IssueList");
-                        break;               
+                        break;
                 }
             }
         }
@@ -263,12 +269,4 @@ namespace CTBTeam {
             }
         }
     }
-			if (Session["Full_time"] != null)
-				if (!(bool)Session["Full_time"])
-					lstSchedule.Visible = true;
-
-			if (Session["Vehicle"] == null)
-				Session["Vehicle"] = false;
-		}
-	}
 }
