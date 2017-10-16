@@ -17,6 +17,9 @@ namespace CTBTeam {
 			if (Session["Full_time"] != null)
 				if (!(bool)Session["Full_time"])
 					lstSchedule.Visible = true;
+
+			if (Session["Vehicle"] == null)
+				Session["Vehicle"] = false;
 		}
 	}
 }

@@ -11,7 +11,6 @@ namespace CTBTeam {
 	public partial class Hours : HoursPage {
 		private SqlConnection objConn;
 		private DataTable projectData, projectHoursData, vehicleHoursData, vehiclesData, datesData;
-		private enum DATA_TYPE { VEHICLE, PROJECT };
 
 		protected void Page_Load(object sender, EventArgs e) {
 			if (Session["Alna_num"] == null) {
@@ -75,12 +74,14 @@ namespace CTBTeam {
 
 			Hashtable h = new Hashtable();
 
-			int id; string name;
+			int id; string name, globalATesting = "BLE_Key_Pass_Global_A_Testing";
 			foreach (DataRow r in projectData.Rows) {
 				id = (int)r[0];
 				name = r[1].ToString();
-				ddlProjects.Items.Add(name);
 				h.Add(id, name);
+				if (!(bool)Session["Full_time"] && name.Equals(globalATesting))
+					continue;
+				ddlProjects.Items.Add(name);
 			}
 
 			bool hasHoursWorked = false;
@@ -88,13 +89,15 @@ namespace CTBTeam {
 			foreach (DataRow d in projectHoursData.Rows) {
 				if (alna == (int)d[1]) {
 					hasHoursWorked = true;
+					if (!(bool)Session["Full_time"] & h[d[2]].Equals(globalATesting))
+						continue;
 					ddlWorkedHours.Items.Add("P_ID#" + d[0].ToString() + ": worked " + d[3] + " hours on " + h[d[2]]);
 				}
 			}
 			if (hasHoursWorked) pnlDeleteHours.Visible = true;
 
 			hoursUpdate();
-			if ((bool)Session["Full_time"]) return;
+			if (!(bool)Session["Vehicle"]) return;
 			pnlVehicleHours.Visible = true;
 
 			h = new Hashtable();
@@ -139,11 +142,11 @@ namespace CTBTeam {
 				redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitPercent)) {
-				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedIndex, DATA_TYPE.PROJECT))
+				if (insertRecord(ddlProjects.SelectedValue, ddlHours.SelectedIndex, true))
 					redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnSubmitVehicles)) {
-				if (insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedIndex, DATA_TYPE.VEHICLE))
+				if (insertRecord(ddlVehicles.SelectedValue, ddlHoursVehicles.SelectedIndex, false))
 					redirectSafely("~/Hours");
 			}
 			else if (sender.Equals(btnDelete)) {
@@ -158,7 +161,7 @@ namespace CTBTeam {
 					return;
 				}
 
-				string table = selection.Substring(0, 1).Equals("V") && !(bool)Session["Full_time"] ? "VehicleHours" : "ProjectHours";
+				string table = selection.Substring(0, 1).Equals("V") ? "VehicleHours" : "ProjectHours";
 
 				int startIndex = selection.IndexOf("#") + 1, endIndex = selection.IndexOf(":");
 				selection = selection.Substring(startIndex, endIndex - startIndex);
@@ -168,8 +171,18 @@ namespace CTBTeam {
 				}
 
 				objConn.Open();
-				object[] o = { Session["Alna_num"], id };
-				executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o, objConn);
+				object[] o;
+				if (table.Equals("VehicleHours")) {
+					o = new object[] {id, "BLE_Key_Pass_Global_A_Testing", Session["Alna_num"], Session["Date_ID"]};
+
+					if (!(bool)Session["Full_time"])
+						executeVoidSQLQuery("update ProjectHours set Hours_worked=Hours_worked-(select Hours_worked from VehicleHours where ID=@value1) where Proj_ID=(select Project_ID from Projects where Name=@value2) and Alna_num=@value3 and Date_ID=@value4", o, objConn);
+					executeVoidSQLQuery("delete from VehicleHours where ID=@value1", id, objConn);
+				}
+				else {
+					o = new object[] { Session["Alna_num"], id };
+					executeVoidSQLQuery("delete from " + table + " where Alna_num=@value1 and ID=@value2", o, objConn);
+				}
 				objConn.Close();
 				redirectSafely("~/Hours");
 			}
@@ -179,31 +192,26 @@ namespace CTBTeam {
 			}
 		}
 
-		private bool insertRecord(string projectOrVehicle, int hours, DATA_TYPE type) {
-			string table, modelTable, column;
+		private bool insertRecord(string projectOrVehicle, int hours, bool isProject) {
+			string table, readerQuery, insertionQuery;
 			DataTable tableToUpdate;
-			switch (type) {
-				case DATA_TYPE.PROJECT:
-					table = "ProjectHours";
-					column = "Proj_ID";
-					modelTable = "Projects";
-					tableToUpdate = projectData;
-					break;
-				case DATA_TYPE.VEHICLE:
-					table = "VehicleHours";
-					column = "Vehicle_ID";
-					modelTable = "Vehicles";
-					tableToUpdate = vehiclesData;
-					break;
-				default:
-					new NotImplementedException("Method has not been implemented");
-					return false;
+			if (isProject) {
+				table = "ProjectHours";
+				readerQuery = "select ID, Hours_worked from ProjectHours where Alna_num=@value1 and Proj_ID=(select ID from Projects where Name=@value2) and Date_ID=@value3";
+				insertionQuery = "insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)";
+				tableToUpdate = projectData;
+			}
+			else {
+				table = "VehicleHours";
+				insertionQuery = "insert into VehicleHours values(@value1, (select ID from Vehicles where Name=@value2), @value3, @value4)";
+				readerQuery = "select ID, Hours_worked from VehicleHours where Alna_num=@value1 and Vehicle_ID=(select ID from Vehicles where Name=@value2) and Date_ID=@value3";
+				tableToUpdate = vehiclesData;
 			}
 
 			try {
 				objConn.Open();
 				object[] o = { Session["Alna_num"], projectOrVehicle, Session["Date_ID"] };
-				SqlDataReader reader = getReader("select ID, Hours_worked from " + table + " where Alna_num=@value1 and " + column + "=(select ID from " + modelTable + " where Name=@value2) and Date_ID=@value3", o, objConn);
+				SqlDataReader reader = getReader(readerQuery, o, objConn);
 				if (reader == null) return false;
 
 				if (reader.HasRows) {
@@ -219,7 +227,11 @@ namespace CTBTeam {
 				}
 
 				o = new object[] { o[0], projectOrVehicle, hours, o[2] };
-				executeVoidSQLQuery("insert into " + table + " values(@value1, (select ID from " + modelTable + " where Name=@value2), @value3, @value4)", o, objConn);
+				executeVoidSQLQuery(insertionQuery, o, objConn);
+				if (!(bool)Session["Full_time"] & !isProject) {
+					o[1] = "BLE_Key_Pass_Global_A_Testing";
+					executeVoidSQLQuery("insert into ProjectHours values(@value1, (select Project_ID from Projects where Name=@value2), @value3, @value4)", o, objConn);
+				}
 				objConn.Close();
 			}
 			catch (Exception ex) {
@@ -288,13 +300,10 @@ namespace CTBTeam {
 			lblUserHours.Text = "Your Hours: " + hoursWorked + "/40";
 			if (hoursWorked == 40) pnlAddHours.Visible = false;
 
-			if ((bool)Session["Full_time"]) return;
+			if (!(bool)Session["Vehicle"]) return;
 
-			hoursWorked = 0;
 			ddlHoursVehicles.Items.Add("--Select A Percent (Out of 40 hrs)--");
-			howMuchHoursWorked(vehicleHoursData);
 			addDDLoptions(ddlHoursVehicles);
-
 			lblUserHours.Text = "Logged " + hoursWorked + "/40";
 		}
 	}

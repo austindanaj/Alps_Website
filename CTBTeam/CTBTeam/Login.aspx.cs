@@ -51,11 +51,12 @@ namespace CTBTeam {
 				Session["Admin"] = reader.GetBoolean(1);
 				reader.Close();
 
-				reader = getReader("Select Alna_num, Name, Full_time from Employees where Employees.[Name]=@value1;", ddl.Text, objConn);
+				reader = getReader("Select Alna_num, Name, Full_time, Vehicle from Employees where Employees.[Name]=@value1;", ddl.Text, objConn);
 				reader.Read();
 				Session["Alna_num"] = reader.GetValue(0);
 				Session["Name"] = reader.GetValue(1);
 				Session["Full_time"] = reader.GetValue(2);
+				Session["Vehicle"] = reader.GetValue(3);
 				Session["loginStatus"] = "Signed in as " + Session["Name"] + " (Sign out)";
 				redirectSafely("~/");
 			}
