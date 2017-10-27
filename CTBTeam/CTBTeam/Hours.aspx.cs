@@ -56,7 +56,7 @@ namespace CTBTeam {
 			//Everything else
 			projectHoursData = getDataTable("select ID, Alna_num, Proj_ID, Hours_worked from ProjectHours where Date_ID=@value1", Session["Date_ID"], objConn);
 			vehicleHoursData = getDataTable("select ID, Alna_num, Vehicle_ID, Hours_worked from VehicleHours where Date_ID=@value1", Session["Date_ID"], objConn);
-			datesData = getDataTable("select Dates from Dates order by ID desc", null, objConn);
+			datesData = getDataTable("select Dates from Dates order by Dates desc", null, objConn);
 			objConn.Close();
 
 			if (projectData == null || vehiclesData == null || projectHoursData == null || vehicleHoursData == null || datesData == null) {

@@ -6,16 +6,16 @@
 
 <html lang="en">
 <head runat="server">
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title><%: Page.Title %> - Connectivity Engineering </title>
-	<link rel="stylesheet" runat="server" href="~/Content/AddedCSS.css" />
-	<asp:PlaceHolder runat="server">
-		<%: Scripts.Render("~/bundles/modernizr") %>
-	</asp:PlaceHolder>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - Connectivity Engineering </title>
+    <link rel="stylesheet" runat="server" href="~/Content/AddedCSS.css" />
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
 
-	<webopt:BundleReference runat="server" Path="~/Content/css" />
-	<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <webopt:BundleReference runat="server" Path="~/Content/css" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 </head>
 <body>
     <form runat="server">
@@ -65,8 +65,8 @@
                     <ul class="nav navbar-nav  navbar-right">
                         <li id="lstSchedule" runat="server" visible="false"><a runat="server" href="~/Schedule">Schedule</a> </li>
                         <li id="admin" runat="server" visible="false"><a runat="server" href="~/Admin">Admin</a></li>
-                          <li id="btnLogin" runat="server" visible="true"><a id="OpenLogin" runat="server" onserverclick="Open_Login"><%:(string)Session["loginStatus"] %></a></li>
-                       
+                        <li id="btnLogin" runat="server" visible="true"><a id="OpenLogin" runat="server" onserverclick="Open_Login"><%:(string)Session["loginStatus"] %></a></li>
+
                     </ul>
                 </div>
             </div>
@@ -88,10 +88,10 @@
             </div>
         </div>
         <script>
-            $(document).ready(function(){
-                $('#inputPassword').keypress(function(e){
-                  if(e.keyCode==13)
-                  $('#OkClicked').click();
+            $(document).ready(function () {
+                $('#inputPassword').keypress(function (e) {
+                    if (e.keyCode == 13)
+                        $('#OkClicked').click();
                 });
             });
         </script>
@@ -100,17 +100,17 @@
                 <div class="card card-container">
                     <div class="form-signin">
                         <div class="modalHeader">
-                            <asp:Label ID="lblTitle" runat="server" style="font-size: 20px; font:bold;" Text="Sign In"  />
-                        <span id="CancelClicked" class="close">&times;</span>
-                           <br />
+                            <asp:Label ID="lblTitle" runat="server" Style="font-size: 20px; font: bold;" Text="Sign In" />
+                            <span id="CancelClicked" class="close">&times;</span>
+                            <br />
                         </div>
                         <div>
                             <asp:DropDownList ID="ddl" runat="server" CssClass="form-control">
                                 <asp:ListItem Text="-- Select yourself --" />
                             </asp:DropDownList>
-                              <span id="reauth-email" class="reauth-email"></span>
-                            <input type="text" runat="server" ID="inputUsername" class="form-control" placeholder="Username" required autofocus />
-                            <input type="password" runat="server" ID="inputPassword" class="form-control" placeholder="Password" required/>
+                            <span id="reauth-email" class="reauth-email"></span>
+                            <input type="text" runat="server" id="inputUsername" class="form-control" placeholder="Username" required autofocus />
+                            <input type="password" runat="server" id="inputPassword" class="form-control" placeholder="Password" required />
 
                             <asp:Button ID="OkClicked" class="btn btn-lg btn-primary btn-block btn-signin" OnClick="Login_Clicked" runat="server" Text="Sign In" type="submit" />
                         </div>
@@ -120,7 +120,7 @@
 
 
         </asp:Panel>
-        <asp:Button ID="hiddenButton" runat="server" style="display:none" />
+        <asp:Button ID="hiddenButton" runat="server" Style="display: none" />
 
         <ajaxToolkit:ModalPopupExtender ID="mpeLogin" runat="server" TargetControlID="hiddenButton" PopupControlID="loginContainer" BackgroundCssClass="modalBackground" CancelControlID="CancelClicked" />
 
